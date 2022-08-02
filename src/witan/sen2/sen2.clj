@@ -19,6 +19,5 @@
                (fn [x] (= (:new_la_code x) s))
 
                (= la-or-gss :la)
-    (tc/select-rows @caseload-2010-2022
-                    #(and (pred %)
-                          (comp (get % "time_period") (range 2010 2023))))))
+               (fn [x] (= (:la_name x) s)))]
+    (tc/select-rows @caseload-2010-2022 #(pred %))))
