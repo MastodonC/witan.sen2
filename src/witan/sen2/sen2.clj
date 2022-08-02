@@ -7,13 +7,11 @@
 (def caseload-2010-2022 (delay (-> "sen2_estab_caseload.csv"
                                    io/resource
                                    io/file
-                                   tc/dataset))) ;; this doesn't work with districts
+                                   tc/dataset
+                                   (tc/select-rows #(and (= (get % "establishment_type") "Total")
+                                                         (= (get % "establishment_group") "Total")))
+                                   (tc/select-columns ["Total_all" "time_period" "new_la_code" "la_name"])))) ;; this doesn't work with districts
 
-(defn process-sen2-caseload [year caseload-data]
-  (-> caseload-data
-      (tc/select-rows #(and (= (get % "establishment_type") "Total")
-                            (= (get % "establishment_group") "Total")))
-      (tc/select-columns ["Total_all" "time_period" "new_la_code" "la_name"])))
 
 
 (defn generate-current-pop [gss]
