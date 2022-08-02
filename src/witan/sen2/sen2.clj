@@ -11,8 +11,7 @@
 
 (defn process-sen2-caseload [year caseload-data]
   (-> caseload-data
-      (tc/select-rows #(and (= (get % "time_period") year)
-                            (= (get % "establishment_type") "Total")
+      (tc/select-rows #(and (= (get % "establishment_type") "Total")
                             (= (get % "establishment_group") "Total")))
       (tc/select-columns ["Total_all" "time_period" "new_la_code" "la_name"])))
 
