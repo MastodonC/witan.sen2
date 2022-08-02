@@ -9,11 +9,9 @@
                                    io/file
                                    tc/dataset))) ;; this doesn't work with districts
 
-(defn process-sen2-caseload [gss-or-la year caseload-data]
+(defn process-sen2-caseload [year caseload-data]
   (-> caseload-data
-      (tc/select-rows #(and (or (= (get % "new_la_code") gss-or-la)
-                                (= (get % "la_name") gss-or-la))
-                            (= (get % "time_period") year)
+      (tc/select-rows #(and (= (get % "time_period") year)
                             (= (get % "establishment_type") "Total")
                             (= (get % "establishment_group") "Total")))
       (tc/select-columns ["Total_all" "time_period"])))
