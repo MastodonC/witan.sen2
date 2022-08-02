@@ -12,9 +12,13 @@
                                                          (= (get % "establishment_group") "Total")))
                                    (tc/select-columns ["Total_all" "time_period" "new_la_code" "la_name"])))) ;; this doesn't work with districts
 
+(defn generate-current-pop [s la-or-gss]
+  (let [pred (cond
+               (= la-or-gss :gss)
+               (fn [x] (= (get x "new_la_code") s))
 
-
-(defn generate-current-pop [gss]
-  (apply tc/concat
-         (map (fn [year] (process-sen2-caseload gss year @caseload-2010-2022))
-              (range 2010 2023))))
+               (= la-or-gss :la)
+               (fn [x] (= (get x "la_name") s)))]
+    (tc/select-rows @caseload-2010-2022
+                    #(and (pred %)
+                          (comp (get % "time_period") (range 2010 2023))))))
