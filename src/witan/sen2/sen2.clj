@@ -14,7 +14,8 @@
       (tc/select-rows #(and (= (get % "time_period") year)
                             (= (get % "establishment_type") "Total")
                             (= (get % "establishment_group") "Total")))
-      (tc/select-columns ["Total_all" "time_period"])))
+      (tc/select-columns ["Total_all" "time_period" "new_la_code" "la_name"])))
+
 
 (defn generate-current-pop [gss]
   (apply tc/concat
