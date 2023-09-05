@@ -1,6 +1,7 @@
 (ns witan.sen2.return.person-level.blade-export.csv-eda
   "Functions to facilitate EDA of datasets read from SEN2 COLLECT Blade CSV Export files."
-  (:require [clojure.string :as string]
+  (:require [clojure.set :as set]
+            [clojure.string :as string]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]))
@@ -63,15 +64,15 @@
                                            :placement-detail "5b: Placements - Placement details (`placement-detail`)"
                                            :sen-need         "5c: Placements - SEN need (`sen-need`)"}
                                           module-key)
-        col-name->csv-label          (get {:sen2             sen2-blade-csv/sen2-col-name->csv-label
-                                           :person           sen2-blade-csv/person-col-name->csv-label
-                                           :requests         sen2-blade-csv/requests-col-name->csv-label
-                                           :assessment       sen2-blade-csv/assessment-col-name->csv-label
-                                           :named-plan       sen2-blade-csv/named-plan-col-name->csv-label
-                                           :plan-detail      sen2-blade-csv/plan-detail-col-name->csv-label
-                                           :active-plans     sen2-blade-csv/active-plans-col-name->csv-label
-                                           :placement-detail sen2-blade-csv/placement-detail-col-name->csv-label
-                                           :sen-need         sen2-blade-csv/sen-need-col-name->csv-label}
+        col-name->csv-label          (get {:sen2             (set/map-invert sen2-blade-csv/sen2-csv-col-label->name)
+                                           :person           (set/map-invert sen2-blade-csv/person-csv-col-label->name)
+                                           :requests         (set/map-invert sen2-blade-csv/requests-csv-col-label->name)
+                                           :assessment       (set/map-invert sen2-blade-csv/assessment-csv-col-label->name)
+                                           :named-plan       (set/map-invert sen2-blade-csv/named-plan-csv-col-label->name)
+                                           :plan-detail      (set/map-invert sen2-blade-csv/plan-detail-csv-col-label->name)
+                                           :active-plans     (set/map-invert sen2-blade-csv/active-plans-csv-col-label->name)
+                                           :placement-detail (set/map-invert sen2-blade-csv/placement-detail-csv-col-label->name)
+                                           :sen-need         (set/map-invert sen2-blade-csv/sen-need-csv-col-label->name)}
                                           module-key)
         col-name->label              (get {:sen2             sen2-blade-csv/sen2-col-name->label
                                            :person           sen2-blade-csv/person-col-name->label

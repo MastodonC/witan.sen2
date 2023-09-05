@@ -17,8 +17,8 @@
                               [(get need->order k2) k2]))
          (keys need->order)))
 
-(def need->label
-  "Map EHCP need abbreviation to label for display"
+(def need->name
+  "Map EHCP need abbreviation to name as given in the 2023 SEN2 return guide v1.0"
   (into (sorted-map-by  (fn [k1 k2] (compare [(get need->order k1) k1]
                                              [(get need->order k2) k2])))
         {"SPLD" "Specific learning difficulty"
@@ -32,5 +32,22 @@
          "MSI"  "Multi-sensory impairment"
          "PD"   "Physical disability"
          "ASD"  "Autistic spectrum disorder"
+
          "OTH"  "Other difficulty"}))
+(def need->label
+  "Map EHCP need abbreviation to label for display"
+  (into (sorted-map-by  (fn [k1 k2] (compare [(get need->order k1) k1]
+                                             [(get need->order k2) k2])))
+        {"SPLD" "Specific Learning Difficulty"
+         "MLD"  "Moderate Learning Difficulty"
+         "SLD"  "Severe Learning Difficulty"
+         "PMLD" "Profound and Multiple Learning Difficulty"
+         "SEMH" "Social, Emotional and Mental Health"
+         "SLCN" "Speech, Language and Communication Needs"
+         "HI"   "Hearing Impairment"
+         "VI"   "Vision Impairment"
+         "MSI"  "Multi-Sensory Impairment"
+         "PD"   "Physical Disability"
+         "ASD"  "Autistic Spectrum Disorder"
+         "OTH"  "Other Difficulty"}))
 

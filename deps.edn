@@ -1,6 +1,6 @@
 {:paths   ["src" "resources" "notebooks"]
  :deps    {org.clojure/clojure         {:mvn/version "1.11.1"}
-           techascent/tech.ml.dataset  {:mvn/version "7.000-beta-51"}
+           techascent/tech.ml.dataset  {:mvn/version "7.000"}
            scicloj/tablecloth          {:mvn/version "7.000-beta-51"
                                         :exclusions  [techascent/tech.ml.dataset
                                                       org.apache.poi/poi-ooxml-schemas
@@ -8,9 +8,4 @@
                                                       org.apache.poi/poi-ooxml]}
            io.github.nextjournal/clerk {;; :mvn/version "0.14.919"
                                         :git/url "https://github.com/nextjournal/clerk"
-                                        :sha     "fbc5d8d9fb413e53a68e76a952ac744acfc8e00c"}}
- :aliases {:jdk-17 {:jvm-opts ["-XX:-OmitStackTraceInFastThrow"
-                               "-Xlog:gc*:gc.log"
-                               "-XX:+UseZGC"
-                               "--add-modules" "jdk.incubator.foreign,jdk.incubator.vector"
-                               "--enable-native-access=ALL-UNNAMED"]}}}
+                                        :sha     "fbc5d8d9fb413e53a68e76a952ac744acfc8e00c"}}}

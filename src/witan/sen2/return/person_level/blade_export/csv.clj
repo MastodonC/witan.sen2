@@ -1,7 +1,6 @@
 (ns witan.sen2.return.person-level.blade-export.csv
   "Read and manipulate SEN2 person level return COLLECT Blade Export CSV files"
-  (:require [clojure.set    :as set]
-            [tablecloth.api :as tc]))
+  (:require [tablecloth.api :as tc]))
 
 ;;; # Utility functions
 (defn- parse-date
@@ -9,16 +8,6 @@
   [s]
   (java.time.LocalDate/parse (re-find #"^[^ ]+" s) (java.time.format.DateTimeFormatter/ofPattern "uuuu-LLL-dd" (java.util.Locale. "en_US"))))
 
-(defn ->ds
-  "Read CSV file at `file-path` into dataset named `dataset-name` using `key-fn` & `parser-fn`."
-  [file-path {:keys [key-fn parser-fn dataset-name]}]
-  (tc/dataset file-path
-              {:file-type    :csv
-               :separator    ","
-               :header-row?  true
-               :key-fn       key-fn
-               :parser-fn    parser-fn
-               :dataset-name dataset-name}))
 
 
 ;;; # CSV data files
@@ -58,10 +47,6 @@
    "dmo"                :dmo
    "dco"                :dco})
 
-(def sen2-col-name->csv-label
-  "Map SEN2 module 0 \"SEN2\" dataset column names to label used in the CSV file."
-  (set/map-invert sen2-csv-col-label->name))
-
 (def sen2-parser-fn
   "Parser function for SEN2 module 0 \"SEN2\" CSV file columns."
   {:sen2-table-id         :string
@@ -93,7 +78,7 @@
 (defn sen2->ds
   "Reads dataset of SEN2 module 0 \"SEN2\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path sen2-read-cfg))
+  (tc/dataset file-path sen2-read-cfg))
 
 (def sen2-col-name->label
   "Map SEN2 module 0 \"SEN2\" dataset column names to display labels."
@@ -132,10 +117,6 @@
    "uniquelearnernumber"  :unique-learner-number
    "upnunknown"           :upn-unknown})
 
-(def person-col-name->csv-label
-  "Map SEN2 module 1 \"Person\" dataset column names to label used in the CSV file."
-  (set/map-invert person-csv-col-label->name))
-
 (def person-parser-fn
   "Parser function for SEN2 module 1 \"Person\" CSV file columns."
   {:person-table-id         :string
@@ -162,7 +143,7 @@
 (defn person->ds
   "Reads dataset of SEN2 module 1 \"Person\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path person-read-cfg))
+  (tc/dataset file-path person-read-cfg))
 
 (def person-col-name->label
   "Map SEN2 module 1 \"Person\" dataset column names to display labels."
@@ -198,10 +179,6 @@
    "requesttribunal"        :request-tribunal
    "exported"               :exported})
 
-(def requests-col-name->csv-label
-  "Map SEN2 module 2 \"Requests\" dataset column names to label used in the CSV file."
-  (set/map-invert requests-csv-col-label->name))
-
 (def requests-parser-fn
   "Parser function for SEN2 module 2 \"Requests\" CSV file columns."
   {:requests-table-id         :string
@@ -226,7 +203,7 @@
 (defn requests->ds
   "Reads dataset of SEN2 module 2 \"Requests\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path requests-read-cfg))
+  (tc/dataset file-path requests-read-cfg))
 
 (def requests-col-name->label
   "Map SEN2 module 2 \"Requests\" dataset column names to display labels."
@@ -260,10 +237,6 @@
    "othertribunal"            :other-tribunal
    "week20"                   :week20})
 
-(def assessment-col-name->csv-label
-  "Map SEN2 module 3 \"EHC needs assessments\" dataset column names to label used in the CSV file."
-  (set/map-invert assessment-csv-col-label->name))
-
 (def assessment-parser-fn
   "Parser function for SEN2 module 3 \"EHC needs assessments\" CSV file columns."
   {:assessment-table-id         :string
@@ -288,7 +261,7 @@
 (defn assessment->ds
   "Reads dataset of SEN2 module 3 \"EHC needs assessments\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path assessment-read-cfg))
+  (tc/dataset file-path assessment-read-cfg))
 
 (def assessment-col-name->label
   "Map SEN2 module 3 \"EHC needs assessments\" dataset column names to display labels."
@@ -323,10 +296,6 @@
    "ceasedate"               :cease-date
    "ceasereason"             :cease-reason})
 
-(def named-plan-col-name->csv-label
-  "Map SEN2 module 4a \"Named plan\" dataset column names to label used in the CSV file."
-  (set/map-invert named-plan-csv-col-label->name))
-
 (def named-plan-parser-fn
   "Parser function for SEN2 module 4a \"Named plan\" CSV file columns."
   {:named-plan-table-id         :string
@@ -352,7 +321,7 @@
 (defn named-plan->ds
   "Reads dataset of SEN2 module 4a \"Named plan\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path named-plan-read-cfg))
+  (tc/dataset file-path named-plan-read-cfg))
 
 (def named-plan-col-name->label
   "Map SEN2 module 4a \"Named plan\" dataset column names to display labels."
@@ -387,10 +356,6 @@
    "senunitindicator"            :sen-unit-indicator
    "resourcedprovisionindicator" :resourced-provision-indicator})
 
-(def plan-detail-col-name->csv-label
-  "Map SEN2 module 4b \"Plan detail records\" dataset column names to label used in the CSV file."
-  (set/map-invert plan-detail-csv-col-label->name))
-
 (def plan-detail-parser-fn
   "Parser function for SEN2 module 4b \"Plan detail records\" CSV file columns."
   {:plan-detail-table-id          :string
@@ -415,7 +380,7 @@
 (defn plan-detail->ds
   "Reads dataset of SEN2 module 4b \"Plan detail records\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path plan-detail-read-cfg))
+  (tc/dataset file-path plan-detail-read-cfg))
 
 (def plan-detail-col-name->label
   "Map SEN2 module 4b \"Plan detail records\" dataset column names to display labels."
@@ -446,10 +411,6 @@
    "wbp"                       :wbp
    "lastreview"                :last-review})
 
-(def active-plans-col-name->csv-label
-  "Map SEN2 module 5a \"Active plans\" dataset column names to label used in the CSV file."
-  (set/map-invert active-plans-csv-col-label->name))
-
 (def active-plans-parser-fn
   "Parser function for SEN2 module 5a \"Active plans\" CSV file columns."
   {:active-plans-table-id         :string
@@ -471,7 +432,7 @@
 (defn active-plans->ds
   "Reads dataset of SEN2 module 5a \"Active plans\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path active-plans-read-cfg))
+  (tc/dataset file-path active-plans-read-cfg))
 
 (def active-plans-col-name->label
   "Map SEN2 module 5a \"Active plans\" dataset column names to display labels."
@@ -505,10 +466,6 @@
    "senunitindicator"              :sen-unit-indicator
    "resourcedprovisionindicator"   :resourced-provision-indicator})
 
-(def placement-detail-col-name->csv-label
-  "Map SEN2 module 5b \"Placement details\" dataset column names to label used in the CSV file."
-  (set/map-invert placement-detail-csv-col-label->name))
-
 (def placement-detail-parser-fn
   "Parser function for SEN2 module 5b \"Placement details\" CSV file columns."
   {:placement-detail-table-id         :string
@@ -536,7 +493,7 @@
 (defn placement-detail->ds
   "Reads dataset of SEN2 module 5b \"Placement details\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path placement-detail-read-cfg))
+  (tc/dataset file-path placement-detail-read-cfg))
 
 (def placement-detail-col-name->label
   "Map SEN2 module 5b \"Placement details\" dataset column names to display labels."
@@ -568,10 +525,6 @@
    "sentyperank"           :sen-type-rank
    "sentype"               :sen-type})
 
-(def sen-need-col-name->csv-label
-  "Map SEN2 module 5c \"SEN need\" dataset column names to label used in the CSV file."
-  (set/map-invert sen-need-csv-col-label->name))
-
 (def sen-need-parser-fn
   "Parser function for SEN2 module 5 \"SEN need\" CSV file columns."
   {:sen-need-table-id         :string
@@ -591,7 +544,7 @@
 (defn sen-need->ds
   "Reads dataset of SEN2 module 5 \"SEN need\" data from CSV file at `file-path`."
   [file-path]
-  (->ds file-path sen-need-read-cfg))
+  (tc/dataset file-path sen-need-read-cfg))
 
 (def sen-need-col-name->label
   "Map SEN2 module 5c \"SEN need\" dataset column names to display labels."
@@ -623,7 +576,7 @@
   using read configuration from corresponding key of `read-cfg'`
   into map of datasets with same keys."
   ([file-dir file-names'] (->ds-map file-dir file-names' read-cfg))
-  ([file-dir file-names' read-cfg'] (reduce-kv #(assoc %1 %2 (->ds (str file-dir %3) (get read-cfg' %2)))
+  ([file-dir file-names' read-cfg'] (reduce-kv #(assoc %1 %2 (tc/dataset (str file-dir %3) (get read-cfg' %2)))
                                                {}
                                                file-names')))
 
