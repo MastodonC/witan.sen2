@@ -1,10 +1,11 @@
-{:paths ["src" "resources"]
- :deps  {org.clojure/clojure                 {:mvn/version "1.11.0"}
-         scicloj/tablecloth         {:mvn/version "6.090"
-                                     :exclusions  [org.apache.poi/poi-ooxml-schemas
-                                                   org.apache.poi/poi
-                                                   org.apache.poi/poi-ooxml]}}
- :aliases
- {:test {:extra-paths ["test"]
-         :extra-deps  {org.clojure/test.check {:mvn/version "0.9.0"}
-                       lambdaisland/kaocha {:mvn/version "1.0.641"}}}}}
+{:paths   ["src" "resources" "notebooks"]
+ :deps    {org.clojure/clojure         {:mvn/version "1.11.1"}
+           techascent/tech.ml.dataset  {:mvn/version "7.000"}
+           scicloj/tablecloth          {:mvn/version "7.000-beta-51"
+                                        :exclusions  [techascent/tech.ml.dataset
+                                                      org.apache.poi/poi-ooxml-schemas
+                                                      org.apache.poi/poi
+                                                      org.apache.poi/poi-ooxml]}
+           io.github.nextjournal/clerk {;; :mvn/version "0.14.919"
+                                        :git/url "https://github.com/nextjournal/clerk"
+                                        :sha     "fbc5d8d9fb413e53a68e76a952ac744acfc8e00c"}}}

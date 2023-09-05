@@ -6,3 +6,4 @@ gc.log*
 .clerk/
 src/user.clj
 data/education-health-and-care-plans/education-health-and-care-plans_*/
+data/example-sen2-blade-csv-export
