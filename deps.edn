@@ -8,4 +8,7 @@
                                                       org.apache.poi/poi-ooxml]}
            io.github.nextjournal/clerk {;; :mvn/version "0.14.919"
                                         :git/url "https://github.com/nextjournal/clerk"
-                                        :sha     "fbc5d8d9fb413e53a68e76a952ac744acfc8e00c"}}}
+                                        :sha     "fbc5d8d9fb413e53a68e76a952ac744acfc8e00c"}
+
+           tick/tick                                          {:mvn/version "0.6.2"}
+           }}
