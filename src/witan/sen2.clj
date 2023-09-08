@@ -3,8 +3,9 @@
 
   from [gov.uk](https://www.gov.uk/guidance/special-educational-needs-survey) unless stated otherwise.")
 
-(def census-dates
-  "SEN2 census dates"
+;;; # SEN2 census dates
+(def census-year->date-string
+  "Map SEN2 census year to census date (as ISO8601 date strings)"
   (sorted-map
    2015 "2015-01-15" ; from [SEN2 2015 Guide v1.3](https://dera.ioe.ac.uk/21852/1/SEN2_2015_Guide_Version_1.3.pdf) (retrieved 2023-04-12)
    2016 "2016-01-21" ; from [SEN2 2016 Guide v1.3](https://dera.ioe.ac.uk/24874/1/SEN2_2016_Guide_Version_1.3.pdf) (retrieved 2023-04-12)
@@ -17,3 +18,11 @@
    2023 "2023-01-19" ; from [SEN2 2023 Guide v1.0](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1099346/2023_SEN2_Person_level_-_Guide_Version_1.0.pdf) (retrieved 2023-04-12)
    2024 "2024-01-18" ; from [SEN2 2024 Guide v1.0](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1174521/2024_SEN2_Person_level_-_Guide_Version_1.0.pdf) (retrieved 2023-07-28)
    ))
+
+(def census-year->date
+  "Map SEN2 census year to census date"
+  (update-vals census-year->date-string
+               #(java.time.LocalDate/parse %
+                                           (java.time.format.DateTimeFormatter/ofPattern "uuuu-MM-dd"
+                                                                                         (java.util.Locale. "en_GB")))))
+
