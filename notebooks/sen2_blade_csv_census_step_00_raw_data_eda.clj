@@ -78,7 +78,7 @@
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-table-id-ds
   "Dataset of `:*table-id` key relationships."
-  (sen2-blade-csv/->table-id-ds sen2-blade-csv-ds-map))
+  (sen2-blade-csv/ds-map->table-id-ds sen2-blade-csv-ds-map))
 
 (sen2-blade-csv-eda/report-table-id-ds sen2-blade-csv-table-id-ds)
 

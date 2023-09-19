@@ -204,46 +204,15 @@
   [ds-map]
   (clerk/fragment
    (map (partial report-csv-ds-map-info ds-map)
-        [:sen2 :person :requests :assessment :named-plan :plan-detail :active-plans :placement-detail :sen-need])))
-
-
-
-;;; # Dataset keys
-(defn report-unique-key? [ds key-cols]
-  (clerk/md (let [key-str        (str "[`:" ((comp (partial clojure.string/join "`, :`") (partial map name)) key-cols) "`]")
-                  ds-name        (tc/dataset-name ds)
-                  num-non-unique (-> ds
-                                     (tc/group-by key-cols)
-                                     (tc/aggregate {:num-rows tc/row-count})
-                                     (tc/select-rows #(not= 1 (:num-rows %)))
-                                     (tc/row-count))]
-              (format (str "Q: Considering %s:  \nis %s a unique key?  \n"
-                           "A: " (if (zero? num-non-unique) "Yes" "NO") ": "
-                           "There are %,d combinations with more than one record.")
-                      ds-name
-                      key-str
-                      num-non-unique))))
-
-(defn report-composite-keys
-  [ds-map]
-  (let [table-id-ds  (sen2-blade-csv/->table-id-ds ds-map)
-        named-plan   (-> (ds-map :named-plan)
-                         (tc/left-join (sen2-blade-csv/ancestor-table-id-ds table-id-ds :named-plan-table-id) [:assessment-table-id])
-                         (tc/set-dataset-name "`named-plan` (with ancestor `table-id`s)"))
-        active-plans (-> (ds-map :active-plans)
-                         (tc/left-join (sen2-blade-csv/ancestor-table-id-ds table-id-ds :active-plans-table-id) [:requests-table-id])
-                         (tc/set-dataset-name "`active-plans` (with ancestor `table-id`s)"))
-        sen-need     (-> (ds-map :sen-need)
-                         (tc/left-join (sen2-blade-csv/ancestor-table-id-ds table-id-ds :sen-need-table-id) [:active-plans-table-id])
-                         (tc/set-dataset-name "`sen-need` (with ancestor `table-id`s)"))]
-    (clerk/fragment
-     (report-unique-key? named-plan   [:person-table-id :requests-table-id])
-     (report-unique-key? named-plan   [:person-table-id])
-     (report-unique-key? active-plans [:person-table-id :requests-table-id])
-     (report-unique-key? active-plans [:person-table-id])
-     (report-unique-key? sen-need     [:person-table-id :requests-table-id :sen-type-rank])
-     (report-unique-key? sen-need     [:person-table-id :sen-type-rank]))))
-
+        [:sen2
+         :person
+         :requests
+         :assessment
+         :named-plan
+         :plan-detail
+         :active-plans
+         :placement-detail
+         :sen-need])))
 
 
 ;;; # Relational database structure: schema and `table-id` key relationships
@@ -378,3 +347,44 @@
                   (tc/rename-columns $ (into {} (map (fn [k] [k
                                                               (clojure.string/replace (name k) #"-table-id$" "")])
                                                      (tc/column-names $))))))))
+
+
+
+;;; # Dataset keys
+(defn report-unique-key? [ds key-cols]
+  (clerk/md (let [key-str        (str "[`:" ((comp (partial clojure.string/join "`, :`") (partial map name)) key-cols) "`]")
+                  ds-name        (tc/dataset-name ds)
+                  num-non-unique (-> ds
+                                     (tc/group-by key-cols)
+                                     (tc/aggregate {:num-rows tc/row-count})
+                                     (tc/select-rows #(not= 1 (:num-rows %)))
+                                     (tc/row-count))]
+              (format (str "Q: Considering `%s`:  \nis %s a unique key?  \n"
+                           "A: " (if (zero? num-non-unique) "Yes" "NO") ": "
+                           "There are %,d combinations with more than one record.")
+                      ds-name
+                      key-str
+                      num-non-unique))))
+
+(defn report-composite-keys
+  [ds-map]
+  (let [table-id-ds  (sen2-blade-csv/->table-id-ds ds-map)
+        named-plan   (-> (ds-map :named-plan)
+                         (tc/left-join (sen2-blade-csv/ancestor-table-id-ds table-id-ds :named-plan-table-id) [:assessment-table-id])
+                         (tc/set-dataset-name "`named-plan` (with ancestor `table-id`s)"))
+        active-plans (-> (ds-map :active-plans)
+                         (tc/left-join (sen2-blade-csv/ancestor-table-id-ds table-id-ds :active-plans-table-id) [:requests-table-id])
+                         (tc/set-dataset-name "`active-plans` (with ancestor `table-id`s)"))
+        sen-need     (-> (ds-map :sen-need)
+                         (tc/left-join (sen2-blade-csv/ancestor-table-id-ds table-id-ds :sen-need-table-id) [:active-plans-table-id])
+                         (tc/set-dataset-name "`sen-need` (with ancestor `table-id`s)"))]
+    (clerk/fragment
+     (report-unique-key? named-plan   [:person-table-id :requests-table-id])
+     (report-unique-key? named-plan   [:person-table-id])
+     (report-unique-key? active-plans [:person-table-id :requests-table-id])
+     (report-unique-key? active-plans [:person-table-id])
+     (report-unique-key? sen-need     [:person-table-id :requests-table-id :sen-type-rank])
+     (report-unique-key? sen-need     [:person-table-id :sen-type-rank]))))
+
+
+
