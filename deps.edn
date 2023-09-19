@@ -1,7 +1,7 @@
 {:paths   ["src" "resources" "notebooks"]
  :deps    {org.clojure/clojure         {:mvn/version "1.11.1"}
-           techascent/tech.ml.dataset  {:mvn/version "7.000"}
-           scicloj/tablecloth          {:mvn/version "7.000-beta-51"
+           techascent/tech.ml.dataset  {:mvn/version "7.007"}
+           scicloj/tablecloth          {:mvn/version "7.007"
                                         :exclusions  [techascent/tech.ml.dataset
                                                       org.apache.poi/poi-ooxml-schemas
                                                       org.apache.poi/poi
