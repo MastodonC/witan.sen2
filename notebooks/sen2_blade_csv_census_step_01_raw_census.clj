@@ -11,10 +11,7 @@
             [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv-census :as sen2-blade-csv-census]
-
-            [tick.core :as t]
-            ))
+            [witan.sen2.return.person-level.blade-export.csv-census :as sen2-blade-csv-census]))
 
 (clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
                "# Raw Census from SEN2 Person Level Return Blade CSV Export"
@@ -76,7 +73,7 @@
 (def census-years [2022 2023])
 ^{::clerk/viewer clerk/table}
 (def census-dates-ds
-  (sen2-blade-csv-census/census-years->census-dates-ds census-years))
+  (sen2/census-years->census-dates-ds census-years))
 
 
 
@@ -107,7 +104,7 @@
 
 
 ;;; ## Extract plans & placements open on census-dates
-;;; ### Person information
+;;; ### Person information on census dates
 ;; …with age at start of school year & nominal NCY for census-dates
 
 ^{::clerk/viewer clerk/md}
@@ -119,18 +116,12 @@
 
 ^{::clerk/visibility {:result :hide}}
 (def person-on-census-dates
-  (sen2-blade-csv-census/person-on-census-dates sen2-blade-csv-ds-map
-                                                #_{:census-years census-years}
-                                                {:census-dates-ds census-dates-ds}
-                                                ))
-^{::clerk/visibility {:result :hide}}
-(def person-on-census-dates-col-name->label
-  (sen2-blade-csv-census/person-on-census-dates-col-name->label person-on-census-dates))
+  (sen2-blade-csv-census/person-on-census-dates sen2-blade-csv-ds-map census-dates-ds))
 
 ;; Dataset `person-on-census-dates`:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels person-on-census-dates
-                         person-on-census-dates-col-name->label)
+                         (sen2-blade-csv-census/person-on-census-dates-col-name->label person-on-census-dates))
 
 ;; Ages on at start of school year (on 31-AUG) containing the `:census-date` and corresponding nominal NCY for all CYP in `person` table:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
@@ -141,4 +132,88 @@
                      :nominal-ncy #(map second (% "rows/cols"))})
     (tc/drop-columns "rows/cols")
     (tc/reorder-columns [:age-at-start-of-school-year :nominal-ncy])
-    (tc/rename-columns person-on-census-dates-col-name->label))
+    (tc/rename-columns (sen2-blade-csv-census/person-on-census-dates-col-name->label person-on-census-dates)))
+
+
+;;; ### `named-plan`s open on a census date
+^{::clerk/visibility {:result :hide}}
+(def named-plan-on-census-dates
+  (sen2-blade-csv-census/named-plan-on-census-dates sen2-blade-csv-ds-map census-dates-ds))
+
+;; Dataset `named-plan-on-census-dates`:
+^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(column-info-with-labels named-plan-on-census-dates
+                         (sen2-blade-csv-census/named-plan-on-census-dates-col-name->label named-plan-on-census-dates))
+
+
+;;; ### `placement-detail`s open on a census date
+^{::clerk/visibility {:result :hide}}
+(def placement-detail-on-census-dates
+  (sen2-blade-csv-census/placement-detail-on-census-dates sen2-blade-csv-ds-map census-dates-ds))
+
+;; Dataset `placement-detail-on-census-dates`:
+^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(column-info-with-labels placement-detail-on-census-dates
+                         (sen2-blade-csv-census/placement-detail-on-census-dates-col-name->label placement-detail-on-census-dates))
+
+;; Some CYP will have a `:requests-table-id` with both `:placement-rank` 1 and `:placement-rank` 2 placements
+;; open on a census date, but there may be some CYP with only a `:placement-rank` 2 placement open on a `:census-date`.
+(clerk/table {::clerk/width :prose}
+             (-> placement-detail-on-census-dates
+                 (tc/select-columns [:census-year :person-table-id :requests-table-id :placement-rank])
+                 (tc/order-by       [:census-year :person-table-id :requests-table-id :placement-rank])
+                 (tc/fold-by        [:census-year :person-table-id :requests-table-id])
+                 (tc/crosstab [:census-year] [:placement-rank] {:marginal-rows true})
+                 (tc/order-by ["rows/cols"])
+                 (tc/rename-columns {"rows/cols" "Census year \\ [placementrank s]"})))
+;; Where a CYP has both rank 1 and rank 2 placements open on a census date for the same request,
+;; then we take the rank 1 one, but if the CYP only has a rank 2 placement open for a given request,
+;; then we take that. However, note that doing so may result in transitions from a rank 1 placement
+;; to a rank 2 placement if a rank 1 placement open at a census date ends before the next census-date
+;; but the rank 2 placement continues beyond it.
+
+;; Where a CYP has both rank 1 and rank 2 placements open on a census date for the same request,
+;; then we take the rank 1 one, but if the CYP only has a rank 2 placement open for a given request,
+;; then we take that, giving:
+(clerk/table {::clerk/width :prose}
+             (-> placement-detail-on-census-dates
+                 (tc/select-rows (comp zero? :census-date-placement-idx))
+                 (tc/select-columns [:census-year :person-table-id :requests-table-id :placement-rank])
+                 (tc/order-by       [:census-year :person-table-id :requests-table-id :placement-rank])
+                 (tc/fold-by        [:census-year :person-table-id :requests-table-id])
+                 (tc/crosstab [:census-year] [:placement-rank] {:marginal-rows true})
+                 (tc/order-by ["rows/cols"])
+                 (tc/rename-columns {"rows/cols" "Census year \\ [placementrank s]"})))
+
+
+
+;;; ### EHCP primary need from `sen-need`
+^{::clerk/visibility {:result :hide}}
+(def sen-need-primary
+  (sen2-blade-csv-census/sen-need-primary sen2-blade-csv-ds-map))
+
+;; Dataset `sen-need-primary`:
+^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(column-info-with-labels sen-need-primary
+                         (sen2-blade-csv-census/sen-need-primary-col-name->label sen-need-primary))
+
+
+
+;;; ## Collate raw sen2 census
+^{::clerk/visibility {:result :hide}}
+(def sen2-census-raw
+  (sen2-blade-csv-census/sen2-census-raw sen2-blade-csv-ds-map
+                                         census-dates-ds
+                                         #_{#_#_:person-on-census-dates-ds           person-on-census-dates
+                                            #_#_:named-plan-on-census-dates-ds       named-plan-on-census-dates
+                                            #_#_:placement-detail-on-census-dates-ds placement-detail-on-census-dates
+                                            #_#_:sen-need-primary-ds                 sen-need-primary})
+  
+  )
+
+
+;; Dataset `sen2-census-raw`:
+^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(column-info-with-labels sen2-census-raw
+                         (sen2-blade-csv-census/sen2-census-raw-col-name->label sen2-census-raw))
+

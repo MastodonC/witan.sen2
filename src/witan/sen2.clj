@@ -1,7 +1,8 @@
 (ns witan.sen2
   "Special educational needs survey (SEN2) information
-
-  from [gov.uk](https://www.gov.uk/guidance/special-educational-needs-survey) unless stated otherwise.")
+   from [gov.uk](https://www.gov.uk/guidance/special-educational-needs-survey)
+   unless stated otherwise."
+  (:require [tablecloth.api :as tc]))
 
 ;;; # SEN2 census dates
 (def census-year->date-string
@@ -25,4 +26,21 @@
                #(java.time.LocalDate/parse %
                                            (java.time.format.DateTimeFormatter/ofPattern "uuuu-MM-dd"
                                                                                          (java.util.Locale. "en_GB")))))
+
+(defn census-years->census-dates-ds
+  "Return dataset of census-dates given vector of `census-years`."
+  [census-years]
+  (-> (tc/dataset [[:census-year census-years]])
+      #_(tc/convert-types {:census-year :int16})
+      (tc/map-columns :census-date [:census-year] census-year->date)
+      (tc/set-dataset-name "census-dates")))
+
+(defn census-dates-col-name->label
+  "Column labels for display."
+  ([]
+   {:census-year "SEN2 census year"
+    :census-date "SEN2 census date"})
+  ([ds]
+   (-> (census-dates-col-name->label)
+       (select-keys (tc/column-names ds)))))
 
