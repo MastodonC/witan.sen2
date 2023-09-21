@@ -1,7 +1,7 @@
-(ns witan.sen2.return.person-level.blade-export.csv-census
-  "Extract raw census of plans & placements open on census dates,
-   with person details and EHCP primary need from SEN2 person level return
-  COLLECT Blade Export CSV files"
+(ns witan.sen2.return.person-level.blade-export.csv.census
+  "Raw census of plans & placements open on census dates,
+   with person details and EHCP primary need,
+  from SEN2 person level return COLLECT Blade Export CSV files"
   (:require [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
             [witan.sen2.ncy :as ncy]

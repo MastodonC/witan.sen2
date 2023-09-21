@@ -1,4 +1,4 @@
-(ns sen2-blade-csv-census-step-00-raw-data-eda
+(ns sen2-blade-csv-eda
   "Clerk notebook to read and document SEN2 return Blade CSV Export."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :fold
@@ -10,7 +10,7 @@
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv-eda :as sen2-blade-csv-eda]))
+            [witan.sen2.return.person-level.blade-export.csv.eda :as sen2-blade-csv-eda]))
 
 (clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
                "# SEN2 Person Level Return Blade CSV Export"
@@ -22,7 +22,7 @@
 ;;; # Raw data EDA
 ;; Illustrates use of:
 ;; - `witan.sen2.return.person-level.blade-export.csv`
-;; - `witan.sen2.return.person-level.blade-export.csv-eda`
+;; - `witan.sen2.return.person-level.blade-export.csv.eda`
 
 
 ;;; ## Parameters

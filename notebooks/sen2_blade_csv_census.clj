@@ -1,4 +1,4 @@
-(ns sen2-blade-csv-census-step-01-raw-census
+(ns sen2-blade-csv-census
   "Clerk notebook to extract raw census of plans & placements open on census dates from SEN2 return Blade CSV Export."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :fold
@@ -11,7 +11,7 @@
             [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv-census :as sen2-blade-csv-census]))
+            [witan.sen2.return.person-level.blade-export.csv.census :as sen2-blade-csv-census]))
 
 (clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
                "# Raw Census from SEN2 Person Level Return Blade CSV Export"
@@ -24,7 +24,7 @@
 ;;; # SEN2 raw census
 ;; Illustrates use of:
 ;; - `witan.sen2.return.person-level.blade-export.csv`
-;; - `witan.sen2.return.person-level.blade-export.csv-census`
+;; - `witan.sen2.return.person-level.blade-export.csv.census`
 
 
 
