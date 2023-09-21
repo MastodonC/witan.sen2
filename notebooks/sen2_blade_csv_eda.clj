@@ -19,22 +19,29 @@
 
 
 
+
 ;;; # Raw data EDA
 ;; Illustrates use of:
-;; - `witan.sen2.return.person-level.blade-export.csv`
-;; - `witan.sen2.return.person-level.blade-export.csv.eda`
+;; - `witan.sen2.return.person-level.blade-export.csv`  
+;;   (aliased as `sen2-blade-csv` here)
+;; - `witan.sen2.return.person-level.blade-export.csv.eda`  
+;;   (aliased as `sen2-blade-csv-eda` here)
+
 
 
 ;;; ## Parameters
-;;; ### SEN2 Blade CSV Export Data Files
-;; SEN2 Blade CSV folder:
-^{::clerk/viewer clerk/md}
+;;; ### SEN2 Blade CSV Export
+;; Specify the folder containing the SEN2 Blade CSV files:
+^{::clerk/visibility {:code   :show
+                      :result :hide}
+  ::clerk/viewer clerk/md}
 (def sen2-blade-csv-dir
   "Directory containing SEN2 blade export CSV files"
   "./data/example-sen2-blade-csv-export/")
 
-;; SEN2 Blade CSV files:
-^{::clerk/visibility {:result :hide}}
+;; Make a map of the SEN2 Blade CSV file names:
+^{::clerk/visibility {:code   :show
+                      :result :hide}}
 (def sen2-blade-csv-file-names
   (sen2-blade-csv/file-names "31-03-2023"))
 
@@ -46,8 +53,9 @@
                    sen2-blade-csv-file-names))
 
 
+
 ;;; ## Read CSV files
-;; …into a map with datasets as values:
+;; Read the CSV files into a map with datasets as values:
 ^{::clerk/visibility {:code   :show
                       :result :hide}}
 (def sen2-blade-csv-ds-map
@@ -56,13 +64,16 @@
                            sen2-blade-csv-file-names))
 
 
+
 ;;; ## Dataset structure & categorical values
 (sen2-blade-csv-eda/report-csv-ds-map-info-all sen2-blade-csv-ds-map)
+
 
 
 ;;; ## Database structure
 (sen2-blade-csv-eda/report-expected-schema)
 (sen2-blade-csv-eda/report-table-keys)
+
 
 
 ;;; ## `*-table-id` Key relationships
@@ -74,6 +85,7 @@
 (sen2-blade-csv-eda/report-key-relationships sen2-blade-csv-ds-map)
 
 
+
 ;;; ## `table-id-ds`
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-table-id-ds
@@ -81,6 +93,7 @@
   (sen2-blade-csv/ds-map->table-id-ds sen2-blade-csv-ds-map))
 
 (sen2-blade-csv-eda/report-table-id-ds sen2-blade-csv-table-id-ds)
+
 
 
 ;;; ## Composite keys

@@ -55,19 +55,18 @@
 
 ;;; ## `named-plan`s open on census dates
 
-;; Note that open `named-plan`s are identified based on their `:start-date` and `:cease-date`:
-;; - The `:start-date` is the date of the EHC plan,
-;;   which may be before the EHC plan transferred in.
-;; - The `:cease-date` is the date the EHC plan ended
-;;   or the date the EHC plan was transferred to another LA.
-;; - Thus for a census date not at the end of the SEN2 collection period,
-;;   this may include plans that were open with another LA (prior to
-;;   transferring in later during the collection year).
-
 (defn named-plan-on-census-dates
   "All `named-plan` records open on census dates, with ancestor table IDs.
-  Note: For a census date not at the end of the SEN2 collection period,
-        this may include plans that were open with another LA prior to transferring in."
+
+  Note that open `named-plan`s are identified based on their `:start-date` and `:cease-date`:
+  - The `:start-date` is the date of the EHC plan,
+    which may be before the EHC plan transferred in.
+  - The `:cease-date` is the date the EHC plan ended
+    or the date the EHC plan was transferred to another LA.
+  - Thus for a census date not at the end of the SEN2 collection period,
+    this may include plans that were open with another LA (prior to
+    transferring in later during the collection year).
+  "
   [sen2-blade-csv-ds-map census-dates-ds]
   (-> (sen2-blade-csv-ds-map :named-plan)
       (select-episodes-open-on-census-dates census-dates-ds :start-date :cease-date)
@@ -192,16 +191,23 @@
 
 (defn sen2-census-raw
   "Raw census from SEN2 return.
-   - Collated `named-plan`s and highest ranking `placement-detail`s open on census dates,
-     with primary `sen-need`, `active-plans` and `person` age/NCY details.
-     - For a census date not at the end of the SEN2 collection period,
-       this may include plans that were open with another LA prior to transferring in.
+  
+   Collated `named-plan`s and highest ranking `placement-detail`s open on census dates,
+   with primary `sen-need`, `active-plans` and `person` details including age & nominal NCY for age.
+   - For a census date not at the end of the SEN2 collection period,
+     this may include plans that were open with another LA prior to transferring in.
+   - Where a CYP has both rank 1 and rank 2 placements open on a census date for the same request,
+     then we take the rank 1 one, but if the CYP only has a rank 2 placement open for a given request,
+     then we take that. However, note that doing so may result in transitions from a rank 1 placement
+     to a rank 2 placement if a rank 1 placement open at a census date ends before the next census-date
+     but the rank 2 placement continues up to or beyond it.
    - As from SEN2 return only, does not have `:settings` or `:designations`,
      and uses `:census-date` & `:nominal-ncy`
-     rather than `:calendar-year` & `:academic-year` as would with a census for analysis.
-   - Unique key is [`:person-table-id` `:requests-table-id` `:census-date`]
-     - a CYP with `named-plan`s or `placement-detail`s from more than one `request` open on a `:census-date`
-       will have more than one record for that `:census-date`."
+     (rather than `:calendar-year` & `:academic-year`).
+   - Unique key is [`:person-table-id` `:requests-table-id` `:census-date`] - CYP
+     with `named-plan`s or `placement-detail`s from more than one `request`
+     open on a `:census-date` will have more than one record for that `:census-date`.
+  "
   ([sen2-blade-csv-ds-map census-dates-ds] (sen2-census-raw sen2-blade-csv-ds-map census-dates-ds {}))
   ([sen2-blade-csv-ds-map census-dates-ds {:keys [person-on-census-dates-ds
                                                   named-plan-on-census-dates-ds
