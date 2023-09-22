@@ -99,7 +99,7 @@
    :dco                   "DCO"})
 
 
-;;; ## Module 1: Person details (deidentified) (`person`)
+;;; ## Module 1: Person details (`person`)
 (def person-csv-col-label->name
   "Map SEN2 module 1 \"Person\" CSV file column label to column name for the dataset."
   {"persontableid"        :person-table-id
@@ -608,10 +608,11 @@
   "Map names of table-id columns to labels."
   (select-keys col-name->label table-id-col-names))
 
-(defn ->table-id-ds
-  "Returns dataset of `:*table-id` key relationships.
+(defn ds-map->table-id-ds
+  "Return dataset of `:*table-id` key relationships, given map `ds-map` of datasets read from CSV files.
   The returned dataset permits traversing up each branch of the dataset hierarchy without going through all intermediate datasets."
-  [{:keys [sen2 person requests assessment named-plan plan-detail active-plans placement-detail sen-need]}]
+  [{:keys [sen2 person requests assessment named-plan plan-detail active-plans placement-detail sen-need]
+    :as   ds-map}]
   (-> (tc/select-columns
        sen2
        [:sen2-table-id])
@@ -651,10 +652,12 @@
   "Map table-id to table-id of parent."
   (update-vals table-id->ancestors last))
 
-(defn ancestor-table-id-ds
-  "Filter `table-id-ds` dataset for ancestors of table with primary key `table-id`."
-  [table-id-ds table-id]
-  (-> table-id-ds
+(defn ds-map->ancestor-table-id-ds
+  "Return dataset of `:*table-id` key relationships for ancestors of table with primary key `table-id`,
+  given map `ds-map` of datasets read from CSV files."
+  [ds-map table-id]
+  (-> ds-map
+      ds-map->table-id-ds
       (tc/select-columns (table-id->ancestors table-id))
       (tc/drop-missing)
       (tc/unique-by)))
