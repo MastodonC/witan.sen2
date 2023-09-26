@@ -1,5 +1,5 @@
-(ns sen2-blade-csv-census
-  "Clerk notebook to extract raw census of plans & placements open on census dates from SEN2 return Blade CSV Export."
+(ns sen2-blade-csv-plans-placements
+  "Clerk notebook illustrating extraction of plans & placements open on census dates from SEN2 return Blade CSV export."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :fold
                                             :result :show}
@@ -11,22 +11,23 @@
             [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv.census :as sen2-blade-csv-census]))
+            [witan.sen2.return.person-level.blade-export.csv.plans-placements :as sen2-blade-csv-plans-placements]))
 
+^::clerk/no-cache
 (clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
-               "# Raw Census from SEN2 Person Level Return Blade CSV Export"
+               "# Plans & placements open on census dates"
                (format "  \n`%s`  \n" *ns*)
                ((comp :doc meta) *ns*)))
 
 
 
 
-;;; # SEN2 raw census
+;;; # Plans & Placements
 ;; Illustrates use of:
 ;; - `witan.sen2.return.person-level.blade-export.csv`  
 ;;   (aliased as `sen2-blade-csv` here)
-;; - `witan.sen2.return.person-level.blade-export.csv.census`  
-;;   (aliased as `sen2-blade-csv-census` here)
+;; - `witan.sen2.return.person-level.blade-export.csv.plans-placements`  
+;;   (aliased as `sen2-blade-csv-plans-placements` here)
 
 
 
@@ -64,7 +65,7 @@
 
 
 ;;; ### Census dates
-;; Make a dataset with column `:census-date` of dates to create the census on:
+;; Make a dataset with column `:census-date` of dates to extract open plans & placements on:
 ^{::clerk/visibility {:code   :show
                       :result :show}
   ::clerk/viewer clerk/table}
@@ -92,18 +93,19 @@
 
 
 
-;;; ## Raw sen2 census
+;;; ## Extract plans & placements open on census dates
 ^{::clerk/viewer clerk/md ::clerk/no-cache true}
-((comp :doc meta) #'sen2-blade-csv-census/sen2-census-raw)
+((comp :doc meta) #'sen2-blade-csv-plans-placements/plans-placements-on-census-dates)
 
-;; Extract raw sen2 census from `sen2-blade-ds-map` for `:census-dates` in `census-dates-ds` using:
-^{::clerk/visibility {:result :hide
-                      :code   :show}}
-(def sen2-census-raw
-  (sen2-blade-csv-census/sen2-census-raw sen2-blade-csv-ds-map
-                                         census-dates-ds))
+;; Extract plans & placements open on census dates (with person information)
+;; from `sen2-blade-ds-map` for `:census-dates` in `census-dates-ds` using:
+^{::clerk/visibility {:code   :show
+                      :result :hide}}
+(def plans-placements-on-census-dates
+  (sen2-blade-csv-plans-placements/plans-placements-on-census-dates sen2-blade-csv-ds-map
+                                                                    census-dates-ds))
 
-;; This returns a `sen2-census-raw` dataset with the following structure:
+;; This returns a `plans-placements-on-census-dates` dataset with the following structure:
 ^{::clerk/visibility {:result :hide}}
 (defn- column-info-with-labels
   "Selected column info with labels."
@@ -122,6 +124,6 @@
                           :max       "Max"})))
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(column-info-with-labels sen2-census-raw
-                         (sen2-blade-csv-census/sen2-census-raw-col-name->label sen2-census-raw))
+(column-info-with-labels plans-placements-on-census-dates
+                         (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label plans-placements-on-census-dates))
 
