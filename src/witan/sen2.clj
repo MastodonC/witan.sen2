@@ -35,12 +35,8 @@
       (tc/map-columns :census-date [:census-year] census-year->date)
       (tc/set-dataset-name "census-dates")))
 
-(defn census-dates-col-name->label
+(def census-dates-col-name->label
   "Column labels for display."
-  ([]
-   {:census-year "SEN2 census year"
-    :census-date "SEN2 census date"})
-  ([ds]
-   (-> (census-dates-col-name->label)
-       (select-keys (tc/column-names ds)))))
+  {:census-year "SEN2 census year"
+   :census-date "SEN2 census date"})
 

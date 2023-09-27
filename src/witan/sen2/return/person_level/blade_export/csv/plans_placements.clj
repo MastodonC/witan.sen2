@@ -1,5 +1,5 @@
 (ns witan.sen2.return.person-level.blade-export.csv.plans-placements
-  "Tools to extract and manipulate plans & placements open on census dates
+  "Tools to extract and manipulate plans & placements on census dates
    (with person details and EHCP primary need)
   from SEN2 person level return COLLECT Blade Export CSV files"
   (:require [tablecloth.api :as tc]
@@ -12,9 +12,10 @@
 
 ;;; # Extract SEN2 information on census dates
 
-(defn select-episodes-open-on-census-dates
-  "Select records from `episodes-ds` that are open for each `:census-date` in `census-dates-ds`,
-  where episode start and end dates are in columns `episode-start-date-col` & `episode-end-date-col`."
+(defn extract-episodes-on-census-dates
+  "Extract records from `episodes-ds` that span each `:census-date` in `census-dates-ds`,
+  where episode start and end dates are in columns `episode-start-date-col` & `episode-end-date-col`.
+  If an episode record spans multiple `:census-date`s then a record for each is returned."
   [episode-ds census-dates-ds episode-start-date-col episode-end-date-col]
   (-> episode-ds
       (tc/cross-join census-dates-ds)
@@ -38,38 +39,35 @@
       (tc/cross-join census-dates-ds)
       (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date] ncy/age-at-start-of-school-year-for-date)
       (tc/map-columns :nominal-ncy [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
-      (tc/set-dataset-name "Person ages and nominal NCYs on census dates")))
+      (tc/set-dataset-name "person-on-census-dates")))
 
-(defn person-on-census-dates-col-name->label
+(def person-on-census-dates-col-name->label
   "Column labels for display."
-  ([]
-   (merge sen2-blade-csv/person-col-name->label
-          (sen2/census-dates-col-name->label)
-          {:age-at-start-of-school-year "Age at start of school year"
-           :nominal-ncy                 "Nominal NCY for age"}))
-  ([ds]
-   (-> (person-on-census-dates-col-name->label)
-       (select-keys (tc/column-names ds)))))
+  (merge (select-keys sen2-blade-csv/person-col-name->label
+                      [:sen2-table-id :person-table-id :person-order-seq-column :upn :unique-learner-number :person-birth-date])
+         sen2/census-dates-col-name->label
+         {:age-at-start-of-school-year "Age at start of school year"
+          :nominal-ncy                 "Nominal NCY for age"}))
 
 
 
-;;; ## `named-plan`s open on census dates
+;;; ## `named-plan`s on census dates
 
 (defn named-plan-on-census-dates
-  "All `named-plan` records open on census dates, with ancestor table IDs.
+  "All `named-plan` records on census dates, with ancestor table IDs.
 
-  Note that open `named-plan`s are identified based on their `:start-date` and `:cease-date`:
+  Note that `named-plan`s on census dates are identified based on their `:start-date` and `:cease-date`:
   - The `:start-date` is the date of the EHC plan,
     which may be before the EHC plan transferred in.
   - The `:cease-date` is the date the EHC plan ended
     or the date the EHC plan was transferred to another LA.
   - Thus for a census date not at the end of the SEN2 collection period,
-    this may include plans that were open with another LA (prior to
-    transferring in later during the collection year).
+    this may include plans that were with another LA,
+    prior to transferring in later during the collection year.
   "
   [sen2-blade-csv-ds-map census-dates-ds]
   (-> (sen2-blade-csv-ds-map :named-plan)
-      (select-episodes-open-on-census-dates census-dates-ds :start-date :cease-date)
+      (extract-episodes-on-census-dates census-dates-ds :start-date :cease-date)
       (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds sen2-blade-csv-ds-map :named-plan-table-id)
                     [:assessment-table-id])
       (tc/drop-columns [:table-id-ds.assessment-table-id])
@@ -77,42 +75,38 @@
       (tc/reorder-columns (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds)))
       (tc/set-dataset-name "named-plan-on-census-dates")))
 
-(defn named-plan-on-census-dates-col-name->label
+(def named-plan-on-census-dates-col-name->label
   "Column labels for display."
-  ([]
-   (merge sen2-blade-csv/table-id-col-name->label
-          (sen2/census-dates-col-name->label)
-          sen2-blade-csv/named-plan-col-name->label))
-  ([ds]
-   (-> (named-plan-on-census-dates-col-name->label)
-       (select-keys (tc/column-names ds)))))
+  (merge sen2-blade-csv/table-id-col-name->label
+         sen2/census-dates-col-name->label
+         sen2-blade-csv/named-plan-col-name->label))
 
 
 
-;;; ## `placement-detail`s open on census dates
+;;; ## `placement-detail`s on census dates
 
 (defn placement-detail-on-census-dates
-  "All `placement-detail` records open on census dates, with ancestor table IDs.
+  "All `placement-detail` records on census dates, with ancestor table IDs.
   
   Some `:person-table-id` will have a `:requests-table-id` with both
-  `:placement-rank` 1 and `:placement-rank` 2 placements open on a census date,
+  `:placement-rank` 1 and `:placement-rank` 2 placements on a census date,
   and there may be some CYP with only a `:placement-rank` 2 placement
-  open on a `:census-date`.
+  on a `:census-date`.
 
-  To permit selection of the placement with highest rank open on a census date,
+  To permit selection of the placement with highest rank on a census date,
   column `:census-date-placement-idx` is added to the dataset, indexing
   placements by [`:person-table-id` `:requests-table-id` `:census-date`]
   in `:placement-rank` order: this is zero for the placement with highest rank
-  open on the `:census-date`.
+  on the `:census-date`.
 
   Note that taking rank 2 placements for analysis may result in
   transitions from a rank 1 placement to a rank 2 placement if a rank
-  1 placement open at a census date ends before the next census-date
+  1 placement on a census date ends before the next census date
   but the rank 2 placement continues beyond it.
   "
   [sen2-blade-csv-ds-map census-dates-ds]
   (-> (sen2-blade-csv-ds-map :placement-detail)
-      (select-episodes-open-on-census-dates census-dates-ds :entry-date :leaving-date )
+      (extract-episodes-on-census-dates census-dates-ds :entry-date :leaving-date )
       (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds sen2-blade-csv-ds-map :placement-detail-table-id)
                     [:active-plans-table-id])
       (tc/drop-columns [:table-id-ds.active-plans-table-id])
@@ -126,16 +120,12 @@
       (tc/reorder-columns (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds) [:census-date-placement-idx]))
       (tc/set-dataset-name "placement-detail-on-census-dates")))
 
-(defn placement-detail-on-census-dates-col-name->label
+(def placement-detail-on-census-dates-col-name->label
   "Column labels for display."
-  ([]
-   (merge sen2-blade-csv/table-id-col-name->label
-          (sen2/census-dates-col-name->label)
-          {:census-date-placement-idx "Census date placement index"}
-          sen2-blade-csv/placement-detail-col-name->label))
-  ([ds]
-   (-> (placement-detail-on-census-dates-col-name->label)
-       (select-keys (tc/column-names ds)))))
+  (merge sen2-blade-csv/table-id-col-name->label
+         sen2/census-dates-col-name->label
+         {:census-date-placement-idx "Census date placement index"}
+         sen2-blade-csv/placement-detail-col-name->label))
 
 
 
@@ -153,58 +143,54 @@
       (tc/reorder-columns sen2-blade-csv/table-id-col-names)
       (tc/set-dataset-name "sen-need-primary")))
 
-(defn sen-need-primary-col-name->label
+(def sen-need-primary-col-name->label
   "Column labels for display."
-  ([]
-   (merge sen2-blade-csv/table-id-col-name->label
-          sen2-blade-csv/sen-need-col-name->label))
-  ([ds]
-   (-> (sen-need-primary-col-name->label)
-       (select-keys (tc/column-names ds)))))
+  (merge sen2-blade-csv/table-id-col-name->label
+         sen2-blade-csv/sen-need-col-name->label))
 
 
 
 
 ;;; # Collate
 
-;; Collate open `named-plan`s with open primary `placement-detail`,
+;; Collate `named-plan`s on census dates with primary `placement-detail`s on census dates,
 ;; add primary `sen-need`, `active-plans` (for `:transfer-la`) and `person` age/NCY details.
 ;; Note merge order:
 ;; - Merging `named-plan-on-census-dates` with highest ranking `placement-detail-on-census-dates` first:
-;;   - Full (outer) join, as may not have open EHCP `named-plan` for every open `placement-detail` (& vice versa).
+;;   - Full (outer) join, as may not have both an EHCP `named-plan` and a `placement-detail` for a census date.
 ;;   - Joining by `:requests-table-id` (in addition to `:person-table-id` and `:census-date`), as:
-;;     - may have CYP with multiple `named-plan`s  from different `requests` open on a census date, and
-;;     - may have CYP with multiple `active-plans` from different `requests` open on a census date, and
+;;     - may have CYP with multiple `named-plan`s  from different `requests` on a census date, and
+;;     - may have CYP with multiple `active-plans` from different `requests` on a census date, and
 ;;     - a `named-plan` & `active-plan` (for a census-date) for a CYP may be from different `requests`.
 ;; - Then merge in `sen-need-primary`, by `:requests-table-id`:
 ;;   - Merging in *after* joining `named-plans` & `placement-detail`
-;;     in case have open `named-plan`s (with an `active-plans`) without corresponding open `placement-detail`.
+;;     in case have `named-plan`s (with an `active-plans`) on a census date without corresponding `placement-detail`.
 ;;   - Recall that there is at most 1 `active-plans` record for each `requests` record,
 ;;     so can merge `sen-need-primary` by `:requests-table-id` without loss of uniqueness.
-;;   - Left join as only want primary needs for open `named-plan`s as well as primary `placement-detail`s
+;;   - Left join as only want primary needs where have `named-plan` or `placement-detail` on census date
 ;;     (`sen-need`s are for each `:active-plans-table-id`).
 ;; - Then merge in `active-plans` (for `:transfer-la`), by `:requests-table-id`:
 ;;   - Merging in *after* joining `named-plans` & `placement-detail`
-;;     in case have open `named-plan`s (with an `active-plans`) without corresponding open `placement-detail`.
+;;     in case have `named-plan`s (with an `active-plans`) on a census date without corresponding `placement-detail`.
 ;; - Then merge in `person` level info (including age and nominal NCY):
-;;   - Left join as only want info for CYP with open `named-plan`s or primary `placement-detail`s.
+;;   - Left join as only want info for CYP with `named-plan`s or `placement-detail` on census date.
 
 (defn plans-placements-on-census-dates
-  "Collate `named-plan`s and highest ranking `placement-detail`s open on census dates,
+  "Collate `named-plan`s and highest ranking `placement-detail`s on census dates,
    with primary `sen-need`, `active-plans` and `person` details including age & nominal NCY for age.
    - For a census date not at the end of the SEN2 collection period,
-     this may include plans that were open with another LA prior to transferring in.
-   - Where a CYP has both rank 1 and rank 2 placements open on a census date for the same request,
-     then we take the rank 1 one, but if the CYP only has a rank 2 placement open for a given request,
+     this may include plans that were with another LA prior to transferring in.
+   - Where a CYP has both rank 1 and rank 2 placements on a census date for the same request,
+     then we take the rank 1 one, but if the CYP only has a rank 2 placement on a census date for a given request,
      then we take that. However, note that doing so may result in transitions from a rank 1 placement
-     to a rank 2 placement if a rank 1 placement open at a census date ends before the next census date
+     to a rank 2 placement if a rank 1 placement on a census date ends before the next census date
      but the rank 2 placement continues up to or beyond it.
    - As from SEN2 return only, does not have `:settings` or `:designations`,
      and uses `:census-date` & `:nominal-ncy`
      (rather than `:calendar-year` & `:academic-year`).
-   - Unique key is [`:person-table-id` `:requests-table-id` `:census-date`]: CYP
-     with `named-plan`s or `placement-detail`s from more than one `request`
-     open on a `:census-date` will have more than one record for that `:census-date`.
+   - Unique key is [`:person-table-id` `:requests-table-id` `:census-date`]:
+     CYP with `named-plan`s or `placement-detail`s from more than one `request`
+     on a `:census-date` will have more than one record for that `:census-date`.
   "
   ([sen2-blade-csv-ds-map census-dates-ds] (plans-placements-on-census-dates sen2-blade-csv-ds-map census-dates-ds {}))
   ([sen2-blade-csv-ds-map census-dates-ds {:keys [person-on-census-dates-ds
@@ -288,8 +274,21 @@
          #_(tc/order-by        (conj sen2-blade-csv/table-id-col-names :census-date))
          (tc/set-dataset-name "plans-placements-on-census-dates")))))
 
-(defn plans-placements-on-census-dates-col-name->label
+(def plans-placements-on-census-dates-col-name->label
   "Column labels for display."
+  (merge  sen2-blade-csv/table-id-col-name->label
+          sen2/census-dates-col-name->label
+          person-on-census-dates-col-name->label
+          named-plan-on-census-dates-col-name->label
+          placement-detail-on-census-dates-col-name->label
+          sen2-blade-csv/active-plans-col-name->label
+          sen-need-primary-col-name->label
+          {:person?           "Got CYP details from `person`?"
+           :named-plan?       "Got named plan from `named-plan`?"
+           :active-plans?     "Got active plan from `active plans`?"
+           :placement-detail? "Got placement details from `placement-detail`?"
+           :sen-need?         "Got an EHCP primary need from `sen-need`?"}))
+
   ([]
    (merge  sen2-blade-csv/table-id-col-name->label
            (sen2/census-dates-col-name->label)
