@@ -33,6 +33,12 @@
 
 
 ;;; ## Parameters
+;;; ### Working directory
+;; For output files:
+^{::clerk/viewer clerk/md}
+(def wk-dir "./tmp/")
+
+
 ;;; ### SEN2 Blade CSV Export
 ;; Specify the folder containing the SEN2 Blade CSV files:
 ^{::clerk/visibility {:result :hide}
@@ -157,3 +163,43 @@
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (sen2-blade-csv-plans-placements/summarise-issues plans-placements-on-census-dates-issues
                                                   sen2-blade-csv-plans-placements/checks)
+
+
+
+;;; ## Write output files
+^{::clerk/visibility {:code :hide}}
+(clerk/md (format "Write `%s`  \nto working directory: %s:" (tc/dataset-name plans-placements-on-census-dates) wk-dir))
+^{::clerk/visibility {:code :show
+                      :result :hide}}
+(comment
+  (let [ds              plans-placements-on-census-dates
+        file-name-stem  (tc/dataset-name ds)
+        col-name->label sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label]
+    (tc/write! ds
+               (str wk-dir file-name-stem ".csv"))
+    (tc/write! (tc/dataset {:column-number (iterate inc 1)
+                            :column-name   (map name   (tc/column-names ds))
+                            :column-label  (map col-name->label (tc/column-names ds))})
+               (str wk-dir file-name-stem "-col-labels.csv"))
+    )
+
+  )
+
+(clerk/md (format "Write `%s`  \nto working directory: %s:" (tc/dataset-name plans-placements-on-census-dates-issues) wk-dir))
+^{::clerk/visibility {:code :show
+                      :result :hide}}
+(comment
+  (let [ds              plans-placements-on-census-dates-issues
+        file-name-stem  (tc/dataset-name ds)
+        col-name->label (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
+                         sen2-blade-csv-plans-placements/checks)]
+    (tc/write! ds
+               (str wk-dir file-name-stem ".csv"))
+    (tc/write! (tc/dataset {:column-number (iterate inc 1)
+                            :column-name   (map name   (tc/column-names ds))
+                            :column-label  (map col-name->label (tc/column-names ds))})
+               (str wk-dir file-name-stem "-col-labels.csv"))
+    )
+
+  )
+
