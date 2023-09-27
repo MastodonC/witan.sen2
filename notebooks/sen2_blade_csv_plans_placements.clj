@@ -48,7 +48,7 @@
   (sen2-blade-csv/file-names "31-03-2023"))
 
 (clerk/table {::clerk/width :prose}
-             (into [["Key" "Value" "File exists?"]]
+             (into [["Key" "File Name" "Exists?"]]
                    (map (fn [[k v]]
                           (let [path (str sen2-blade-csv-dir v)]
                             [k v (if (.exists (io/file path)) "✅" "❌")])))
@@ -57,11 +57,11 @@
 ;; NOTE: The `person` module should be de-identified as follows:
 ;; - [x] Contents of the `surname` field deleted.
 ;; - [x] Contents of the `forename` field deleted.
-;; - [x] Contents of `personbirthdate` (which were of the form "YYYY-Mmm-DD 00:00:00")
-;;       edited to first day of the month (so of the form "YYYY-Mmm-01 00:00:00").
+;; - [x] Contents of `personbirthdate`
+;;       (which were of the form "YYYY-Mmm-DD 00:00:00")
+;;       edited to first day of the month
+;;       (so of the form "YYYY-Mmm-01 00:00:00").
 ;; - [x] Contents of the `postcode` field deleted.
-
-
 
 
 ;;; ### Census dates
@@ -80,7 +80,6 @@
 
 
 
-
 ;;; ## Read CSV files
 ;; Read the CSV files into a map with datasets as values:
 ^{::clerk/visibility {:code   :show
@@ -92,12 +91,11 @@
 
 
 
-
-;;; ## Extract plans & placements open on census dates
+;;; ## Extract plans & placements on census dates
 ^{::clerk/viewer clerk/md ::clerk/no-cache true}
 ((comp :doc meta) #'sen2-blade-csv-plans-placements/plans-placements-on-census-dates)
 
-;; Extract plans & placements open on census dates (with person information)
+;; Extract plans & placements on census dates (with person information)
 ;; from `sen2-blade-ds-map` for `:census-dates` in `census-dates-ds` using:
 ^{::clerk/visibility {:code   :show
                       :result :hide}}
@@ -125,5 +123,5 @@
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels plans-placements-on-census-dates
-                         (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label plans-placements-on-census-dates))
+                         sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label)
 
