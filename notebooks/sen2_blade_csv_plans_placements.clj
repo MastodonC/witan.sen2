@@ -1,7 +1,7 @@
 (ns sen2-blade-csv-plans-placements
   "Clerk notebook illustrating extraction of plans & placements open on census dates from SEN2 return Blade CSV export."
   {:nextjournal.clerk/toc                  true
-   :nextjournal.clerk/visibility           {:code   :fold
+   :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
    :nextjournal.clerk/page-size            nil
    :nextjournal.clerk/auto-expand-results? true
@@ -18,6 +18,7 @@
                "# Plans & placements open on census dates"
                (format "  \n`%s`  \n" *ns*)
                ((comp :doc meta) *ns*)))
+{::clerk/visibility {:code :show}}
 
 
 
@@ -34,25 +35,25 @@
 ;;; ## Parameters
 ;;; ### SEN2 Blade CSV Export
 ;; Specify the folder containing the SEN2 Blade CSV files:
-^{::clerk/visibility {:code   :show
-                      :result :hide}
+^{::clerk/visibility {:result :hide}
   ::clerk/viewer clerk/md}
 (def sen2-blade-csv-dir
   "Directory containing SEN2 blade export CSV files"
   "./data/example-sen2-blade-csv-export/")
 
 ;; Make a map of the SEN2 Blade CSV file names:
-^{::clerk/visibility {:code   :show
-                      :result :hide}}
+^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-file-names
   (sen2-blade-csv/file-names "31-03-2023"))
 
-(clerk/table {::clerk/width :prose}
-             (into [["Key" "File Name" "Exists?"]]
-                   (map (fn [[k v]]
-                          (let [path (str sen2-blade-csv-dir v)]
-                            [k v (if (.exists (io/file path)) "✅" "❌")])))
-                   sen2-blade-csv-file-names))
+;; Check the files exist:
+^{::clerk/visibility {:code :fold}
+  ::clerk/viewer (partial clerk/table {::clerk/width :prose})}
+(into [["Key" "File Name" "Exists?"]]
+      (map (fn [[k v]]
+             (let [path (str sen2-blade-csv-dir v)]
+               [k v (if (.exists (io/file path)) "✅" "❌")])))
+      sen2-blade-csv-file-names)
 
 ;; NOTE: The `person` module should be de-identified as follows:
 ;; - [x] Contents of the `surname` field deleted.
@@ -66,8 +67,7 @@
 
 ;;; ### Census dates
 ;; Make a dataset with column `:census-date` of dates to extract open plans & placements on:
-^{::clerk/visibility {:code   :show
-                      :result :show}
+^{::clerk/visibility {:result :show}
   ::clerk/viewer clerk/table}
 (def census-dates-ds
   (sen2/census-years->census-dates-ds [2022 2023]))
@@ -92,7 +92,8 @@
 
 
 ;;; ## Extract plans & placements on census dates
-^{::clerk/viewer clerk/md ::clerk/no-cache true}
+^{::clerk/visibility {:code :hide}
+  ::clerk/viewer clerk/md ::clerk/no-cache true}
 ((comp :doc meta) #'sen2-blade-csv-plans-placements/plans-placements-on-census-dates)
 
 ;; Extract plans & placements on census dates (with person information)
@@ -104,7 +105,8 @@
                                                                     census-dates-ds))
 
 ;; This returns a `plans-placements-on-census-dates` dataset with the following structure:
-^{::clerk/visibility {:result :hide}}
+^{::clerk/visibility {:code :hide
+                      :result :hide}}
 (defn- column-info-with-labels
   "Selected column info with labels."
   [ds ds-col-name->label]
@@ -121,7 +123,37 @@
                           :min       "Min"
                           :max       "Max"})))
 
-^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+^{::clerk/visibility {:code :hide}
+  ::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels plans-placements-on-census-dates
                          sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label)
 
+
+
+;;; ## Check for issues
+;;; ### Issues dataset
+;; Apply `checks` to `plans-placements-on-census-dates` to obtain
+;; dataset of issues for manual review and updates:
+^{::clerk/visibility {:code   :show
+                      :result :hide}}
+(def plans-placements-on-census-dates-issues
+  (sen2-blade-csv-plans-placements/issues->ds plans-placements-on-census-dates
+                                              sen2-blade-csv-plans-placements/checks))
+
+;; This returns a `plans-placements-on-census-dates-issues` dataset
+;; containing key columns of the `plans-placements-on-census-dates` dataset,
+;; for rows with issues flagged by `checks`,
+;; with issue flag columns,
+;; and blank columns for manual updates,
+;; with the following structure:
+^{::clerk/visibility {:code :hide}
+  ::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(column-info-with-labels plans-placements-on-census-dates-issues
+                         (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
+                          sen2-blade-csv-plans-placements/checks))
+
+;;; ### Issues summary
+;; Summary of issues (& numbers of CYP & records) by `:census-date`:
+^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(sen2-blade-csv-plans-placements/summarise-issues plans-placements-on-census-dates-issues
+                                                  sen2-blade-csv-plans-placements/checks)
