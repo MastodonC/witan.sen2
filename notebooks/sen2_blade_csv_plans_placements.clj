@@ -17,7 +17,9 @@
 (clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
                "# Plans & placements open on census dates"
                (format "  \n`%s`  \n" *ns*)
-               ((comp :doc meta) *ns*)))
+               ((comp :doc meta) *ns*)
+               "  \nAs of " (.format (java.time.LocalDateTime/now)
+                                     (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
 {::clerk/visibility {:code :show}}
 
 
