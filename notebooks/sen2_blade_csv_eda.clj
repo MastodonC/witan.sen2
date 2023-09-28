@@ -1,7 +1,7 @@
 (ns sen2-blade-csv-eda
   "Clerk notebook to read and document SEN2 return Blade CSV Export."
   {:nextjournal.clerk/toc                  true
-   :nextjournal.clerk/visibility           {:code   :fold
+   :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
    :nextjournal.clerk/page-size            nil
    :nextjournal.clerk/auto-expand-results? true
@@ -12,10 +12,14 @@
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
             [witan.sen2.return.person-level.blade-export.csv.eda :as sen2-blade-csv-eda]))
 
+^::clerk/no-cache
 (clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
                "# SEN2 Person Level Return Blade CSV Export"
                (format "  \n`%s`  \n" *ns*)
-               ((comp :doc meta) *ns*)))
+               ((comp :doc meta) *ns*)
+               "  \nAs of " (.format (java.time.LocalDateTime/now)
+                                     (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
+{::clerk/visibility {:code :fold}}
 
 
 
@@ -45,12 +49,23 @@
 (def sen2-blade-csv-file-names
   (sen2-blade-csv/file-names "31-03-2023"))
 
-(clerk/table {::clerk/width :prose}
-             (into [["Key" "File Name" "Exists?"]]
-                   (map (fn [[k v]]
-                          (let [path (str sen2-blade-csv-dir v)]
-                            [k v (if (.exists (io/file path)) "✅" "❌")])))
-                   sen2-blade-csv-file-names))
+;; Check the files exist:
+^{::clerk/visibility {:code :fold}
+  ::clerk/viewer (partial clerk/table {::clerk/width :prose})}
+(into [["Key" "File Name" "Exists?"]]
+      (map (fn [[k v]]
+             (let [path (str sen2-blade-csv-dir v)]
+               [k v (if (.exists (io/file path)) "✅" "❌")])))
+      sen2-blade-csv-file-names)
+
+;; NOTE: The `person` module should be de-identified as follows:
+;; - [x] Contents of the `surname` field deleted.
+;; - [x] Contents of the `forename` field deleted.
+;; - [x] Contents of `personbirthdate`
+;;       (which were of the form "YYYY-Mmm-DD 00:00:00")
+;;       edited to first day of the month
+;;       (so of the form "YYYY-Mmm-01 00:00:00").
+;; - [x] Contents of the `postcode` field deleted.
 
 
 
