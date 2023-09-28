@@ -87,7 +87,7 @@
       (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds sen2-blade-csv-ds-map :named-plan-table-id)
                     [:assessment-table-id])
       (tc/drop-columns [:table-id-ds.assessment-table-id])
-      (tc/order-by        (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds)))
+      (tc/order-by        (concat sen2-blade-csv/table-id-col-names [:census-date]))
       (tc/reorder-columns (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds)))
       (tc/set-dataset-name "named-plan-on-census-dates")))
 
@@ -132,7 +132,7 @@
       (tc/add-column :census-date-placement-idx (range))
       (tc/ungroup)
       ;; Order
-      (tc/order-by        (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds) [:placement-rank]))
+      (tc/order-by        (concat sen2-blade-csv/table-id-col-names [:census-date] [:placement-rank]))
       (tc/reorder-columns (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds) [:census-date-placement-idx]))
       (tc/set-dataset-name "placement-detail-on-census-dates")))
 
@@ -288,7 +288,7 @@
                                                [:active-plans?    ] (tc/column-names (sen2-blade-csv-ds-map :active-plans))
                                                [:placement-detail?] (tc/column-names placement-detail-on-census-dates-ds)
                                                [:sen-need?        ] (tc/column-names sen-need-primary-ds))))
-         #_(tc/order-by        (conj sen2-blade-csv/table-id-col-names :census-date))
+         (tc/order-by [:person-table-id :census-date :requests-table-id])
          (tc/set-dataset-name "plans-placements-on-census-dates")))))
 
 (def plans-placements-on-census-dates-col-name->label
@@ -320,10 +320,10 @@
         ;;   - should otherwise leave the dataset intact.
         m           {:issue-non-unique-key
                      {:idx           001
-                      :label         "[:person-table-id :requests-table-id :census-date] not unique key"
+                      :label         "[:person-table-id :census-date :requests-table-id] not unique key"
                       :action        ["- Should be unique."]
                       :col-fn        (fn [ds] (-> ds
-                                                  (tc/group-by [:person-table-id :requests-table-id :census-date])
+                                                  (tc/group-by [:person-table-id :census-date :requests-table-id])
                                                   (tc/add-column :issue-non-unique-key tc/row-count)
                                                   (tc/ungroup)
                                                   (tc/map-columns :issue-non-unique-key
@@ -331,7 +331,7 @@
                                                                   (partial < 1))))
                       :summary-fn    #(-> %
                                           (tc/select-rows :issue-non-unique-key)
-                                          (tc/unique-by [:person-table-id :requests-table-id :census-date])
+                                          (tc/unique-by [:person-table-id :census-date :requests-table-id])
                                           tc/row-count)
                       :summary-label "#keys"}
                      :issue-multiple-requests
@@ -514,6 +514,7 @@
                                      ;; SEN need info from SEN2 `sen-need` module
                                      [:sen-need?
                                       :sen-type])))
+       (tc/order-by [:person-table-id :census-date :requests-table-id])
        (tc/set-dataset-name "plans-placements-on-census-dates-issues"))))
 
 (defn plans-placements-on-census-dates-issues-col-name->label
