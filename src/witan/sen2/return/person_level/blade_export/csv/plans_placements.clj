@@ -53,6 +53,8 @@
       (tc/cross-join census-dates-ds)
       (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date] ncy/age-at-start-of-school-year-for-date)
       (tc/map-columns :nominal-ncy [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
+      (tc/convert-types {:age-at-start-of-school-year :int8
+                         :nominal-ncy                 :int8})
       (tc/set-dataset-name "person-on-census-dates")))
 
 (def person-on-census-dates-col-name->label

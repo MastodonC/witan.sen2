@@ -31,7 +31,7 @@
   "Return dataset of census-dates given vector of `census-years`."
   [census-years]
   (-> (tc/dataset [[:census-year census-years]])
-      #_(tc/convert-types {:census-year :int16})
+      (tc/convert-types {:census-year :int16})
       (tc/map-columns :census-date [:census-year] census-year->date)
       (tc/set-dataset-name "census-dates")))
 
