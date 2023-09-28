@@ -22,6 +22,18 @@
   "Establishment columns from `placement-detail` table"
   [:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting])
 
+(def key-columns-for-census
+  "Key columns from collated plans & placements required to construct census."
+  (distinct (concat [:person-table-id] person-id-cols
+                    [:requests-table-id]
+                    [:census-year :census-date]
+                    [#_:age-at-start-of-school-year :nominal-ncy]
+                    sen2-establishment-cols
+                    [:sen-type])))
+
+
+
+
 ;;; # Extract SEN2 information on census dates
 
 (defn extract-episodes-on-census-dates
@@ -585,3 +597,23 @@
                            :label         "Issue | TOTAL"
                            :summary-label "Summary"
                            :desc          "Index: Issue (summary statistic)"}))))
+
+
+
+
+;;; # CSV file read
+(defn csv-file->ds
+  "Read columns required to construct census
+   from CSV file of `plans-placements-on-census-dates` into a dataset."
+  [filepath]
+  (tc/dataset filepath
+              {:column-whitelist (map name key-columns-for-census)
+               :key-fn           keyword
+               :parser-fn        (merge (select-keys sen2-blade-csv/parser-fn
+                                                     key-columns-for-census)
+                                        {:census-date                 :packed-local-date
+                                         :census-year                 :int16
+                                         :age-at-start-of-school-year [:int8 parse-long]
+                                         :nominal-ncy                 [:int8 parse-long]})}))
+
+
