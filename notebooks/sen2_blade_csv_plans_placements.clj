@@ -6,7 +6,8 @@
    :nextjournal.clerk/page-size            nil
    :nextjournal.clerk/auto-expand-results? true
    :nextjournal.clerk/budget               nil}
-  (:require [clojure.java.io :as io]
+  (:require [clojure.string :as string]
+            [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
@@ -18,8 +19,8 @@
                "# Plans & placements open on census dates"
                (format "  \n`%s`  \n" *ns*)
                ((comp :doc meta) *ns*)
-               "  \nAs of " (.format (java.time.LocalDateTime/now)
-                                     (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
+               "  \nTimeStamp: " (.format (java.time.LocalDateTime/now)
+                                          (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
 {::clerk/visibility {:code :show}}
 
 
@@ -36,21 +37,21 @@
 
 ;;; ## Parameters
 ;;; ### Working directory
-;; For output files:
-^{::clerk/viewer clerk/md}
+^{::clerk/visibility {:code :show, :result :hide}
+  ::clerk/viewer clerk/md}
 (def wk-dir "./tmp/")
 
 
 ;;; ### SEN2 Blade CSV Export
 ;; Specify the folder containing the SEN2 Blade CSV files:
-^{::clerk/visibility {:result :hide}
+^{::clerk/visibility {:code :show, :result :hide}
   ::clerk/viewer clerk/md}
 (def sen2-blade-csv-dir
   "Directory containing SEN2 blade export CSV files"
   "./data/example-sen2-blade-csv-export/")
 
 ;; Make a map of the SEN2 Blade CSV file names:
-^{::clerk/visibility {:result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (def sen2-blade-csv-file-names
   (sen2-blade-csv/file-names "31-03-2023"))
 
@@ -90,8 +91,7 @@
 
 ;;; ## Read CSV files
 ;; Read the CSV files into a map with datasets as values:
-^{::clerk/visibility {:code   :show
-                      :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (def sen2-blade-csv-ds-map
   "Map of SEN2 Blade CSV Export datasets."
   (sen2-blade-csv/->ds-map sen2-blade-csv-dir
@@ -106,15 +106,13 @@
 
 ;; Extract plans & placements on census dates (with person information)
 ;; from `sen2-blade-ds-map` for `:census-dates` in `census-dates-ds` using:
-^{::clerk/visibility {:code   :show
-                      :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (def plans-placements-on-census-dates
   (sen2-blade-csv-plans-placements/plans-placements-on-census-dates sen2-blade-csv-ds-map
                                                                     census-dates-ds))
 
 ;; This returns a `plans-placements-on-census-dates` dataset with the following structure:
-^{::clerk/visibility {:code :hide
-                      :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (defn- column-info-with-labels
   "Selected column info with labels."
   [ds ds-col-name->label]
@@ -137,13 +135,29 @@
                          sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label)
 
 
+;;; ### Write plans & placements file
+^{::clerk/visibility {:code :hide}}
+(clerk/md (format "Write `%s`  \nto working directory: %s:" (tc/dataset-name plans-placements-on-census-dates) wk-dir))
+^{::clerk/visibility {:code :show, :result :hide}}
+(comment
+  (let [ds              plans-placements-on-census-dates
+        file-name-stem  (tc/dataset-name ds)
+        col-name->label sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label]
+    (tc/write! (tc/dataset {:column-number (iterate inc 1)
+                            :column-name   (map name   (tc/column-names ds))
+                            :column-label  (map col-name->label (tc/column-names ds))})
+               (str wk-dir file-name-stem "-col-labels.csv"))
+    (tc/write! ds
+               (str wk-dir file-name-stem ".csv")))
+  )
+
+
 
 ;;; ## Check for issues
 ;;; ### Issues dataset
 ;; Apply `checks` to `plans-placements-on-census-dates` to obtain
 ;; dataset of issues for manual review and updates:
-^{::clerk/visibility {:code   :show
-                      :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (def plans-placements-on-census-dates-issues
   (sen2-blade-csv-plans-placements/issues->ds plans-placements-on-census-dates
                                               sen2-blade-csv-plans-placements/checks))
@@ -160,6 +174,7 @@
                          (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
                           sen2-blade-csv-plans-placements/checks))
 
+
 ;;; ### Issues summary
 ;; Summary of issues (& numbers of CYP & records) by `:census-date`:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
@@ -167,29 +182,9 @@
                                                   sen2-blade-csv-plans-placements/checks)
 
 
-
-;;; ## Write output files
-^{::clerk/visibility {:code :hide}}
-(clerk/md (format "Write `%s`  \nto working directory: %s:" (tc/dataset-name plans-placements-on-census-dates) wk-dir))
-^{::clerk/visibility {:code :show
-                      :result :hide}}
-(comment
-  (let [ds              plans-placements-on-census-dates
-        file-name-stem  (tc/dataset-name ds)
-        col-name->label sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label]
-    (tc/write! (tc/dataset {:column-number (iterate inc 1)
-                            :column-name   (map name   (tc/column-names ds))
-                            :column-label  (map col-name->label (tc/column-names ds))})
-               (str wk-dir file-name-stem "-col-labels.csv"))
-    (tc/write! ds
-               (str wk-dir file-name-stem ".csv"))
-    )
-
-  )
-
+;;; ### Write issues file
 (clerk/md (format "Write `%s`  \nto working directory: %s:" (tc/dataset-name plans-placements-on-census-dates-issues) wk-dir))
-^{::clerk/visibility {:code :show
-                      :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (comment
   (let [ds              plans-placements-on-census-dates-issues
         file-name-stem  (tc/dataset-name ds)
@@ -200,8 +195,89 @@
                             :column-label  (map col-name->label (tc/column-names ds))})
                (str wk-dir file-name-stem "-col-labels.csv"))
     (tc/write! ds
-               (str wk-dir file-name-stem ".csv"))
-    )
-
+               (str wk-dir file-name-stem ".csv")))
   )
 
+
+
+;;; ## Update
+;; Apply updates from `plans-placements-on-census-dates-updates` CSV file
+;; (essentially the issues file with the `:update-*` columns filled in)
+;; to address the issues in the raw `plans-placements-on-census-dates`.
+
+;; Note that only the key columns required to construct a census are retained.
+
+
+;;; ### Updates file
+;; Filepath of CSV file of updates to apply to address issues:
+^{::clerk/viewer clerk/md}
+(def plans-placements-on-census-dates-updates-filepath
+  (str wk-dir "plans-placements-on-census-dates-updates.csv"))
+
+;; Read columns required into `plans-placements-on-census-dates-updates`:
+^{::clerk/visibility {:code :show, :result :hide}}
+(def plans-placements-on-census-dates-updates
+  (sen2-blade-csv-plans-placements/updates-csv-file->ds plans-placements-on-census-dates-updates-filepath))
+
+;; This returns a `plans-placements-on-census-dates-updates` dataset with structure:
+^{::clerk/visibility {:code :hide}
+  ::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(column-info-with-labels plans-placements-on-census-dates-updates
+                         (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
+                          sen2-blade-csv-plans-placements/checks))
+
+
+;;; ### Summarise updates
+;; Summary of updates: dropping (✓) and updating (Δ) records as follows:
+^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(sen2-blade-csv-plans-placements/summarise-updates plans-placements-on-census-dates-updates)
+
+
+;;; ### Apply updates
+^{::clerk/visibility {:result :hide}}
+(def plans-placements-on-census-dates-updated
+  (sen2-blade-csv-plans-placements/update-plans-placements-on-census-dates plans-placements-on-census-dates
+                                                                           plans-placements-on-census-dates-updates))
+
+;; Giving updated `plans-placements-on-census-dates-updated` dataset
+;; (retaining only the columns required to construct a census) with structure:
+^{::clerk/visibility {:code :hide}
+  ::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(column-info-with-labels plans-placements-on-census-dates-updated
+                         sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label)
+
+
+;;; ### Check updated dataset
+;; TODO: Check no issues with updated dataset.
+
+
+;;; ### Write updated file
+^{::clerk/visibility {:code :hide}}
+(clerk/md (format "Write `%s`  \nto working directory: %s:" (tc/dataset-name plans-placements-on-census-dates-updated) wk-dir))
+^{::clerk/visibility {:code :show, :result :hide}}
+(comment
+  (let [ds              plans-placements-on-census-dates-updated
+        file-name-stem  (tc/dataset-name ds)
+        col-name->label sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label]
+    (tc/write! (tc/dataset {:column-number (iterate inc 1)
+                            :column-name   (map name   (tc/column-names ds))
+                            :column-label  (map col-name->label (tc/column-names ds))})
+               (str wk-dir file-name-stem "-col-labels.csv"))
+    (tc/write! ds
+               (str wk-dir file-name-stem ".csv")))
+  )
+
+
+
+
+
+^{::clerk/visibility {:code :hide, :result :hide}}
+(comment ;; clerk build
+  (let [in-path            (str "notebooks/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
+        out-path           (str wk-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
+    (clerk/build! {:paths    [in-path]
+                   :ssr      true
+                   :bundle   true
+                   :out-path "."})
+    (.renameTo (io/file "./index.html") (io/file out-path)))
+  )
