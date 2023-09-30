@@ -35,6 +35,17 @@
 
 
 ;;; # Extract SEN2 information on census dates
+;;; ## Utilities
+(defn- episode-on-census-date?
+  "Identify if `census-date` is between episode `start-date` and `end-date`.
+   Assumes open ended episodes if either `start-datte` or `end-date` is missing."
+  [census-date start-date end-date]
+  (and (or (nil?      start-date)
+           (.isEqual  start-date census-date)
+           (.isBefore start-date census-date))
+       (or (nil?                             end-date)
+           (.isEqual             census-date end-date)
+           (.isBefore            census-date end-date))))
 
 (defn extract-episodes-on-census-dates
   "Extract records from `episodes-ds` that span each `:census-date` in `census-dates-ds`,
@@ -43,12 +54,7 @@
   [episode-ds census-dates-ds episode-start-date-col episode-end-date-col]
   (-> episode-ds
       (tc/cross-join census-dates-ds)
-      (tc/select-rows #(and (or (nil?      (% episode-start-date-col))
-                                (.isEqual  (% episode-start-date-col) (:census-date %))
-                                (.isBefore (% episode-start-date-col) (:census-date %)))
-                            (or (nil?      (% episode-end-date-col))
-                                (.isEqual  (:census-date %) (% episode-end-date-col))
-                                (.isBefore (:census-date %) (% episode-end-date-col)))))))
+      (tc/select-rows #(episode-on-census-date? (:census-date %) (% episode-start-date-col) (% episode-end-date-col)))))
 
 
 
