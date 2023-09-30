@@ -27,7 +27,7 @@
   (distinct (concat [:person-table-id] person-id-cols
                     [:requests-table-id]
                     [:census-year :census-date]
-                    [#_:age-at-start-of-school-year :nominal-ncy]
+                    [#_:age-at-start-of-school-year :ncy-nominal]
                     sen2-establishment-keys
                     [:sen-type])))
 
@@ -64,9 +64,9 @@
                                            [:person-birth-date])))
       (tc/cross-join census-dates-ds)
       (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date] ncy/age-at-start-of-school-year-for-date)
-      (tc/map-columns :nominal-ncy [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
+      (tc/map-columns :ncy-nominal [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
       (tc/convert-types {:age-at-start-of-school-year :int8
-                         :nominal-ncy                 :int8})
+                         :ncy-nominal                 :int8})
       (tc/set-dataset-name "person-on-census-dates")))
 
 (def person-on-census-dates-col-name->label
@@ -77,7 +77,7 @@
                                         [:person-birth-date])))
          sen2/census-dates-col-name->label
          {:age-at-start-of-school-year "Age at start of school year"
-          :nominal-ncy                 "Nominal NCY for age"}))
+          :ncy-nominal                 "Nominal NCY for age"}))
 
 
 
@@ -216,7 +216,7 @@
      to a rank 2 placement if a rank 1 placement on a census date ends before the next census date
      but the rank 2 placement continues up to or beyond it.
    - As from SEN2 return only, does not have `:settings` or `:designations`,
-     and uses `:census-date` & `:nominal-ncy`
+     and uses `:census-date` & `:ncy-nominal`
      (rather than `:calendar-year` & `:academic-year`).
    - Unique key is [`:person-table-id` `:requests-table-id` `:census-date`]:
      CYP with `named-plan`s or `placement-detail`s from more than one `request`
@@ -289,7 +289,7 @@
                                                                   person-id-cols
                                                                   [:person-birth-date]
                                                                   (tc/column-names census-dates-ds)
-                                                                  [:age-at-start-of-school-year :nominal-ncy])))
+                                                                  [:age-at-start-of-school-year :ncy-nominal])))
                            (tc/add-column :person? true)
                            (tc/set-dataset-name "person"))
                        [:sen2-table-id :person-table-id :census-date])
@@ -508,7 +508,7 @@
                                      ;; Census date & year
                                      [:census-year :census-date]
                                      ;; Age & NCY
-                                     [:age-at-start-of-school-year :nominal-ncy]
+                                     [:age-at-start-of-school-year :ncy-nominal]
                                      ;; Request ID (as may vary by `:census-year`)
                                      [:requests-table-id]
                                      ;; Issue flags
@@ -613,7 +613,7 @@
                                         {:census-date                 :packed-local-date
                                          :census-year                 :int16
                                          :age-at-start-of-school-year [:int8 parse-long]
-                                         :nominal-ncy                 [:int8 parse-long]})}))
+                                         :ncy-nominal                 [:int8 parse-long]})}))
 
 (defn updates-csv-file->ds
   "Read columns required to update columns for census
@@ -693,9 +693,9 @@
       (tc/drop-columns #"^:update\..*$")
       ;; Drop records with `:update-drop?`
       (tc/drop-rows :update-drop?)
-      ;; Update `:nominal-ncy` if non-nil in update dataset
-      (tc/map-columns :nominal-ncy
-                      [:update-nominal-ncy :nominal-ncy]
+      ;; Update `:ncy-nominal` if non-nil in update dataset
+      (tc/map-columns :ncy-nominal
+                      [:update-nominal-ncy :ncy-nominal]
                       #(if (some? %1) %1 %2))
       ;; Update all sen2-establishment columns if any are non nil in update dataset
       (tc/map-columns :update-sen2-establishment-cols? [:update-urn
