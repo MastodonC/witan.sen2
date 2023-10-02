@@ -612,7 +612,7 @@
    from CSV file of `plans-placements-on-census-dates` into a dataset."
   [filepath]
   (tc/dataset filepath
-              {:column-whitelist (map name key-columns-for-census)
+              {:column-allowlist (map name key-columns-for-census)
                :key-fn           keyword
                :parser-fn        (merge (select-keys sen2-blade-csv/parser-fn
                                                      key-columns-for-census)
@@ -627,7 +627,7 @@
    with update columns filled in into a dataset."
   [filepath]
   (tc/dataset filepath
-              {:column-whitelist (map name [:person-table-id
+              {:column-allowlist (map name [:person-table-id
                                             :census-date
                                             :requests-table-id
                                             :update-drop?
