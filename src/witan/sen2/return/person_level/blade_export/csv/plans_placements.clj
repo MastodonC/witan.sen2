@@ -485,7 +485,7 @@
 (def names-of-update-cols
   "Names of columns to add to issues dataset for updates."
   [:update-drop?
-   :update-nominal-ncy
+   :update-ncy-nominal
    :update-urn
    :update-ukprn
    :update-sen-unit-indicator
@@ -631,7 +631,7 @@
                                             :census-date
                                             :requests-table-id
                                             :update-drop?
-                                            :update-nominal-ncy
+                                            :update-ncy-nominal
                                             :update-urn
                                             :update-ukprn
                                             :update-sen-unit-indicator
@@ -644,7 +644,7 @@
                                          :census-year        :int16
                                          :requests-table-id  (sen2-blade-csv/parser-fn :requests-table-id)
                                          :update-drop?       :boolean
-                                         :update-nominal-ncy [:int8 parse-long]}
+                                         :update-ncy-nominal [:int8 parse-long]}
                                         (update-vals   {:update-urn                           :urn
                                                         :update-ukprn                         :ukprn
                                                         :update-sen-unit-indicator            :sen-unit-indicator
@@ -670,13 +670,13 @@
       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
       (tc/update-columns [:update-drop?] (partial map #(if % "✓" " ")))
       (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "Δ" " ")))
-      (tc/group-by [:census-date :update-drop? :update-sen-type :update-nominal-ncy :update-sen2-establishment])
+      (tc/group-by [:census-date :update-drop? :update-sen-type :update-ncy-nominal :update-sen2-establishment])
       (tc/aggregate {:row-count tc/row-count})
       (tc/pivot->wider :census-date :row-count)
       ((fn [ds] (tc/order-by ds (tc/column-names ds #"^:update-.*") :desc)))
       (tc/rename-columns {:update-drop?              "drop?"
                           :update-sen-type           "sen-type (need)"
-                          :update-nominal-ncy        "Nominal NCY"
+                          :update-ncy-nominal        "Nominal NCY"
                           :update-sen2-establishment "SEN2 Establishment"})))
 
 (defn update-plans-placements-on-census-dates
@@ -687,7 +687,7 @@
       (tc/left-join (-> plans-placements-on-census-dates-updates'
                         (tc/select-columns [:person-table-id :census-date :requests-table-id
                                             :update-drop?
-                                            :update-nominal-ncy
+                                            :update-ncy-nominal
                                             :update-urn
                                             :update-ukprn
                                             :update-sen-unit-indicator
@@ -701,7 +701,7 @@
       (tc/drop-rows :update-drop?)
       ;; Update `:ncy-nominal` if non-nil in update dataset
       (tc/map-columns :ncy-nominal
-                      [:update-nominal-ncy :ncy-nominal]
+                      [:update-ncy-nominal :ncy-nominal]
                       #(if (some? %1) %1 %2))
       ;; Update all sen2-establishment columns if any are non nil in update dataset
       (tc/map-columns :update-sen2-establishment-cols? [:update-urn
