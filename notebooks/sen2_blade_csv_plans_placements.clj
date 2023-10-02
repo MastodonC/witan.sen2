@@ -32,7 +32,18 @@
 ;;   (aliased as `sen2-blade-csv` here)
 ;; - `witan.sen2.return.person-level.blade-export.csv.plans-placements`  
 ;;   (aliased as `sen2-blade-csv-plans-placements` here)
-
+;;
+;; to:
+;; 1. Read the CSV files from a SEN2 return Blade exported from COLLECT.
+;; 2. Extract plans & placements on census dates.
+;; 3. Identify issues in the dataset of plans & placements and create an
+;;    issues CSV file for review and entry of updates.
+;; 4. Apply updates from an updates file to address issues.
+;;
+;; In practice this would be split into two separate namespaces: The
+;; first would end after #3 so the issues file can be reviewed with the
+;; client and updates to address the issues agreed. Step #4 would be then
+;; follow, likely as the first part of a namespace progressing towards a census.
 
 
 ;;; ## Parameters
@@ -89,7 +100,7 @@
 
 
 
-;;; ## Read CSV files
+;;; ## 1. Read CSV files
 ;; Read the CSV files into a map with datasets as values:
 ^{::clerk/visibility {:code :show, :result :hide}}
 (def sen2-blade-csv-ds-map
@@ -99,7 +110,7 @@
 
 
 
-;;; ## Extract plans & placements on census dates
+;;; ## 2. Extract plans & placements on census dates
 ^{::clerk/visibility {:code :hide}
   ::clerk/viewer clerk/md ::clerk/no-cache true}
 ((comp :doc meta) #'sen2-blade-csv-plans-placements/plans-placements-on-census-dates)
@@ -112,7 +123,7 @@
                                                                     census-dates-ds))
 
 ;; This returns a `plans-placements-on-census-dates` dataset with the following structure:
-^{::clerk/visibility {:code :show, :result :hide}}
+^{::clerk/visibility {:code :fold, :result :hide}}
 (defn- column-info-with-labels
   "Selected column info with labels."
   [ds ds-col-name->label]
@@ -153,17 +164,17 @@
 
 
 
-;;; ## Check for issues
+;;; ## 3. Check for issues
 ;;; ### Issues dataset
 ;; Apply `checks` to `plans-placements-on-census-dates` to obtain
-;; dataset of issues for manual review and updates:
+;; dataset of issues for manual review and entry of updates:
 ^{::clerk/visibility {:code :show, :result :hide}}
 (def plans-placements-on-census-dates-issues
   (sen2-blade-csv-plans-placements/issues->ds plans-placements-on-census-dates
                                               sen2-blade-csv-plans-placements/checks))
 
-;; This returns a `plans-placements-on-census-dates-issues` dataset
-;; containing key columns of the `plans-placements-on-census-dates` dataset,
+;; This returns a `plans-placements-on-census-dates-issues` dataset containing
+;; selected columns of the `plans-placements-on-census-dates` dataset,
 ;; for rows with issues flagged by `checks`,
 ;; with issue flag columns,
 ;; and blank columns for manual updates,
@@ -200,12 +211,52 @@
 
 
 
-;;; ## Update
+;; ## 4. Update
 ;; Apply updates from `plans-placements-on-census-dates-updates` CSV file
-;; (essentially the issues file with the `:update-*` columns filled in)
-;; to address the issues in the raw `plans-placements-on-census-dates`.
+;; (essentially the issues file with the #"`:update-.*`" columns filled in)
+;; to address issues in the raw `plans-placements-on-census-dates`.
+;;
+;; In practice this step would be in a separate namespace, since the
+;; issues identified in step #3 above would need to be reviewed, updates
+;; agreed, and updates entered in to the #"`:update-.*`" columns of the
+;; issues file before this step could be completed.  It is included here
+;; to illustrate the complete process of obtaining clean
+;; `plans-plaements-on-census-dates`.
+;;
+;; This step would likely be the first step of a namespace progressing
+;; towards a census, which  may also include programmatic updates for systematic
+;; issues as well as implementing updates entered in the #"`:update-.*`" columns of
+;; the issues file using the code below.
 
-;; Note that only the key columns required to construct a census are retained.
+;; Note that only the columns required to construct a census are retained:
+^{::clerk/visibility {:code :fold, :result :show}}
+sen2-blade-csv-plans-placements/cols-for-census
+
+
+;;; ### Read CSV of plans & placements
+;; If doing these updates in a separate namespace,
+;; then will have to retrieve the required columns from the
+;; `plans-placements-on-census-dates` CSV
+;; (with correct parsing and datatypes) using the code in this section.
+
+;; Filepath of CSV file containing `plans-placements-on-census-dates`:
+^{::clerk/visibility {:code :show, :result :hide}
+  ::clerk/viewer clerk/md}
+(def plans-placements-on-census-dates-filepath
+  (str wk-dir "plans-placements-on-census-dates.csv"))
+
+;; Get columns from `plans-placements-on-census-dates` required to construct census:
+^{::clerk/visibility {:code :show, :result :hide}
+  ::clerk/viewer clerk/md}
+(def plans-placements-on-census-dates-cols4census
+  (sen2-blade-csv-plans-placements/csv-file->ds plans-placements-on-census-dates-filepath))
+
+;; `plans-placements-on-census-dates-cols4census` dataset structure:
+^{::clerk/visibility {:code :hide, :result :show}
+  ::clerk/viewer (partial clerk/table {::clerk/width :prose})}
+(-> plans-placements-on-census-dates-cols4census
+    tc/info
+    (tc/select-columns [:col-name :datatype :n-valid :n-missing]))
 
 
 ;;; ### Updates file
@@ -236,7 +287,7 @@
 ;;; ### Apply updates
 ^{::clerk/visibility {:result :hide}}
 (def plans-placements-on-census-dates-updated
-  (sen2-blade-csv-plans-placements/update-plans-placements-on-census-dates plans-placements-on-census-dates
+  (sen2-blade-csv-plans-placements/update-plans-placements-on-census-dates plans-placements-on-census-dates-cols4census
                                                                            plans-placements-on-census-dates-updates))
 
 ;; Giving updated `plans-placements-on-census-dates-updated` dataset

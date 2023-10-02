@@ -26,16 +26,26 @@
 
 
 ;;; # Raw data EDA
-;; Illustrates use of:
+;; This notebook illustrates use of:
 ;; - `witan.sen2.return.person-level.blade-export.csv`  
 ;;   (aliased as `sen2-blade-csv` here)
 ;; - `witan.sen2.return.person-level.blade-export.csv.eda`  
 ;;   (aliased as `sen2-blade-csv-eda` here)
+;; to read and document the SEN2 return Blade export CSV files.
+;;
+;; Notebook `sen2-blade-csv-plans-placements` describes all the steps
+;; necessary to extract plans & placements on census dates (from which
+;; one can derive a census for modelling).
+;;
+;; This notebook does not write any files, and is not a prerequisite for
+;; `sen2-blade-csv-plans-placements`.  It is provided to assist in
+;; understanding the SEN2 return Blade CSV export.
 
 
 
 ;;; ## Parameters
 ;;; ### Working directory
+;;; (Only used in last comment as destination for built HTML notebook.)
 ^{::clerk/visibility {:code :show, :result :hide}
   ::clerk/viewer clerk/md}
 (def wk-dir "./tmp/")
