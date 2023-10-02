@@ -22,8 +22,8 @@
   "Sen2 establishment column keywords from `placement-detail` table"
   [:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting])
 
-(def key-columns-for-census
-  "Key columns from collated plans & placements required to construct census."
+(def cols-for-census
+  "Columns from collated plans & placements required to construct census."
   (distinct (concat [:person-table-id] person-id-cols
                     [:requests-table-id]
                     [:census-year :census-date]
@@ -495,9 +495,9 @@
    :update-notes])
 
 (defn flagged-issues->ds
-  "Extract issues dataset from `plans-placements-on-census-dates-issues-flagged`
-   containing rows with issues flagged by `checks'`,
-   key columns for review,
+  "Extract issues dataset from `plans-placements-on-census-dates-issues-flagged` containing
+   rows with issues flagged by `checks'`,
+   selected columns for review,
    and blank columns for manual updates."
   ([plans-placements-on-census-dates-issues-flagged]
    (flagged-issues->ds plans-placements-on-census-dates-issues-flagged checks))
@@ -554,8 +554,8 @@
 (defn issues->ds
   "Run `checks'` on `plans-placements-on-census-dates` dataset, extracting
    rows with issues flagged by `checks'`,
-   key columns for review,
-  and blank columns for manual updates."
+   selected columns for review,
+   and blank columns for manual updates."
   ([plans-placements-on-census-dates'] (issues->ds plans-placements-on-census-dates' checks))
   ([plans-placements-on-census-dates' checks']
    (-> plans-placements-on-census-dates'
@@ -612,10 +612,10 @@
    from CSV file of `plans-placements-on-census-dates` into a dataset."
   [filepath]
   (tc/dataset filepath
-              {:column-allowlist (map name key-columns-for-census)
+              {:column-allowlist (map name cols-for-census)
                :key-fn           keyword
                :parser-fn        (merge (select-keys sen2-blade-csv/parser-fn
-                                                     key-columns-for-census)
+                                                     cols-for-census)
                                         {:census-date                 :packed-local-date
                                          :census-year                 :int16
                                          :age-at-start-of-school-year [:int8 parse-long]
@@ -683,7 +683,7 @@
   "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`."
   [plans-placements-on-census-dates' plans-placements-on-census-dates-updates']
   (-> plans-placements-on-census-dates'
-      (tc/select-columns key-columns-for-census)
+      (tc/select-columns cols-for-census)
       (tc/left-join (-> plans-placements-on-census-dates-updates'
                         (tc/select-columns [:person-table-id :census-date :requests-table-id
                                             :update-drop?
