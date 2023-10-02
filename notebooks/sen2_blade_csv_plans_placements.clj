@@ -42,7 +42,7 @@
 ;;
 ;; In practice this would be split into two separate namespaces: The
 ;; first would end after #3 so the issues file can be reviewed with the
-;; client and updates to address the issues agreed. Step #4 would be then
+;; client and updates to address the issues agreed. Step #4 would then
 ;; follow, likely as the first part of a namespace progressing towards a census.
 
 

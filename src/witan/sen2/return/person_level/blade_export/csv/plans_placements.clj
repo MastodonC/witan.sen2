@@ -670,14 +670,13 @@
       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
       (tc/update-columns [:update-drop?] (partial map #(if % "✓" " ")))
       (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "Δ" " ")))
-      (tc/group-by [:census-date :update-drop? :update-sen-type :update-ncy-nominal :update-sen2-establishment])
+      (tc/group-by [:census-date :update-drop? :update-ncy-nominal :update-sen2-establishment :update-sen-type])
       (tc/aggregate {:row-count tc/row-count})
       (tc/pivot->wider :census-date :row-count)
-      ((fn [ds] (tc/order-by ds (tc/column-names ds #"^:update-.*") :desc)))
       (tc/rename-columns {:update-drop?              "drop?"
-                          :update-sen-type           "sen-type (need)"
                           :update-ncy-nominal        "Nominal NCY"
-                          :update-sen2-establishment "SEN2 Establishment"})))
+                          :update-sen2-establishment "SEN2 Establishment"
+                          :update-sen-type           "sen-type (need)"})))
 
 (defn update-plans-placements-on-census-dates
   "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`."
