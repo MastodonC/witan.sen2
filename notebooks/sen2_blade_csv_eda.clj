@@ -6,7 +6,8 @@
    :nextjournal.clerk/page-size            nil
    :nextjournal.clerk/auto-expand-results? true
    :nextjournal.clerk/budget               nil}
-  (:require [clojure.java.io :as io]
+  (:require [clojure.string :as string]
+            [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
@@ -17,35 +18,49 @@
                "# SEN2 Person Level Return Blade CSV Export"
                (format "  \n`%s`  \n" *ns*)
                ((comp :doc meta) *ns*)
-               "  \nAs of " (.format (java.time.LocalDateTime/now)
-                                     (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
+               "  \nTimeStamp: " (.format (java.time.LocalDateTime/now)
+                                          (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
 {::clerk/visibility {:code :fold}}
 
 
 
 
 ;;; # Raw data EDA
-;; Illustrates use of:
+;; This notebook illustrates use of:
 ;; - `witan.sen2.return.person-level.blade-export.csv`  
 ;;   (aliased as `sen2-blade-csv` here)
 ;; - `witan.sen2.return.person-level.blade-export.csv.eda`  
 ;;   (aliased as `sen2-blade-csv-eda` here)
+;; to read and document the SEN2 return Blade export CSV files.
+;;
+;; Notebook `sen2-blade-csv-plans-placements` describes all the steps
+;; necessary to extract plans & placements on census dates (from which
+;; one can derive a census for modelling).
+;;
+;; This notebook does not write any files, and is not a prerequisite for
+;; `sen2-blade-csv-plans-placements`.  It is provided to assist in
+;; understanding the SEN2 return Blade CSV export.
 
 
 
 ;;; ## Parameters
+;;; ### Working directory
+;;; (Only used in last comment as destination for built HTML notebook.)
+^{::clerk/visibility {:code :show, :result :hide}
+  ::clerk/viewer clerk/md}
+(def wk-dir "./tmp/")
+
+
 ;;; ### SEN2 Blade CSV Export
 ;; Specify the folder containing the SEN2 Blade CSV files:
-^{::clerk/visibility {:code   :show
-                      :result :hide}
+^{::clerk/visibility {:code :show, :result :hide}
   ::clerk/viewer clerk/md}
 (def sen2-blade-csv-dir
   "Directory containing SEN2 blade export CSV files"
   "./data/example-sen2-blade-csv-export/")
 
 ;; Make a map of the SEN2 Blade CSV file names:
-^{::clerk/visibility {:code   :show
-                      :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (def sen2-blade-csv-file-names
   (sen2-blade-csv/file-names "31-03-2023"))
 
@@ -71,8 +86,7 @@
 
 ;;; ## Read CSV files
 ;; Read the CSV files into a map with datasets as values:
-^{::clerk/visibility {:code   :show
-                      :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}}
 (def sen2-blade-csv-ds-map
   "Map of SEN2 Blade CSV Export datasets."
   (sen2-blade-csv/->ds-map sen2-blade-csv-dir
@@ -115,3 +129,16 @@
 ;; Note: OK if not a unique key without `requests-table-id`,
 (sen2-blade-csv-eda/report-composite-keys sen2-blade-csv-ds-map)
 
+
+
+
+^{::clerk/visibility {:code :hide, :result :hide}}
+(comment ;; clerk build
+  (let [in-path            (str "notebooks/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
+        out-path           (str wk-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
+    (clerk/build! {:paths    [in-path]
+                   :ssr      true
+                   :bundle   true
+                   :out-path "."})
+    (.renameTo (io/file "./index.html") (io/file out-path)))
+  )

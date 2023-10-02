@@ -341,12 +341,10 @@
                   "as the dataset is designed to facilitate traversing up the hierarchy, "
                   "going from a child key up to to ancestor keys (from right to left):"))
    (clerk/table {::clerk/width :full}
-                (as-> table-id-ds $
-                  (tc/add-columns $ (update-vals (tc/columns $ :as-map) (fn [v] (map #(if % "+" " ") v))))
-                  (tc/unique-by $)
-                  (tc/rename-columns $ (into {} (map (fn [k] [k
-                                                              (clojure.string/replace (name k) #"-table-id$" "")])
-                                                     (tc/column-names $))))))))
+                (-> table-id-ds
+                    (tc/update-columns :all (partial map #(if % "+" " ")))
+                    (tc/unique-by)
+                    (tc/rename-columns #(clojure.string/replace % #"^:(.*)-table-id$" "$1"))))))
 
 
 

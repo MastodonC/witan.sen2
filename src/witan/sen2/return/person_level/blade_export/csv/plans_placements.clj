@@ -18,11 +18,34 @@
   "Person ID columns to carry through from `person` table (in addition to `:person-table-id`)."
   [:person-order-seq-column :upn :unique-learner-number])
 
-(def sen2-establishment-cols
-  "Establishment columns from `placement-detail` table"
+(def sen2-establishment-keys
+  "Sen2 establishment column keywords from `placement-detail` table"
   [:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting])
 
+(def cols-for-census
+  "Columns from collated plans & placements required to construct census."
+  (distinct (concat [:person-table-id] person-id-cols
+                    [:requests-table-id]
+                    [:census-year :census-date]
+                    [#_:age-at-start-of-school-year :ncy-nominal]
+                    sen2-establishment-keys
+                    [:sen-type])))
+
+
+
+
 ;;; # Extract SEN2 information on census dates
+;;; ## Utilities
+(defn- episode-on-census-date?
+  "Identify if `census-date` is between episode `start-date` and `end-date`.
+   Assumes open ended episodes if either `start-datte` or `end-date` is missing."
+  [census-date start-date end-date]
+  (and (or (nil?      start-date)
+           (.isEqual  start-date census-date)
+           (.isBefore start-date census-date))
+       (or (nil?                             end-date)
+           (.isEqual             census-date end-date)
+           (.isBefore            census-date end-date))))
 
 (defn extract-episodes-on-census-dates
   "Extract records from `episodes-ds` that span each `:census-date` in `census-dates-ds`,
@@ -31,12 +54,7 @@
   [episode-ds census-dates-ds episode-start-date-col episode-end-date-col]
   (-> episode-ds
       (tc/cross-join census-dates-ds)
-      (tc/select-rows #(and (or (nil?      (% episode-start-date-col))
-                                (.isEqual  (% episode-start-date-col) (:census-date %))
-                                (.isBefore (% episode-start-date-col) (:census-date %)))
-                            (or (nil?      (% episode-end-date-col))
-                                (.isEqual  (:census-date %) (% episode-end-date-col))
-                                (.isBefore (:census-date %) (% episode-end-date-col)))))))
+      (tc/select-rows #(episode-on-census-date? (:census-date %) (% episode-start-date-col) (% episode-end-date-col)))))
 
 
 
@@ -51,10 +69,10 @@
                                            person-id-cols
                                            [:person-birth-date])))
       (tc/cross-join census-dates-ds)
-      (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date] ncy/age-at-start-of-school-year-for-date)
-      (tc/map-columns :nominal-ncy [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
+      (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date] #(when %1 (ncy/age-at-start-of-school-year-for-date %1 %2)))
+      (tc/map-columns :ncy-nominal [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
       (tc/convert-types {:age-at-start-of-school-year :int8
-                         :nominal-ncy                 :int8})
+                         :ncy-nominal                 :int8})
       (tc/set-dataset-name "person-on-census-dates")))
 
 (def person-on-census-dates-col-name->label
@@ -65,7 +83,7 @@
                                         [:person-birth-date])))
          sen2/census-dates-col-name->label
          {:age-at-start-of-school-year "Age at start of school year"
-          :nominal-ncy                 "Nominal NCY for age"}))
+          :ncy-nominal                 "Nominal NCY for age"}))
 
 
 
@@ -204,7 +222,7 @@
      to a rank 2 placement if a rank 1 placement on a census date ends before the next census date
      but the rank 2 placement continues up to or beyond it.
    - As from SEN2 return only, does not have `:settings` or `:designations`,
-     and uses `:census-date` & `:nominal-ncy`
+     and uses `:census-date` & `:ncy-nominal`
      (rather than `:calendar-year` & `:academic-year`).
    - Unique key is [`:person-table-id` `:requests-table-id` `:census-date`]:
      CYP with `named-plan`s or `placement-detail`s from more than one `request`
@@ -236,7 +254,7 @@
                                                                  :placement-detail-table-id :placement-detail-order-seq-column
                                                                  :census-date
                                                                  :entry-date :leaving-date :placement-rank]
-                                                                sen2-establishment-cols
+                                                                sen2-establishment-keys
                                                                 [:sen-setting-other])))
                            (tc/add-column :placement-detail? true)
                            (tc/set-dataset-name "placement-detail"))
@@ -277,7 +295,7 @@
                                                                   person-id-cols
                                                                   [:person-birth-date]
                                                                   (tc/column-names census-dates-ds)
-                                                                  [:age-at-start-of-school-year :nominal-ncy])))
+                                                                  [:age-at-start-of-school-year :ncy-nominal])))
                            (tc/add-column :person? true)
                            (tc/set-dataset-name "person"))
                        [:sen2-table-id :person-table-id :census-date])
@@ -467,7 +485,7 @@
 (def names-of-update-cols
   "Names of columns to add to issues dataset for updates."
   [:update-drop?
-   :update-nominal-ncy
+   :update-ncy-nominal
    :update-urn
    :update-ukprn
    :update-sen-unit-indicator
@@ -477,9 +495,9 @@
    :update-notes])
 
 (defn flagged-issues->ds
-  "Extract issues dataset from `plans-placements-on-census-dates-issues-flagged`
-   containing rows with issues flagged by `checks'`,
-   key columns for review,
+  "Extract issues dataset from `plans-placements-on-census-dates-issues-flagged` containing
+   rows with issues flagged by `checks'`,
+   selected columns for review,
    and blank columns for manual updates."
   ([plans-placements-on-census-dates-issues-flagged]
    (flagged-issues->ds plans-placements-on-census-dates-issues-flagged checks))
@@ -496,7 +514,7 @@
                                      ;; Census date & year
                                      [:census-year :census-date]
                                      ;; Age & NCY
-                                     [:age-at-start-of-school-year :nominal-ncy]
+                                     [:age-at-start-of-school-year :ncy-nominal]
                                      ;; Request ID (as may vary by `:census-year`)
                                      [:requests-table-id]
                                      ;; Issue flags
@@ -512,7 +530,7 @@
                                      ;; Placement info from SEN2 `placement-detail` module
                                      [:placement-detail?
                                       :placement-rank :entry-date :leaving-date]
-                                     sen2-establishment-cols
+                                     sen2-establishment-keys
                                      ;; SEN need info from SEN2 `sen-need` module
                                      [:sen-need?
                                       :sen-type])))
@@ -531,14 +549,13 @@
                                            (#(string/replace % "update-" ""))
                                            (#(plans-placements-on-census-dates-col-name->label (keyword %) %))
                                            ((partial str "Update: ")))))
-                  {} names-of-update-cols)
-          )))
+                  {} names-of-update-cols))))
 
 (defn issues->ds
   "Run `checks'` on `plans-placements-on-census-dates` dataset, extracting
    rows with issues flagged by `checks'`,
-   key columns for review,
-  and blank columns for manual updates."
+   selected columns for review,
+   and blank columns for manual updates."
   ([plans-placements-on-census-dates'] (issues->ds plans-placements-on-census-dates' checks))
   ([plans-placements-on-census-dates' checks']
    (-> plans-placements-on-census-dates'
@@ -556,7 +573,7 @@
                             {:num-cyp   (comp count distinct :person-table-id)
                              :row-count tc/row-count}))
        (tc/order-by [:census-date])
-       (tc/map-columns :census-date [:census-date] #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE)))
+       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
        (tc/pivot->longer (complement #{:census-date}))
        (tc/pivot->wider :census-date :$value)
        (tc/rename-columns {:$column :issue-key})
@@ -585,3 +602,135 @@
                            :label         "Issue | TOTAL"
                            :summary-label "Summary"
                            :desc          "Index: Issue (summary statistic)"}))))
+
+
+
+
+;;; # CSV file read
+(defn csv-file->ds
+  "Read columns required to construct census
+   from CSV file of `plans-placements-on-census-dates` into a dataset."
+  [filepath]
+  (tc/dataset filepath
+              {:column-allowlist (map name cols-for-census)
+               :key-fn           keyword
+               :parser-fn        (merge (select-keys sen2-blade-csv/parser-fn
+                                                     cols-for-census)
+                                        {:census-date                 :packed-local-date
+                                         :census-year                 :int16
+                                         :age-at-start-of-school-year [:int8 parse-long]
+                                         :ncy-nominal                 [:int8 parse-long]})}))
+
+(defn updates-csv-file->ds
+  "Read columns required to update columns for census
+   from CSV file of `plans-placements-on-census-dates-issues`
+   with update columns filled in into a dataset."
+  [filepath]
+  (tc/dataset filepath
+              {:column-allowlist (map name [:person-table-id
+                                            :census-date
+                                            :requests-table-id
+                                            :update-drop?
+                                            :update-ncy-nominal
+                                            :update-urn
+                                            :update-ukprn
+                                            :update-sen-unit-indicator
+                                            :update-resourced-provision-indicator
+                                            :update-sen-setting
+                                            :update-sen-type])
+               :key-fn           keyword
+               :parser-fn        (merge {:person-table-id    (sen2-blade-csv/parser-fn :person-table-id)
+                                         :census-date        :packed-local-date
+                                         :census-year        :int16
+                                         :requests-table-id  (sen2-blade-csv/parser-fn :requests-table-id)
+                                         :update-drop?       :boolean
+                                         :update-ncy-nominal [:int8 parse-long]}
+                                        (update-vals   {:update-urn                           :urn
+                                                        :update-ukprn                         :ukprn
+                                                        :update-sen-unit-indicator            :sen-unit-indicator
+                                                        :update-resourced-provision-indicator :resourced-provision-indicator
+                                                        :update-sen-setting                   :sen-setting
+                                                        :update-sen-type                      :sen-type}
+                                                       sen2-blade-csv/parser-fn))}))
+
+
+
+
+;;; # Updating
+(defn summarise-updates
+  "Summarise updates in `plans-placements-on-census-dates-updates` dataset."
+  [plans-placements-on-census-dates-updates]
+  (-> plans-placements-on-census-dates-updates
+      (tc/map-columns :update-sen2-establishment [:update-urn
+                                                  :update-ukprn
+                                                  :update-sen-unit-indicator
+                                                  :update-resourced-provision-indicator
+                                                  :update-sen-setting]
+                      (fn [& args] (some some? args)))
+      (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
+      (tc/update-columns [:update-drop?] (partial map #(if % "✓" " ")))
+      (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "Δ" " ")))
+      (tc/group-by [:census-date :update-drop? :update-ncy-nominal :update-sen2-establishment :update-sen-type])
+      (tc/aggregate {:row-count tc/row-count})
+      (tc/pivot->wider :census-date :row-count)
+      (tc/rename-columns {:update-drop?              "drop?"
+                          :update-ncy-nominal        "Nominal NCY"
+                          :update-sen2-establishment "SEN2 Establishment"
+                          :update-sen-type           "sen-type (need)"})))
+
+(defn update-plans-placements-on-census-dates
+  "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`."
+  [plans-placements-on-census-dates' plans-placements-on-census-dates-updates']
+  (-> plans-placements-on-census-dates'
+      (tc/select-columns cols-for-census)
+      (tc/left-join (-> plans-placements-on-census-dates-updates'
+                        (tc/select-columns [:person-table-id :census-date :requests-table-id
+                                            :update-drop?
+                                            :update-ncy-nominal
+                                            :update-urn
+                                            :update-ukprn
+                                            :update-sen-unit-indicator
+                                            :update-resourced-provision-indicator
+                                            :update-sen-setting
+                                            :update-sen-type])
+                        (tc/set-dataset-name "update"))
+                    [:person-table-id :census-date :requests-table-id])
+      (tc/drop-columns #"^:update\..*$")
+      ;; Drop records with `:update-drop?`
+      (tc/drop-rows :update-drop?)
+      ;; Update `:ncy-nominal` if non-nil in update dataset
+      (tc/map-columns :ncy-nominal
+                      [:update-ncy-nominal :ncy-nominal]
+                      #(if (some? %1) %1 %2))
+      ;; Update all sen2-establishment columns if any are non nil in update dataset
+      (tc/map-columns :update-sen2-establishment-cols? [:update-urn
+                                                        :update-ukprn
+                                                        :update-sen-unit-indicator
+                                                        :update-resourced-provision-indicator
+                                                        :update-sen-setting]
+                      (fn [& args] (some some? args)))
+      (tc/map-columns :urn
+                      [:update-sen2-establishment-cols? :update-urn :urn]
+                      #(if %1 %2 %3))
+      (tc/map-columns :ukprn
+                      [:update-sen2-establishment-cols? :update-ukprn :ukprn]
+                      #(if %1 %2 %3))
+      (tc/map-columns :sen-unit-indicator
+                      [:update-sen2-establishment-cols? :update-sen-unit-indicator :sen-unit-indicator]
+                      #(if %1 (if (some? %2) %2 false) %3))
+      (tc/map-columns :resourced-provision-indicator
+                      [:update-sen2-establishment-cols? :update-resourced-provision-indicator :resourced-provision-indicator]
+                      #(if %1 (if (some? %2) %2 false) %3))
+      (tc/map-columns :sen-setting
+                      [:update-sen2-establishment-cols? :update-sen-setting :sen-setting]
+                      #(if %1 %2 %3))
+      ;; Update `:sen-type` if non-nil in update dataset
+      (tc/map-columns :sen-type
+                      [:update-sen-type :sen-type]
+                      #(if (some? %1) %1 %2))
+      ;; Drop update columns
+      (tc/drop-columns #"^:update-.*$")
+      ;; Arrange dataset
+      (tc/order-by [:person-table-id :census-date :requests-table-id])
+      (tc/set-dataset-name "plans-placements-on-census-dates-updated")))
+

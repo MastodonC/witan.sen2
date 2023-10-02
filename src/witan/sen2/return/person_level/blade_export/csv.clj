@@ -595,6 +595,18 @@
          placement-detail-col-name->label
          sen-need-col-name->label))
 
+(def parser-fn
+  "Collated parser functions for all SEN2 CSV file columns."
+  (merge sen2-parser-fn
+         person-parser-fn
+         requests-parser-fn
+         assessment-parser-fn
+         named-plan-parser-fn
+         plan-detail-parser-fn
+         active-plans-parser-fn
+         placement-detail-parser-fn
+         sen-need-parser-fn))
+
 
 
 ;;; # Definitions and functions to facilitate `:*table-id` usage
