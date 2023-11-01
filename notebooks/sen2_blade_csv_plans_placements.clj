@@ -224,7 +224,7 @@
 ;; `plans-plaements-on-census-dates`.
 ;;
 ;; This step would likely be the first step of a namespace progressing
-;; towards a census, which  may also include programmatic updates for systematic
+;; towards a census, which may also include programmatic updates for systematic
 ;; issues as well as implementing updates entered in the #"`:update-.*`" columns of
 ;; the issues file using the code below.
 
