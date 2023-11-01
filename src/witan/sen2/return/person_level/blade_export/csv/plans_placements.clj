@@ -672,7 +672,7 @@
       (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "Δ" " ")))
       (tc/group-by [:census-date :update-drop? :update-ncy-nominal :update-sen2-establishment :update-sen-type])
       (tc/aggregate {:row-count tc/row-count})
-      (tc/pivot->wider :census-date :row-count)
+      (tc/pivot->wider :census-date :row-count {:drop-missing? false})
       (tc/rename-columns {:update-drop?              "drop?"
                           :update-ncy-nominal        "Nominal NCY"
                           :update-sen2-establishment "SEN2 Establishment"
