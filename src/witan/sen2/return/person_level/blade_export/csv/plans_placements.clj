@@ -18,8 +18,8 @@
   "Person ID columns to carry through from `person` table (in addition to `:person-table-id`)."
   [:person-order-seq-column :upn :unique-learner-number])
 
-(def sen2-establishment-keys
-  "Sen2 establishment column keywords from `placement-detail` table"
+(def sen2-estab-keys
+  "SEN2 establishment column keywords from `placement-detail` table"
   [:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting])
 
 (def cols-for-census
@@ -28,7 +28,7 @@
                     [:requests-table-id]
                     [:census-year :census-date]
                     [#_:age-at-start-of-school-year :ncy-nominal]
-                    sen2-establishment-keys
+                    sen2-estab-keys
                     [:sen-type])))
 
 
@@ -254,7 +254,7 @@
                                                                  :placement-detail-table-id :placement-detail-order-seq-column
                                                                  :census-date
                                                                  :entry-date :leaving-date :placement-rank]
-                                                                sen2-establishment-keys
+                                                                sen2-estab-keys
                                                                 [:sen-setting-other])))
                            (tc/add-column :placement-detail? true)
                            (tc/set-dataset-name "placement-detail"))
@@ -530,7 +530,7 @@
                                      ;; Placement info from SEN2 `placement-detail` module
                                      [:placement-detail?
                                       :placement-rank :entry-date :leaving-date]
-                                     sen2-establishment-keys
+                                     sen2-estab-keys
                                      ;; SEN need info from SEN2 `sen-need` module
                                      [:sen-need?
                                       :sen-type])))
