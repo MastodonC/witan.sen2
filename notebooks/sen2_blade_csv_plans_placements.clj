@@ -112,7 +112,8 @@
 
 ;;; ## 2. Extract plans & placements on census dates
 ^{::clerk/visibility {:code :hide}
-  ::clerk/viewer clerk/md ::clerk/no-cache true}
+  ::clerk/viewer clerk/md
+  ::clerk/no-cache true}
 ((comp :doc meta) #'sen2-blade-csv-plans-placements/plans-placements-on-census-dates)
 
 ;; Extract plans & placements on census dates (with person information)
@@ -224,7 +225,7 @@
 ;; `plans-plaements-on-census-dates`.
 ;;
 ;; This step would likely be the first step of a namespace progressing
-;; towards a census, which  may also include programmatic updates for systematic
+;; towards a census, which may also include programmatic updates for systematic
 ;; issues as well as implementing updates entered in the #"`:update-.*`" columns of
 ;; the issues file using the code below.
 
@@ -266,7 +267,8 @@ sen2-blade-csv-plans-placements/cols-for-census
   (str wk-dir "plans-placements-on-census-dates-updates.csv"))
 
 ;; Read columns required into `plans-placements-on-census-dates-updates`:
-^{::clerk/visibility {:code :show, :result :hide}}
+^{::clerk/visibility {:code :show, :result :hide}
+  ::clerk/no-cache true}
 (def plans-placements-on-census-dates-updates
   (sen2-blade-csv-plans-placements/updates-csv-file->ds plans-placements-on-census-dates-updates-filepath))
 
