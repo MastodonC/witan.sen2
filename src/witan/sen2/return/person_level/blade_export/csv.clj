@@ -71,9 +71,10 @@
 
 (def sen2-read-cfg
   "Configuration map for reading SEN2 module 0 \"SEN2\" CSV file into a dataset."
-  {:key-fn       sen2-csv-col-label->name
-   :parser-fn    sen2-parser-fn
-   :dataset-name "sen2"})
+  {:column-allowlist (keys sen2-csv-col-label->name)
+   :key-fn           sen2-csv-col-label->name
+   :parser-fn        sen2-parser-fn
+   :dataset-name     "sen2"})
 
 (defn sen2->ds
   "Reads dataset of SEN2 module 0 \"SEN2\" data from CSV file at `file-path`."
@@ -136,9 +137,10 @@
 
 (def person-read-cfg
   "Configuration map for reading SEN2 module 1 \"Person\" CSV file into a dataset."
-  {:key-fn       person-csv-col-label->name
-   :parser-fn    person-parser-fn
-   :dataset-name "person"})
+  {:column-allowlist (keys person-csv-col-label->name)
+   :key-fn           person-csv-col-label->name
+   :parser-fn        person-parser-fn
+   :dataset-name     "person"})
 
 (defn person->ds
   "Reads dataset of SEN2 module 1 \"Person\" data from CSV file at `file-path`."
@@ -196,9 +198,10 @@
 
 (def requests-read-cfg
   "Configuration map for reading SEN2 module 2 \"Requests\" CSV file into a dataset."
-  {:key-fn       requests-csv-col-label->name
-   :parser-fn    requests-parser-fn
-   :dataset-name "requests"})
+  {:column-allowlist (keys requests-csv-col-label->name)
+   :key-fn           requests-csv-col-label->name
+   :parser-fn        requests-parser-fn
+   :dataset-name     "requests"})
 
 (defn requests->ds
   "Reads dataset of SEN2 module 2 \"Requests\" data from CSV file at `file-path`."
@@ -254,9 +257,10 @@
 
 (def assessment-read-cfg
   "Configuration map for reading SEN2 module 3 \"EHC needs assessments\" CSV file into a dataset."
-  {:key-fn       assessment-csv-col-label->name
-   :parser-fn    assessment-parser-fn
-   :dataset-name "assessment"})
+  {:column-allowlist (keys assessment-csv-col-label->name)
+   :key-fn           assessment-csv-col-label->name
+   :parser-fn        assessment-parser-fn
+   :dataset-name     "assessment"})
 
 (defn assessment->ds
   "Reads dataset of SEN2 module 3 \"EHC needs assessments\" data from CSV file at `file-path`."
@@ -314,9 +318,10 @@
 
 (def named-plan-read-cfg
   "Configuration map for reading SEN2 module 4a \"Named plan\" CSV file into a dataset."
-  {:key-fn       named-plan-csv-col-label->name
-   :parser-fn    named-plan-parser-fn
-   :dataset-name "named-plan"})
+  {:column-allowlist (keys named-plan-csv-col-label->name)
+   :key-fn           named-plan-csv-col-label->name
+   :parser-fn        named-plan-parser-fn
+   :dataset-name     "named-plan"})
 
 (defn named-plan->ds
   "Reads dataset of SEN2 module 4a \"Named plan\" data from CSV file at `file-path`."
@@ -373,9 +378,10 @@
 
 (def plan-detail-read-cfg
   "Configuration map for reading SEN2 module 4b \"Plan detail records\" CSV file into a dataset."
-  {:key-fn       plan-detail-csv-col-label->name
-   :parser-fn    plan-detail-parser-fn
-   :dataset-name "plan-detail"})
+  {:column-allowlist (keys plan-detail-csv-col-label->name)
+   :key-fn           plan-detail-csv-col-label->name
+   :parser-fn        plan-detail-parser-fn
+   :dataset-name     "plan-detail"})
 
 (defn plan-detail->ds
   "Reads dataset of SEN2 module 4b \"Plan detail records\" data from CSV file at `file-path`."
@@ -425,9 +431,10 @@
 
 (def active-plans-read-cfg
   "Configuration map for reading SEN2 module 5a \"Active plans\" CSV file into a dataset."
-  {:key-fn       active-plans-csv-col-label->name
-   :parser-fn    active-plans-parser-fn
-   :dataset-name "active-plans"})
+  {:column-allowlist (keys active-plans-csv-col-label->name)
+   :key-fn           active-plans-csv-col-label->name
+   :parser-fn        active-plans-parser-fn
+   :dataset-name     "active-plans"})
 
 (defn active-plans->ds
   "Reads dataset of SEN2 module 5a \"Active plans\" data from CSV file at `file-path`."
@@ -486,9 +493,10 @@
 
 (def placement-detail-read-cfg
   "Configuration map for reading SEN2 module 5b \"Placement details\" CSV file into a dataset."
-  {:key-fn       placement-detail-csv-col-label->name
-   :parser-fn    placement-detail-parser-fn
-   :dataset-name "placement-detail"})
+  {:column-allowlist (keys placement-detail-csv-col-label->name)
+   :key-fn           placement-detail-csv-col-label->name
+   :parser-fn        placement-detail-parser-fn
+   :dataset-name     "placement-detail"})
 
 (defn placement-detail->ds
   "Reads dataset of SEN2 module 5b \"Placement details\" data from CSV file at `file-path`."
@@ -537,9 +545,10 @@
 
 (def sen-need-read-cfg
   "Configuration map for reading SEN2 module 5 \"SEN need\" CSV file into a dataset."
-  {:key-fn       sen-need-csv-col-label->name
-   :parser-fn    sen-need-parser-fn
-   :dataset-name "sen-need"})
+  {:column-allowlist (keys sen-need-csv-col-label->name)
+   :key-fn           sen-need-csv-col-label->name
+   :parser-fn        sen-need-parser-fn
+   :dataset-name     "sen-need"})
 
 (defn sen-need->ds
   "Reads dataset of SEN2 module 5 \"SEN need\" data from CSV file at `file-path`."
