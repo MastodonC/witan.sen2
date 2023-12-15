@@ -634,9 +634,7 @@
   The returned dataset permits traversing up each branch of the dataset hierarchy without going through all intermediate datasets."
   [{:keys [sen2 person requests assessment named-plan plan-detail active-plans placement-detail sen-need]
     :as   ds-map}]
-  (-> (tc/select-columns
-       sen2
-       [:sen2-table-id])
+  (-> (tc/select-columns sen2 [:sen2-table-id])
       (tc/left-join (tc/select-columns person [:person-table-id :sen2-table-id]) [:sen2-table-id])
       (tc/left-join (tc/select-columns requests [:requests-table-id :person-table-id]) [:person-table-id])
       (tc/left-join (tc/concat-copying 

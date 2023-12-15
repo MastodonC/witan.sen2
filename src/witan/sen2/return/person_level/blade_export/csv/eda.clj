@@ -346,7 +346,10 @@
                 (-> table-id-ds
                     (tc/update-columns :all (partial map #(if % "+" " ")))
                     (tc/unique-by)
-                    (tc/rename-columns #(clojure.string/replace % #"^:(.*)-table-id$" "$1"))))))
+                    (tc/rename-columns #(clojure.string/replace % #"^:(.*)-table-id$" "$1"))
+                    (tc/order-by ["sen2" "person" "requests"
+                                  "active-plans" "sen-need" "placement-detail"
+                                  "assessment" "named-plan" "plan-detail"])))))
 
 
 
