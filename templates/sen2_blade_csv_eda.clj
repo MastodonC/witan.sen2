@@ -16,7 +16,7 @@
 ^{;; Notebook header
   ::clerk/no-cache true}
 (clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
-               "# SEN2 Person Level Return COLLECT Blade CSV Export"
+               "# witan.sen2"
                (format "  \n`%s`  \n" *ns*)
                ((comp :doc meta) *ns*)
                "  \nTimeStamp: " (.format (java.time.LocalDateTime/now)
