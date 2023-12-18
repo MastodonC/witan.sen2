@@ -17,11 +17,7 @@
                                              :old-la-code
                                              :la-name
                                              :time-period
-                                             :num-caseload])
-                         )
-
-                     )
-  ) ;; this doesn't work with districts
+                                             :num-caseload])))) ;; this doesn't work with districts
 
 (defn generate-current-pop [s la-or-gss]
   "Returns total EHCP caseload for LA `s` specified by name (when `la-or-gss` is `:la`) or GSS code (when `la-or-gss` is `:gss`)"
