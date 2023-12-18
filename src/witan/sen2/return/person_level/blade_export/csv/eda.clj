@@ -48,7 +48,7 @@
   "Display distinct-values of columns `cols` of dataset `ds`."
   [ds cols]
   (clerk/table {::clerk/width :prose}
-               (#(hash-map "Column name" (keys %) "Values" (vals %))
+               (#(hash-map "Column name" (keys %) "Values with frequencies" (vals %))
                 (distinct-vals-with-freq ds cols))))
 
 (defn report-csv-ds-info
@@ -187,9 +187,11 @@
        (clerk/fragment
         (clerk/md "Values:")
         (clerk/table {::clerk/width :prose}
-                     (-> (tc/pivot->longer ds)
-                         (tc/rename-columns {:$column "Column Name"
-                                             :$value  "value"}))))
+                     (-> (tc/pivot->longer ds
+                                           :all
+                                           {:target-columns    "Column Name"
+                                            :value-column-name "value"})
+                         (tc/drop-columns [0]))))
        (clerk/fragment
         (clerk/md "Distinct values of selected categorical columns:")
         (report-distinct-vals ds cols-to-report-distinct-vals))))))
@@ -289,7 +291,7 @@
                                       (tc/reorder-columns [key-col]))
         min-num-key-repeats       (reduce min (:num-key-repeats num-key-repeats))
         max-num-key-repeats       (reduce max(:num-key-repeats num-key-repeats))]
-    (clerk/md (str (format "### `%s` (child) -> `%s` (parent):\n" ds-child-name ds-parent-name)
+    (clerk/md (str (format "### `%s` (child) ↗ `%s` (parent):\n" ds-child-name ds-parent-name)
                    (format "- `%s` (parent) has %,d rows\n" ds-parent-name (tc/row-count ds-parent))
                    (format "- `%s` (child) has %,d rows\n" ds-child-name (tc/row-count ds-child))
                    (format "- `%s` %s unique key for (parent) table `%s`\n"
@@ -344,7 +346,10 @@
                 (-> table-id-ds
                     (tc/update-columns :all (partial map #(if % "+" " ")))
                     (tc/unique-by)
-                    (tc/rename-columns #(clojure.string/replace % #"^:(.*)-table-id$" "$1"))))))
+                    (tc/rename-columns #(clojure.string/replace % #"^:(.*)-table-id$" "$1"))
+                    (tc/order-by ["sen2" "person" "requests"
+                                  "active-plans" "sen-need" "placement-detail"
+                                  "assessment" "named-plan" "plan-detail"])))))
 
 
 
