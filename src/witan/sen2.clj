@@ -28,6 +28,17 @@
                                            (java.time.format.DateTimeFormatter/ofPattern "uuuu-MM-dd"
                                                                                          (java.util.Locale. "en_GB")))))
 
+(defn date->census-date
+  "Given a date `d` and vector of `census-dates`, returns the (first) SEN2 census-date on or after that date.
+   Returns `nil` for dates `d` that are before (or on) the first defined census-date
+   or after the last defined census-date."
+  ([d] (date->census-date d (vals census-year->date)))
+  ([d census-dates]
+   (let [sorted-census-dates (sort census-dates)]
+     (when (.isBefore (first sorted-census-dates) d)
+       (some #(if (.isBefore % d) nil %)
+             sorted-census-dates)))))
+
 (defn census-years->census-dates-ds
   "Return dataset of census-dates given vector of `census-years`."
   [census-years]
