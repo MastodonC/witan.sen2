@@ -25,7 +25,7 @@
                                       census-dates))
         "Date on first census-date did not return nil."))
 
-  (testing "A date tat is a census date after the first should return the same."
+  (testing "A date that is a census date after the first should return the same."
     (is (= (sen2/date->census-date (java.time.LocalDate/parse "2022-01-20")
                                    census-dates)
            (java.time.LocalDate/parse "2022-01-20"))
