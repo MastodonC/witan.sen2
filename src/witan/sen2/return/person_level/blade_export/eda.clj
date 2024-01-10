@@ -1,5 +1,5 @@
-(ns witan.sen2.return.person-level.blade-export.csv.eda
-  "Functions to facilitate EDA of datasets read from SEN2 COLLECT Blade Export CSV files."
+(ns witan.sen2.return.person-level.blade-export.eda
+  "Functions to facilitate EDA of datasets from SEN2 COLLECT Blade Export."
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [nextjournal.clerk :as clerk]
@@ -155,7 +155,7 @@
                       :sen-type]})
 
 (defn report-module-info
-  "Report SEN2 Blade export CSV `module-key` module dataset `ds` structure and distinct values (using clerk)."
+  "Report SEN2 Blade export `module-key` module dataset `ds` structure and distinct values (using clerk)."
   [& {:keys [module-key ds title src-col-name->col-name col-name->label cols-to-report-distinct-vals]}]
   (clerk/fragment
    (clerk/md (str "### " title))
@@ -175,7 +175,7 @@
       (report-distinct-vals ds cols-to-report-distinct-vals)))))
 
 (defn report-all-module-info
-  "Report SEN2 Blade export CSV dataset structure and distinct values (using clerk) for all modules in `ds-map`."
+  "Report SEN2 Blade export dataset structure and distinct values (using clerk) for all modules in `ds-map`."
   [ds-map & {:keys [module-titles module-col-name->label module-src-col-name->col-name module-cols-to-report-distinct-vals]
              :or   {module-cols-to-report-distinct-vals default-module-cols-to-report-distinct-vals}}]
   (clerk/fragment

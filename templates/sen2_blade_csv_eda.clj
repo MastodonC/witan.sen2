@@ -1,5 +1,5 @@
 (ns sen2-blade-csv-eda
-  "Template notebook to read and document SEN2 return COLLECT Blade Export CSV."
+  "Template notebook to read and document SEN2 return COLLECT Blade CSV Export."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -11,7 +11,7 @@
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv.eda :as sen2-blade-csv-eda]))
+            [witan.sen2.return.person-level.blade-export.eda :as sen2-blade-eda]))
 
 ^{;; Notebook header
   ::clerk/no-cache true}
@@ -87,7 +87,7 @@
 
 
 ;;; ## Dataset structure & categorical values
-(sen2-blade-csv-eda/report-all-module-info
+(sen2-blade-eda/report-all-module-info
  sen2-blade-csv-ds-map
  {:module-titles                       sen2-blade-csv/module-titles
   :module-col-name->label              sen2-blade-csv/module-col-name->label
@@ -96,8 +96,8 @@
 
 
 ;;; ## Database structure
-(sen2-blade-csv-eda/report-expected-schema)
-(sen2-blade-csv-eda/report-table-keys)
+(sen2-blade-eda/report-expected-schema)
+(sen2-blade-eda/report-table-keys)
 
 
 
@@ -107,7 +107,7 @@
 ;; - all foreign keys in child are contained in parent
 ;; - not all parent records have children
 ;; - some parents have multiple children
-(sen2-blade-csv-eda/report-key-relationships sen2-blade-csv-ds-map)
+(sen2-blade-eda/report-key-relationships sen2-blade-csv-ds-map)
 
 
 
@@ -117,13 +117,13 @@
   "Dataset of `:*table-id` key relationships."
   (sen2-blade-csv/ds-map->table-id-ds sen2-blade-csv-ds-map))
 
-(sen2-blade-csv-eda/report-table-id-ds sen2-blade-csv-table-id-ds)
+(sen2-blade-eda/report-table-id-ds sen2-blade-csv-table-id-ds)
 
 
 
 ;;; ## Composite keys
 ;; Note: OK if not a unique key without `requests-table-id`,
-(sen2-blade-csv-eda/report-composite-keys sen2-blade-csv-ds-map)
+(sen2-blade-eda/report-composite-keys sen2-blade-csv-ds-map)
 
 
 
