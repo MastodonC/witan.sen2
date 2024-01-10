@@ -1,5 +1,5 @@
 (ns sen2-blade-csv-eda
-  "Template notebook to read and document a SEN2 return COLLECT Blade CSV Export."
+  "Template notebook to read and document SEN2 return COLLECT Blade Export CSV."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -24,7 +24,7 @@
 
 
 
-;;; # SEN2 Blade CSV Export EDA
+;;; # SEN2 Blade EDA
 ;;; ## Parameters
 ;;; ### Output directory
 ^{::clerk/visibility {:result :hide}}
@@ -35,13 +35,13 @@
 (format "%s: `%s`." ((comp :doc meta) #'out-dir) out-dir)
 
 
-;;; ### SEN2 Blade CSV Export
+;;; ### SEN2 Blade Export
 ^{::clerk/visibility {:result :hide}}
-(def sen2-blade-csv-dir
-  "Directory containing SEN2 blade export CSV files"
+(def sen2-blade-export-dir
+  "Directory containing SEN2 Blade export CSV files"
   "./data/example-sen2-blade-csv-export/")
 ^{::clerk/viewer clerk/md}
-(format "%s:  \n`%s`." ((comp :doc meta) #'sen2-blade-csv-dir) sen2-blade-csv-dir)
+(format "%s:  \n`%s`." ((comp :doc meta) #'sen2-blade-export-dir) sen2-blade-export-dir)
 
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-export-date-string
@@ -64,26 +64,34 @@
 ;;; ## Read CSV files
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-file-names
-  "Map of the SEN2 Blade CSV file names"
+  "Map of the SEN2 Blade export CSV file names."
   (sen2-blade-csv/file-names sen2-blade-export-date-string))
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
 (into [["Key" "File Name" "Exists?"]]
       (map (fn [[k v]]
-             (let [path (str sen2-blade-csv-dir v)]
+             (let [path (str sen2-blade-export-dir v)]
                [k v (if (.exists (io/file path)) "✅" "❌")])))
       sen2-blade-csv-file-names)
 
 ^{::clerk/visibility {:result :hide}}
+(def sen2-blade-csv-file-paths
+  "Map of the SEN2 Blade export CSV file paths."
+  (update-vals sen2-blade-csv-file-names (partial str sen2-blade-export-dir)))
+
+^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-ds-map
-  "Map of SEN2 Blade CSV Export datasets."
-  (sen2-blade-csv/->ds-map sen2-blade-csv-dir
-                           sen2-blade-csv-file-names))
+  "Map of SEN2 Blade export CSV datasets."
+  (sen2-blade-csv/file-paths->ds-map sen2-blade-csv-file-paths))
 
 
 
 ;;; ## Dataset structure & categorical values
-(sen2-blade-csv-eda/report-csv-ds-map-info-all sen2-blade-csv-ds-map)
+(sen2-blade-csv-eda/report-all-module-info
+ sen2-blade-csv-ds-map
+ {:module-titles                       sen2-blade-csv/module-titles
+  :module-col-name->label              sen2-blade-csv/module-col-name->label
+  :module-src-col-name->col-name       sen2-blade-csv/module-src-col-name->col-name})
 
 
 

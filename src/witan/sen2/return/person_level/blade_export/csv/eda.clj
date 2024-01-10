@@ -1,33 +1,39 @@
 (ns witan.sen2.return.person-level.blade-export.csv.eda
-  "Functions to facilitate EDA of datasets read from SEN2 COLLECT Blade CSV Export files."
+  "Functions to facilitate EDA of datasets read from SEN2 COLLECT Blade Export CSV files."
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]))
 
+;;; # Utilities
+(def module-order
+  "Map SEN2 return module key to order."
+  (zipmap [:sen2 :person :requests :assessment :named-plan :plan-detail :active-plans :placement-detail :sen-need]
+          (range)))
+
 
 
 ;;; # Dataset structure and distinct values.
-(defn report-csv-ds-column-info
-  "Display column info for a sen2 dataset `ds` read from CSV file."
-  [ds col-name->csv-label col-name->label]
+(defn report-ds-column-info
+  "Display column info for a SEN2 dataset `ds` with labels and source file column names."
+  [ds col-name->label col-name->src-col-name]
   (clerk/table {::clerk/width #_:wide :full}
                (-> ds
                    (tc/info)
                    (tc/select-columns [:col-name :datatype :n-valid :n-missing :min :max])
-                   (tc/map-columns :csv-col-label [:col-name] col-name->csv-label)
+                   (tc/map-columns :src-col-name [:col-name] col-name->src-col-name)
                    (tc/map-columns :col-label     [:col-name] col-name->label)
-                   (tc/reorder-columns [:csv-col-label :col-name :col-label])
+                   (tc/reorder-columns [:src-col-name :col-name :col-label])
                    (tc/rename-columns (merge {:col-name  "Column Name"
                                               :datatype  "Data Type"
                                               :n-valid   "# Valid"
                                               :n-missing "# Missing"
                                               :min       "Min"
                                               :max       "Max"}
-                                             {:csv-col-label "CSV File Column Name"
-                                              :col-name      "Dataset Column Name"
-                                              :col-label     "Column Label"})))))
+                                             {:src-col-name "Source File Column Name"
+                                              :col-name     "Dataset Column Name"
+                                              :col-label    "Column Label"})))))
 
 (defn- distinct-vals 
   "Returns map with column names from `cols` as keys and sorted set of values of that column in `ds` as value."
@@ -51,170 +57,136 @@
                (#(hash-map "Column name" (keys %) "Values with frequencies" (vals %))
                 (distinct-vals-with-freq ds cols))))
 
-(defn report-csv-ds-info
-  "Report SEN2 Blade CSV Export `module-key` module dataset `ds` structure and distinct values (using clerk)."
-  [ds module-key]
-  (let [title                        (get {:sen2             "0: SEN2 metadata (`sen2`)"
-                                           :person           "1: Person details (`person`)"
-                                           :requests         "2: Requests (`requests`)"
-                                           :assessment       "3: EHC needs assessments (`assessment`)"
-                                           :named-plan       "4a: Named plan (`named-plan`)"
-                                           :plan-detail      "4b: Plan detail records (`plan-detail`)"
-                                           :active-plans     "5a: Placements - Active plans (`active-plans`)"
-                                           :placement-detail "5b: Placements - Placement details (`placement-detail`)"
-                                           :sen-need         "5c: Placements - SEN need (`sen-need`)"}
-                                          module-key)
-        col-name->csv-label          (get {:sen2             (set/map-invert sen2-blade-csv/sen2-csv-col-label->name)
-                                           :person           (set/map-invert sen2-blade-csv/person-csv-col-label->name)
-                                           :requests         (set/map-invert sen2-blade-csv/requests-csv-col-label->name)
-                                           :assessment       (set/map-invert sen2-blade-csv/assessment-csv-col-label->name)
-                                           :named-plan       (set/map-invert sen2-blade-csv/named-plan-csv-col-label->name)
-                                           :plan-detail      (set/map-invert sen2-blade-csv/plan-detail-csv-col-label->name)
-                                           :active-plans     (set/map-invert sen2-blade-csv/active-plans-csv-col-label->name)
-                                           :placement-detail (set/map-invert sen2-blade-csv/placement-detail-csv-col-label->name)
-                                           :sen-need         (set/map-invert sen2-blade-csv/sen-need-csv-col-label->name)}
-                                          module-key)
-        col-name->label              (get {:sen2             sen2-blade-csv/sen2-col-name->label
-                                           :person           sen2-blade-csv/person-col-name->label
-                                           :requests         sen2-blade-csv/requests-col-name->label
-                                           :assessment       sen2-blade-csv/assessment-col-name->label
-                                           :named-plan       sen2-blade-csv/named-plan-col-name->label
-                                           :plan-detail      sen2-blade-csv/plan-detail-col-name->label
-                                           :active-plans     sen2-blade-csv/active-plans-col-name->label
-                                           :placement-detail sen2-blade-csv/placement-detail-col-name->label
-                                           :sen-need         sen2-blade-csv/sen-need-col-name->label}
-                                          module-key)
-        cols-to-report-distinct-vals (get {:person           [#_:person-table-id
-                                                              :native-id
-                                                              #_:person-order-seq-column
-                                                              :source-id
-                                                              :sen2-table-id
-                                                              :surname
-                                                              :forename
-                                                              #_:person-birth-date
-                                                              :gender-current
-                                                              #_:ethnicity
-                                                              #_:postcode
-                                                              #_:upn
-                                                              #_:unique-learner-number
-                                                              :upn-unknown]
-                                           :requests         [#_:requests-table-id
-                                                              :native-id
-                                                              #_:requests-order-seq-column
-                                                              :source-id
-                                                              #_:person-table-id
-                                                              #_:received-date
-                                                              :rya
-                                                              #_:request-outcome-date
-                                                              :request-outcome
-                                                              :request-mediation
-                                                              :request-tribunal
-                                                              :exported] 
-                                           :assessment       [#_:assessment-table-id
-                                                              :native-id
-                                                              #_:assessment-order-seq-column
-                                                              :source-id
-                                                              #_:requests-table-id
-                                                              :assessment-outcome
-                                                              #_:assessment-outcome-date
-                                                              :assessment-mediation
-                                                              :assessment-tribunal
-                                                              :other-mediation
-                                                              :other-tribunal
-                                                              :week20]
-                                           :named-plan       [#_:named-plan-table-id
-                                                              :native-id
-                                                              #_:named-plan-order-seq-column
-                                                              :source-id
-                                                              #_:assessment-table-id
-                                                              #_:start-date
-                                                              :plan-res
-                                                              :plan-wbp
-                                                              :pb
-                                                              :oa
-                                                              :dp
-                                                              #_:cease-date
-                                                              :cease-reason]
-                                           :plan-detail      [#_:plan-detail-table-id
-                                                              :native-id
-                                                              #_:plan-detail-order-seq-column
-                                                              :source-id
-                                                              #_:named-plan-table-id
-                                                              #_:urn
-                                                              #_:ukprn
-                                                              :sen-setting
-                                                              :sen-setting-other
-                                                              :placement-rank
-                                                              :sen-unit-indicator
-                                                              :resourced-provision-indicator]
-                                           :active-plans     [#_:active-plans-table-id
-                                                              :native-id
-                                                              #_:active-plans-order-seq-column
-                                                              :source-id
-                                                              #_:requests-table-id
-                                                              :transfer-la
-                                                              :res
-                                                              :wbp
-                                                              #_:last-review]
-                                           :placement-detail [#_:placement-detail-table-id
-                                                              :native-id
-                                                              #_:placement-detail-order-seq-column
-                                                              :source-id
-                                                              #_:active-plans-table-id
-                                                              #_:urn
-                                                              #_:ukprn
-                                                              :sen-setting
-                                                              :sen-setting-other
-                                                              :placement-rank
-                                                              #_:entry-date
-                                                              #_:leaving-date
-                                                              :attendance-pattern
-                                                              :sen-unit-indicator
-                                                              :resourced-provision-indicator]
-                                           :sen-need         [#_:sen-need-table-id
-                                                              :native-id
-                                                              #_:sen-need-order-seq-column
-                                                              :source-id
-                                                              #_:active-plans-table-id
-                                                              :sen-type-rank
-                                                              :sen-type]}
-                                          module-key)]
-    (clerk/fragment
-     (clerk/md (str "### " title))
-     (clerk/md "Dataset structure:")
-     (report-csv-ds-column-info ds col-name->csv-label col-name->label)
-     (if (= module-key :sen2)
-       (clerk/fragment
-        (clerk/md "Values:")
-        (clerk/table {::clerk/width :prose}
-                     (-> (tc/pivot->longer ds
-                                           :all
-                                           {:target-columns    "Column Name"
-                                            :value-column-name "value"})
-                         (tc/drop-columns [0]))))
-       (clerk/fragment
-        (clerk/md "Distinct values of selected categorical columns:")
-        (report-distinct-vals ds cols-to-report-distinct-vals))))))
+(def default-module-cols-to-report-distinct-vals
+  "Default map of columns to report distinct values for for each module."
+  {:person           [#_:person-table-id
+                      :native-id
+                      #_:person-order-seq-column
+                      :source-id
+                      :sen2-table-id
+                      :surname
+                      :forename
+                      #_:person-birth-date
+                      :gender-current
+                      #_:ethnicity
+                      #_:postcode
+                      #_:upn
+                      #_:unique-learner-number
+                      :upn-unknown]
+   :requests         [#_:requests-table-id
+                      :native-id
+                      #_:requests-order-seq-column
+                      :source-id
+                      #_:person-table-id
+                      #_:received-date
+                      :rya
+                      #_:request-outcome-date
+                      :request-outcome
+                      :request-mediation
+                      :request-tribunal
+                      :exported]
+   :assessment       [#_:assessment-table-id
+                      :native-id
+                      #_:assessment-order-seq-column
+                      :source-id
+                      #_:requests-table-id
+                      :assessment-outcome
+                      #_:assessment-outcome-date
+                      :assessment-mediation
+                      :assessment-tribunal
+                      :other-mediation
+                      :other-tribunal
+                      :week20]
+   :named-plan       [#_:named-plan-table-id
+                      :native-id
+                      #_:named-plan-order-seq-column
+                      :source-id
+                      #_:assessment-table-id
+                      #_:start-date
+                      :plan-res
+                      :plan-wbp
+                      :pb
+                      :oa
+                      :dp
+                      #_:cease-date
+                      :cease-reason]
+   :plan-detail      [#_:plan-detail-table-id
+                      :native-id
+                      #_:plan-detail-order-seq-column
+                      :source-id
+                      #_:named-plan-table-id
+                      #_:urn
+                      #_:ukprn
+                      :sen-setting
+                      :sen-setting-other
+                      :placement-rank
+                      :sen-unit-indicator
+                      :resourced-provision-indicator]
+   :active-plans     [#_:active-plans-table-id
+                      :native-id
+                      #_:active-plans-order-seq-column
+                      :source-id
+                      #_:requests-table-id
+                      :transfer-la
+                      :res
+                      :wbp
+                      #_:last-review]
+   :placement-detail [#_:placement-detail-table-id
+                      :native-id
+                      #_:placement-detail-order-seq-column
+                      :source-id
+                      #_:active-plans-table-id
+                      #_:urn
+                      #_:ukprn
+                      :sen-setting
+                      :sen-setting-other
+                      :placement-rank
+                      #_:entry-date
+                      #_:leaving-date
+                      :attendance-pattern
+                      :sen-unit-indicator
+                      :resourced-provision-indicator]
+   :sen-need         [#_:sen-need-table-id
+                      :native-id
+                      #_:sen-need-order-seq-column
+                      :source-id
+                      #_:active-plans-table-id
+                      :sen-type-rank
+                      :sen-type]})
 
-(defn report-csv-ds-map-info
-  "Report SEN2 Blade CSV Export `module-key` module dataset structure and distinct values (using clerk) for dataset from `ds-map`"
-  [ds-map module-key]
-  (report-csv-ds-info (get ds-map module-key) module-key))
-
-(defn report-csv-ds-map-info-all
-  "Report SEN2 Blade CSV Export dataset structure and distinct values (using clerk) for all datasets in `ds-map`"
-  [ds-map]
+(defn report-module-info
+  "Report SEN2 Blade export CSV `module-key` module dataset `ds` structure and distinct values (using clerk)."
+  [& {:keys [module-key ds title src-col-name->col-name col-name->label cols-to-report-distinct-vals]}]
   (clerk/fragment
-   (map (partial report-csv-ds-map-info ds-map)
-        [:sen2
-         :person
-         :requests
-         :assessment
-         :named-plan
-         :plan-detail
-         :active-plans
-         :placement-detail
-         :sen-need])))
+   (clerk/md (str "### " title))
+   (clerk/md "Dataset structure:")
+   (report-ds-column-info ds col-name->label (set/map-invert src-col-name->col-name))
+   (if (= module-key :sen2)
+     (clerk/fragment
+      (clerk/md "Values:")
+      (clerk/table {::clerk/width :prose}
+                   (-> (tc/pivot->longer ds
+                                         :all
+                                         {:target-columns    "Column Name"
+                                          :value-column-name "value"})
+                       (tc/drop-columns [0]))))
+     (clerk/fragment
+      (clerk/md "Distinct values of selected categorical columns:")
+      (report-distinct-vals ds cols-to-report-distinct-vals)))))
+
+(defn report-all-module-info
+  "Report SEN2 Blade export CSV dataset structure and distinct values (using clerk) for all modules in `ds-map`."
+  [ds-map & {:keys [module-titles module-col-name->label module-src-col-name->col-name module-cols-to-report-distinct-vals]
+             :or   {module-cols-to-report-distinct-vals default-module-cols-to-report-distinct-vals}}]
+  (clerk/fragment
+   (map (fn [[k v]] (report-module-info {:module-key                   k
+                                         :ds                           v
+                                         :title                        (get module-titles k (name k))
+                                         :col-name->label              (get module-col-name->label k {})
+                                         :src-col-name->col-name       (get module-src-col-name->col-name k {})
+                                         :cols-to-report-distinct-vals (get module-cols-to-report-distinct-vals k {})}))
+        (into (sorted-map-by #(compare (module-order %1 %1) (module-order %2 %2))) ds-map))))
+
 
 
 ;;; # Relational database structure: schema and `table-id` key relationships

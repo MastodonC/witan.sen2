@@ -1,5 +1,5 @@
 (ns plans-placements
-  "Extract & check plans & placements on census dates from SEN2 return Blade CSV Export."
+  "Extract & check plans & placements on census dates from SEN2 return Blade Export CSV."
   (:require [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
@@ -19,9 +19,9 @@
   (sen2/census-years->census-dates-ds [2022 2023]))
 
 
-;;; ## SEN2 Blade CSV Export
-(def sen2-blade-csv-dir
-  "Directory containing SEN2 blade export CSV files"
+;;; ## SEN2 Blade
+(def sen2-blade-export-dir
+  "Directory containing SEN2 Blade export files"
   "./data/example-sen2-blade-csv-export/")
 
 (def sen2-blade-export-date-string
@@ -31,14 +31,14 @@
 
 
 ;;; # Read CSV files
-(def sen2-blade-csv-file-names
-  "Map of the SEN2 Blade CSV file names"
-  (sen2-blade-csv/file-names sen2-blade-export-date-string))
+(def sen2-blade-csv-file-paths
+  "Map of the SEN2 Blade export CSV file paths."
+  (sen2-blade-csv/file-paths sen2-blade-export-dir
+                             sen2-blade-export-date-string))
 
 (def sen2-blade-csv-ds-map
-  "Map of SEN2 Blade CSV Export datasets."
-  (delay (sen2-blade-csv/->ds-map sen2-blade-csv-dir
-                                  sen2-blade-csv-file-names)))
+  "Map of SEN2 Blade export CSV datasets."
+  (delay (sen2-blade-csv/file-paths->ds-map sen2-blade-csv-file-paths)))
 
 
 

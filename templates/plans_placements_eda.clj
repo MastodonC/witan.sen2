@@ -1,5 +1,5 @@
 (ns plans-placements-eda
-  "Template notebook to report on plans & placements on census dates extracted from SEN2 return COLLECT Blade CSV export."
+  "Template notebook to report on plans & placements on census dates extracted from SEN2 return COLLECT Blade export CSV."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -49,13 +49,12 @@
 
 
 
-;;; ## 1. SEN2 Blade CSV Export
-^{::clerk/viewer clerk/md}
-(format "Read from:  \n`%s`" plans-placements/sen2-blade-csv-dir)
+;;; ## 1. SEN2 Blade
+;; Read from:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-(-> plans-placements/sen2-blade-csv-file-names
-    ((fn [m] (tc/dataset {"File Name"  (vals m)
-                          "Module key" (keys m)}))))
+(-> plans-placements/sen2-blade-csv-file-paths
+    ((fn [m] (tc/dataset {"Module key" (keys m)
+                          "File Path"  (vals m)}))))
 
 ;; NOTE: The `person` module should be de-identified as follows:
 ;; - [x] Contents of the `surname` field deleted.

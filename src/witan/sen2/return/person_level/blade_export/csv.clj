@@ -1,19 +1,53 @@
 (ns witan.sen2.return.person-level.blade-export.csv
   "Read and manipulate SEN2 person level return COLLECT Blade Export CSV files"
-  (:require [tablecloth.api :as tc]))
+  (:require [tablecloth.api :as tc])
+  (:import [java.time LocalDate]
+           [java.time.format DateTimeFormatter]))
 
 ;;; # Utility functions
 (defn- parse-date
   "Function to parse date strings of the form \"2022-Sep-28 00:00:00\" to `:local-date`"
   [s]
-  (java.time.LocalDate/parse (re-find #"^[^ ]+" s) (java.time.format.DateTimeFormatter/ofPattern "uuuu-LLL-dd" (java.util.Locale. "en_US"))))
+  (LocalDate/parse (re-find #"^[^ ]+" s) (DateTimeFormatter/ofPattern "uuuu-LLL-dd" (java.util.Locale. "en_US"))))
+
+
+
+;;; # SEN2 Person Level Return Modules
+(def module-order
+  "Map SEN2 return module key to order."
+  (zipmap [:sen2 :person :requests :assessment :named-plan :plan-detail :active-plans :placement-detail :sen-need]
+          (range)))
+
+(def module-titles
+  "Map of SEN2 return module titles"
+  (into (sorted-map-by #(compare (module-order %1) (module-order %2)))
+        {:sen2             "0: SEN2 metadata (`sen2`)"
+         :person           "1: Person details (`person`)"
+         :requests         "2: Requests (`requests`)"
+         :assessment       "3: EHC needs assessments (`assessment`)"
+         :named-plan       "4a: Named plan (`named-plan`)"
+         :plan-detail      "4b: Plan detail records (`plan-detail`)"
+         :active-plans     "5a: Placements - Active plans (`active-plans`)"
+         :placement-detail "5b: Placements - Placement details (`placement-detail`)"
+         :sen-need         "5c: Placements - SEN need (`sen-need`)"}))
 
 
 
 ;;; # CSV data files
+(defn csv->ds
+  "Read CSV file from `file-path` into dataset using options in `cfg` and post-process with `post-fn`."
+  [file-path & {:keys  [key-fn parser-fn dataset-name]
+                ::keys [post-fn]
+                :or    {post-fn identity}
+                :as    cfg}]
+  (-> file-path
+      (tc/dataset cfg)
+      post-fn))
+
+
 ;;; ## CSV file names
 (defn file-names
-  "Default blade export CSV file names for `export-date` in \"DD-MM-YYYY\" format."
+  "Default Blade export CSV file names for `export-date` (in \"DD-MM-YYYY\" format)."
   [export-date]
   (update-vals 
    {:sen2             "Blade-Export_%s_sen2.csv"
@@ -27,10 +61,15 @@
     :sen-need         "Blade-Export_%s_senneed.csv"}
    (fn [v] (format v export-date))))
 
+(defn file-paths
+  "Default Blade export CSV file paths for `export-date` (as string in \"DD-MM-YYYY\" format) in `data-dir`."
+  [export-dir export-date]
+  (update-vals (file-names export-date) (partial str export-dir)))
+
 
 ;;; ## Module 0: SEN2 metadata (`sen2`)
-(def sen2-csv-col-label->name
-  "Map SEN2 module 0 \"SEN2\" CSV file column label to column name for the dataset."
+(def sen2-src-col-name->col-name
+  "Map SEN2 module 0 \"SEN2\" CSV file column name to column name for the dataset."
   {"sen2tableid"        :sen2-table-id
    "NativeId"           :native-id
    "sen2orderseqcolumn" :sen2-order-seq-column
@@ -55,14 +94,14 @@
    :source-id             :string
    :collection            :string
    :year                  :int32
-   :reference-date        [:packed-local-date parse-date]
+   :reference-date        [:local-date parse-date]
    :source-level          :string
    :software-code         :string
    :release               :string
    :serial-no             :int32
-   :datetime              [:date-time #(java.time.LocalDate/parse
+   :datetime              [:date-time #(LocalDate/parse
                                         %
-                                        (java.time.format.DateTimeFormatter/ofPattern
+                                        (DateTimeFormatter/ofPattern
                                          "yyyy-LLL-dd HH:mm:ss"
                                          (java.util.Locale. "en_US")))]
    :lea                   :string
@@ -71,14 +110,9 @@
 
 (def sen2-read-cfg
   "Configuration map for reading SEN2 module 0 \"SEN2\" CSV file into a dataset."
-  {:key-fn       sen2-csv-col-label->name
+  {:key-fn       #(or (sen2-src-col-name->col-name %) %)
    :parser-fn    sen2-parser-fn
    :dataset-name "sen2"})
-
-(defn sen2->ds
-  "Reads dataset of SEN2 module 0 \"SEN2\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path sen2-read-cfg))
 
 (def sen2-col-name->label
   "Map SEN2 module 0 \"SEN2\" dataset column names to display labels."
@@ -100,8 +134,8 @@
 
 
 ;;; ## Module 1: Person details (`person`)
-(def person-csv-col-label->name
-  "Map SEN2 module 1 \"Person\" CSV file column label to column name for the dataset."
+(def person-src-col-name->col-name
+  "Map SEN2 module 1 \"Person\" CSV file column name to column name for the dataset."
   {"persontableid"        :person-table-id
    "NativeId"             :native-id
    "personorderseqcolumn" :person-order-seq-column
@@ -126,7 +160,7 @@
    :sen2-table-id           :string
    :surname                 :string
    :forename                :string
-   :person-birth-date       [:packed-local-date parse-date]
+   :person-birth-date       [:local-date parse-date]
    :postcode                :string
    :upn                     :string
    :unique-learner-number   :string
@@ -136,14 +170,9 @@
 
 (def person-read-cfg
   "Configuration map for reading SEN2 module 1 \"Person\" CSV file into a dataset."
-  {:key-fn       person-csv-col-label->name
+  {:key-fn       #(or (person-src-col-name->col-name %) %)
    :parser-fn    person-parser-fn
    :dataset-name "person"})
-
-(defn person->ds
-  "Reads dataset of SEN2 module 1 \"Person\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path person-read-cfg))
 
 (def person-col-name->label
   "Map SEN2 module 1 \"Person\" dataset column names to display labels."
@@ -164,8 +193,8 @@
 
 
 ;;; ## Module 2: Requests (`requests`)
-(def requests-csv-col-label->name
-  "Map SEN2 module 2 \"Requests\" CSV file column label to column name for the dataset."
+(def requests-src-col-name->col-name
+  "Map SEN2 module 2 \"Requests\" CSV file column name to column name for the dataset."
   {"requeststableid"        :requests-table-id
    "NativeId"               :native-id
    "requestsorderseqcolumn" :requests-order-seq-column
@@ -186,9 +215,9 @@
    :requests-order-seq-column :int32
    :source-id                 :string
    :person-table-id           :string
-   :received-date             [:packed-local-date parse-date]
+   :received-date             [:local-date parse-date]
    :rya                       :boolean
-   :request-outcome-date      [:packed-local-date parse-date]
+   :request-outcome-date      [:local-date parse-date]
    :request-outcome           :string
    :request-mediation         :boolean
    :request-tribunal          :boolean
@@ -196,14 +225,9 @@
 
 (def requests-read-cfg
   "Configuration map for reading SEN2 module 2 \"Requests\" CSV file into a dataset."
-  {:key-fn       requests-csv-col-label->name
+  {:key-fn       #(or (requests-src-col-name->col-name %) %)
    :parser-fn    requests-parser-fn
    :dataset-name "requests"})
-
-(defn requests->ds
-  "Reads dataset of SEN2 module 2 \"Requests\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path requests-read-cfg))
 
 (def requests-col-name->label
   "Map SEN2 module 2 \"Requests\" dataset column names to display labels."
@@ -222,8 +246,8 @@
 
 
 ;;; ## Module 3: EHC needs assessments (`assessment`)
-(def assessment-csv-col-label->name
-  "Map SEN2 module 3 \"EHC needs assessments\" CSV file column label to column name for the dataset."
+(def assessment-src-col-name->col-name
+  "Map SEN2 module 3 \"EHC needs assessments\" CSV file column name to column name for the dataset."
   {"assessmenttableid"        :assessment-table-id
    "NativeId"                 :native-id
    "assessmentorderseqcolumn" :assessment-order-seq-column
@@ -244,7 +268,7 @@
    :assessment-order-seq-column :int32
    :source-id                   :string
    :requests-table-id           :string
-   :assessment-outcome-date     [:packed-local-date parse-date]
+   :assessment-outcome-date     [:local-date parse-date]
    :assessment-mediation        :boolean
    :assessment-tribunal         :boolean  
    :other-mediation             :boolean
@@ -254,14 +278,9 @@
 
 (def assessment-read-cfg
   "Configuration map for reading SEN2 module 3 \"EHC needs assessments\" CSV file into a dataset."
-  {:key-fn       assessment-csv-col-label->name
+  {:key-fn       #(or (assessment-src-col-name->col-name %) %)
    :parser-fn    assessment-parser-fn
    :dataset-name "assessment"})
-
-(defn assessment->ds
-  "Reads dataset of SEN2 module 3 \"EHC needs assessments\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path assessment-read-cfg))
 
 (def assessment-col-name->label
   "Map SEN2 module 3 \"EHC needs assessments\" dataset column names to display labels."
@@ -280,8 +299,8 @@
 
 
 ;;; ## Module 4a: Named plan (`named-plan`)
-(def named-plan-csv-col-label->name
-  "Map SEN2 module 4a \"Named plan\" CSV file column label to column name for the dataset."
+(def named-plan-src-col-name->col-name
+  "Map SEN2 module 4a \"Named plan\" CSV file column name to column name for the dataset."
   {"namedplantableid"        :named-plan-table-id
    "NativeId"                :native-id
    "namedplanorderseqcolumn" :named-plan-order-seq-column
@@ -303,10 +322,10 @@
    :named-plan-order-seq-column :int32
    :source-id                   :string
    :assessment-table-id         :string
-   :start-date                  [:packed-local-date parse-date]
+   :start-date                  [:local-date parse-date]
    :pb                          :boolean
    :oa                          :boolean
-   :cease-date                  [:packed-local-date parse-date]
+   :cease-date                  [:local-date parse-date]
    :plan-res                    :string
    :plan-wbp                    :string
    :dp                          :string
@@ -314,14 +333,9 @@
 
 (def named-plan-read-cfg
   "Configuration map for reading SEN2 module 4a \"Named plan\" CSV file into a dataset."
-  {:key-fn       named-plan-csv-col-label->name
+  {:key-fn       #(or (named-plan-src-col-name->col-name %) %)
    :parser-fn    named-plan-parser-fn
    :dataset-name "named-plan"})
-
-(defn named-plan->ds
-  "Reads dataset of SEN2 module 4a \"Named plan\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path named-plan-read-cfg))
 
 (def named-plan-col-name->label
   "Map SEN2 module 4a \"Named plan\" dataset column names to display labels."
@@ -341,8 +355,8 @@
 
 
 ;;; ## Module 4b: Plan detail records (`plan-detail`)
-(def plan-detail-csv-col-label->name
-  "Map SEN2 module 4b \"Plan detail records\" CSV file column label to column name for the dataset."
+(def plan-detail-src-col-name->col-name
+  "Map SEN2 module 4b \"Plan detail records\" CSV file column name to column name for the dataset."
   {"plandetailtableid"           :plan-detail-table-id
    "NativeId"                    :native-id
    "plandetailorderseqcolumn"    :plan-detail-order-seq-column
@@ -373,14 +387,9 @@
 
 (def plan-detail-read-cfg
   "Configuration map for reading SEN2 module 4b \"Plan detail records\" CSV file into a dataset."
-  {:key-fn       plan-detail-csv-col-label->name
+  {:key-fn       #(or (plan-detail-src-col-name->col-name %) %)
    :parser-fn    plan-detail-parser-fn
    :dataset-name "plan-detail"})
-
-(defn plan-detail->ds
-  "Reads dataset of SEN2 module 4b \"Plan detail records\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path plan-detail-read-cfg))
 
 (def plan-detail-col-name->label
   "Map SEN2 module 4b \"Plan detail records\" dataset column names to display labels."
@@ -399,8 +408,8 @@
 
 
 ;;; ## Module 5a: Placements - Active plans (`active-plans`)
-(def active-plans-csv-col-label->name
-  "Map SEN2 module 5a \"Active plans\" CSV file column label to column name for the dataset."
+(def active-plans-src-col-name->col-name
+  "Map SEN2 module 5a \"Active plans\" CSV file column name to column name for the dataset."
   {"activeplanstableid"        :active-plans-table-id
    "NativeId"                  :native-id
    "activeplansorderseqcolumn" :active-plans-order-seq-column
@@ -418,21 +427,16 @@
    :active-plans-order-seq-column :int32
    :source-id                     :string
    :requests-table-id             :string
-   :last-review                   [:packed-local-date parse-date]
+   :last-review                   [:local-date parse-date]
    :transfer-la                   :string
    :res                           :string
    :wbp                           :string})
 
 (def active-plans-read-cfg
   "Configuration map for reading SEN2 module 5a \"Active plans\" CSV file into a dataset."
-  {:key-fn       active-plans-csv-col-label->name
+  {:key-fn       #(or (active-plans-src-col-name->col-name %) %)
    :parser-fn    active-plans-parser-fn
    :dataset-name "active-plans"})
-
-(defn active-plans->ds
-  "Reads dataset of SEN2 module 5a \"Active plans\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path active-plans-read-cfg))
 
 (def active-plans-col-name->label
   "Map SEN2 module 5a \"Active plans\" dataset column names to display labels."
@@ -448,8 +452,8 @@
 
 
 ;;; ## Module 5b: Placements - Placement details (`placement-detail`)
-(def placement-detail-csv-col-label->name
-  "Map SEN2 module 5b \"Placement details\" CSV file column label to column name for the dataset."
+(def placement-detail-src-col-name->col-name
+  "Map SEN2 module 5b \"Placement details\" CSV file column name to column name for the dataset."
   {"placementdetailtableid"        :placement-detail-table-id
    "NativeId"                      :native-id
    "placementdetailorderseqcolumn" :placement-detail-order-seq-column
@@ -477,8 +481,8 @@
    :ukprn                             :string
    :sen-setting-other                 :string
    :placement-rank                    [:int8 parse-long]
-   :entry-date                        [:packed-local-date parse-date]
-   :leaving-date                      [:packed-local-date parse-date]
+   :entry-date                        [:local-date parse-date]
+   :leaving-date                      [:local-date parse-date]
    :sen-unit-indicator                :boolean
    :resourced-provision-indicator     :boolean
    :sen-setting                       :string
@@ -486,14 +490,9 @@
 
 (def placement-detail-read-cfg
   "Configuration map for reading SEN2 module 5b \"Placement details\" CSV file into a dataset."
-  {:key-fn       placement-detail-csv-col-label->name
+  {:key-fn       #(or (placement-detail-src-col-name->col-name %) %)
    :parser-fn    placement-detail-parser-fn
    :dataset-name "placement-detail"})
-
-(defn placement-detail->ds
-  "Reads dataset of SEN2 module 5b \"Placement details\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path placement-detail-read-cfg))
 
 (def placement-detail-col-name->label
   "Map SEN2 module 5b \"Placement details\" dataset column names to display labels."
@@ -515,8 +514,8 @@
 
 
 ;;; ## Module 5c: Placements - SEN need (`sen-need`)
-(def sen-need-csv-col-label->name
-  "Map SEN2 module 5c \"SEN need\" CSV file column label to column name for the dataset."
+(def sen-need-src-col-name->col-name
+  "Map SEN2 module 5c \"SEN need\" CSV file column name to column name for the dataset."
   {"senneedtableid"        :sen-need-table-id
    "NativeId"              :native-id
    "senneedorderseqcolumn" :sen-need-order-seq-column
@@ -537,14 +536,9 @@
 
 (def sen-need-read-cfg
   "Configuration map for reading SEN2 module 5 \"SEN need\" CSV file into a dataset."
-  {:key-fn       sen-need-csv-col-label->name
+  {:key-fn       #(or (sen-need-src-col-name->col-name %) %)
    :parser-fn    sen-need-parser-fn
    :dataset-name "sen-need"})
-
-(defn sen-need->ds
-  "Reads dataset of SEN2 module 5 \"SEN need\" data from CSV file at `file-path`."
-  [file-path]
-  (tc/dataset file-path sen-need-read-cfg))
 
 (def sen-need-col-name->label
   "Map SEN2 module 5c \"SEN need\" dataset column names to display labels."
@@ -559,8 +553,20 @@
 
 
 ;;; # Functions to read all CSVs
-(def read-cfg
-  "Map of configuration maps for reading data from CSV files into dataset."
+(def module-src-col-name->col-name
+  "Map of maps mapping CSV file column labels to column name for the dataset for each module."
+  {:sen2             sen2-src-col-name->col-name
+   :person           person-src-col-name->col-name
+   :requests         requests-src-col-name->col-name
+   :assessment       assessment-src-col-name->col-name
+   :named-plan       named-plan-src-col-name->col-name
+   :plan-detail      plan-detail-src-col-name->col-name
+   :active-plans     active-plans-src-col-name->col-name
+   :placement-detail placement-detail-src-col-name->col-name
+   :sen-need         sen-need-src-col-name->col-name})
+
+(def module-read-cfg
+  "Map of configuration maps for reading data from CSV files into dataset for each module."
   {:sen2             sen2-read-cfg
    :person           person-read-cfg
    :requests         requests-read-cfg
@@ -571,18 +577,35 @@
    :placement-detail placement-detail-read-cfg
    :sen-need         sen-need-read-cfg})
 
-(defn ->ds-map
-  "Read CSV files specified in `file-names'` map from `file-dir`
+(def module-col-name->label
+  "Map of maps mapping dataset column names to display labels for each module."
+  {:sen2             sen2-col-name->label
+   :person           person-col-name->label
+   :requests         requests-col-name->label
+   :assessment       assessment-col-name->label
+   :named-plan       named-plan-col-name->label
+   :plan-detail      plan-detail-col-name->label
+   :active-plans     active-plans-col-name->label
+   :placement-detail placement-detail-col-name->label
+   :sen-need         sen-need-col-name->label})
+
+(defn file-paths->ds-map
+  "Read CSV files specified in `file-paths'` map
   using read configuration from corresponding key of `read-cfg'`
   into map of datasets with same keys."
-  ([file-dir file-names'] (->ds-map file-dir file-names' read-cfg))
-  ([file-dir file-names' read-cfg'] (reduce-kv #(assoc %1 %2 (tc/dataset (str file-dir %3) (get read-cfg' %2)))
-                                               {}
-                                               file-names')))
+  ([file-paths'] (file-paths->ds-map file-paths' module-read-cfg))
+  ([file-paths' read-cfg'] (reduce-kv #(assoc %1 %2 (csv->ds %3 (get read-cfg' %2))) {} file-paths')))
+
+(defn ->ds-map
+  "Read CSV files specified in `file-names'` map from `data-dir`
+  using read configuration from corresponding key of `read-cfg'`
+  into map of datasets with same keys."
+  ([data-dir file-names'] (->ds-map data-dir file-names' module-read-cfg))
+  ([data-dir file-names' read-cfg'] (file-paths->ds-map (update-vals file-names' (partial str data-dir)) read-cfg')))
 
 
 
-;;; # Functions to manipulate the SEN2 datasets read from CSV files
+;;; # Functions to manipulate the SEN2 datasets
 (def col-name->label
   "Map SEN2 dataset column names to display labels."
   (merge sen2-col-name->label
