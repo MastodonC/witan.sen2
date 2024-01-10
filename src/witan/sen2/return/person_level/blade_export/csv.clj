@@ -552,7 +552,7 @@
 
 
 
-;;; # Functions to read all CSVs
+;;; # Functions to read all modules
 (def module-src-col-name->col-name
   "Map of maps mapping CSV file column labels to column name for the dataset for each module."
   {:sen2             sen2-src-col-name->col-name
@@ -591,7 +591,7 @@
 
 (defn file-paths->ds-map
   "Read CSV files specified in `file-paths'` map
-  using read configuration from corresponding key of `read-cfg'`
+  using read configuration from corresponding key of `module-read-cfg'`
   into map of datasets with same keys."
   ([file-paths'] (file-paths->ds-map file-paths' module-read-cfg))
   ([file-paths' read-cfg'] (reduce-kv #(assoc %1 %2 (csv->ds %3 (get read-cfg' %2))) {} file-paths')))
