@@ -44,8 +44,7 @@
 
 ;;; # Extract plans & placements on census dates
 (def plans-placements-on-census-dates
-  "Plans & placements on census dates (with person information)
-   from `sen2-blade-ds-map` for `:census-dates` in `census-dates-ds`."
+  "Plans & placements on census dates (with person information)."
   (delay (sen2-blade-csv-plans-placements/plans-placements-on-census-dates @sen2-blade-csv-ds-map
                                                                            census-dates-ds)))
 
@@ -70,7 +69,7 @@
   "Selected columns of the `plans-placements-on-census-dates` dataset,
    for rows with issues flagged by `checks`,
    with issue flag columns,
-  and blank columns for manual updates."
+   and blank columns for manual updates."
   (delay (sen2-blade-csv-plans-placements/issues->ds @plans-placements-on-census-dates
                                                      sen2-blade-csv-plans-placements/checks)))
 
