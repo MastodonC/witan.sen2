@@ -1,5 +1,5 @@
 (ns witan.sen2.return.person-level.blade-export.csv
-  "Read and manipulate SEN2 person level return COLLECT Blade Export CSV files"
+  "Read SEN2 Blade datasets from SEN2 Blade CSV Export."
   (:require [tablecloth.api :as tc])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter]))
@@ -47,7 +47,7 @@
 
 ;;; ## CSV file names
 (defn file-names
-  "Default Blade export CSV file names for `export-date` (in \"DD-MM-YYYY\" format)."
+  "Default Blade CSV export file names for `export-date` (in \"DD-MM-YYYY\" format)."
   [export-date]
   (update-vals 
    {:sen2             "Blade-Export_%s_sen2.csv"
@@ -62,7 +62,7 @@
    (fn [v] (format v export-date))))
 
 (defn file-paths
-  "Default Blade export CSV file paths for `export-date` (as string in \"DD-MM-YYYY\" format) in `data-dir`."
+  "Default Blade CSV export file paths for `export-date` (as string in \"DD-MM-YYYY\" format) in `data-dir`."
   [export-dir export-date]
   (update-vals (file-names export-date) (partial str export-dir)))
 

@@ -1,5 +1,5 @@
 (ns witan.sen2.return.person-level.blade-export.eda
-  "Functions to facilitate EDA of datasets from SEN2 COLLECT Blade Export."
+  "Functions to facilitate EDA of SEN2 Blade datasets."
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [nextjournal.clerk :as clerk]

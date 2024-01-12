@@ -1,5 +1,5 @@
 (ns sen2-blade-csv-eda
-  "Template notebook to read and document SEN2 return COLLECT Blade CSV Export."
+  "EDA of SEN2 Blade datasets read from from SEN2 Blade CSV Export files."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -38,7 +38,7 @@
 ;;; ### SEN2 Blade Export
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-export-dir
-  "Directory containing SEN2 Blade export CSV files"
+  "Directory containing SEN2 Blade CSV export."
   "./data/example-sen2-blade-csv-export/")
 ^{::clerk/viewer clerk/md}
 (format "%s:  \n`%s`." ((comp :doc meta) #'sen2-blade-export-dir) sen2-blade-export-dir)
@@ -64,7 +64,7 @@
 ;;; ## Read CSV files
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-file-names
-  "Map of the SEN2 Blade export CSV file names."
+  "Map of the SEN2 Blade CSV export file names."
   (sen2-blade-csv/file-names sen2-blade-export-date-string))
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
@@ -76,12 +76,12 @@
 
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-file-paths
-  "Map of the SEN2 Blade export CSV file paths."
+  "Map of the SEN2 Blade CSV export file paths."
   (update-vals sen2-blade-csv-file-names (partial str sen2-blade-export-dir)))
 
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-ds-map
-  "Map of SEN2 Blade export CSV datasets."
+  "Map of SEN2 Blade datasets read from Blade CSV export."
   (sen2-blade-csv/file-paths->ds-map sen2-blade-csv-file-paths))
 
 
