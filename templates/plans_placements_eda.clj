@@ -1,5 +1,5 @@
 (ns plans-placements-eda
-  "Template notebook to report on plans & placements on census dates extracted from SEN2 return COLLECT Blade export CSV."
+  "Report on plans & placements on census dates extracted from SEN2 Blade."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -28,7 +28,7 @@
 
 
 ;;; # Plans & Placements
-;; 1. Read the CSV files from a SEN2 return Blade exported from COLLECT.
+;; 1. Get the SEN2 Blade.
 ;; 2. Extract plans & placements on census dates.
 ;; 3. Identify issues in the dataset of plans & placements and create an
 ;;    issues CSV file for review and entry of updates.

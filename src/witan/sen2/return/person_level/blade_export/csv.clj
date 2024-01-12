@@ -1,5 +1,5 @@
 (ns witan.sen2.return.person-level.blade-export.csv
-  "Read SEN2 Blade datasets from SEN2 Blade CSV export."
+  "Read SEN2 Blade CSV export."
   (:require [tablecloth.api :as tc])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter]))
