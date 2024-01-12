@@ -1,5 +1,5 @@
 (ns sen2-blade-csv-eda
-  "EDA of SEN2 Blade datasets read from from SEN2 Blade CSV Export files."
+  "EDA of SEN2 Blade datasets read from from SEN2 Blade CSV export."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
