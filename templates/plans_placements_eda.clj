@@ -10,7 +10,7 @@
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-            [witan.sen2.return.person-level.blade-export.csv.plans-placements :as sen2-blade-csv-plans-placements]
+            [witan.sen2.return.person-level.blade-export.plans-placements :as sen2-blade-plans-placements]
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
             [witan.sen2.ehcp-stats :as ehcp-stats]))
 
@@ -68,7 +68,7 @@
 ;;; ## 2. Plans & placements on census dates
 ^{::clerk/viewer   clerk/md
   ::clerk/no-cache true}
-((comp :doc meta) #'sen2-blade-csv-plans-placements/plans-placements-on-census-dates)
+((comp :doc meta) #'sen2-blade-plans-placements/plans-placements-on-census-dates)
 
 
 ;;; ### Census dates
@@ -122,8 +122,8 @@ plans-placements/census-dates-ds
 ;;; ### Issues summary
 ;; Summary of issues (& numbers of CYP & records) by `:census-date`:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(sen2-blade-csv-plans-placements/summarise-issues @plans-placements/plans-placements-on-census-dates-issues
-                                                  plans-placements/checks)
+(sen2-blade-plans-placements/summarise-issues @plans-placements/plans-placements-on-census-dates-issues
+                                              plans-placements/checks)
 
 
 ;;; ## 4. Compare Totals with DfE Caseload

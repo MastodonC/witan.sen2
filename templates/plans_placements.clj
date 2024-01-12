@@ -3,7 +3,7 @@
   (:require [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
             [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv.plans-placements :as sen2-blade-csv-plans-placements]))
+            [witan.sen2.return.person-level.blade-export.plans-placements :as sen2-blade-plans-placements]))
 
 
 ;;; # Parameters
@@ -45,12 +45,12 @@
 ;;; # Extract plans & placements on census dates
 (def plans-placements-on-census-dates
   "Plans & placements on census dates (with person information)."
-  (delay (sen2-blade-csv-plans-placements/plans-placements-on-census-dates @sen2-blade-csv-ds-map
-                                                                           census-dates-ds)))
+  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates @sen2-blade-csv-ds-map
+                                                                       census-dates-ds)))
 
 (def plans-placements-on-census-dates-col-name->label
   "Column labels for display."
-  sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label)
+  sen2-blade-plans-placements/plans-placements-on-census-dates-col-name->label)
 
 ;;; ## Write plans & placements file
 (comment
@@ -70,19 +70,19 @@
 ;;; # Check for issues
 (def checks
   "Definitions for checks for issues in dataset of plans & placements on census dates."
-  sen2-blade-csv-plans-placements/checks)
+  sen2-blade-plans-placements/checks)
 
 (def plans-placements-on-census-dates-issues
   "Selected columns of the `plans-placements-on-census-dates` dataset,
    for rows with issues flagged by `checks`,
    with issue flag columns,
    and blank columns for manual updates."
-  (delay (sen2-blade-csv-plans-placements/issues->ds @plans-placements-on-census-dates
-                                                     checks)))
+  (delay (sen2-blade-plans-placements/issues->ds @plans-placements-on-census-dates
+                                                 checks)))
 
 (def plans-placements-on-census-dates-issues-col-name->label
   "Column labels for display."
-  (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
+  (sen2-blade-plans-placements/plans-placements-on-census-dates-issues-col-name->label
    checks))
 
 

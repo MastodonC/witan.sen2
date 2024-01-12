@@ -1,4 +1,4 @@
-(ns witan.sen2.return.person-level.blade-export.csv.plans-placements
+(ns witan.sen2.return.person-level.blade-export.plans-placements
   "Tools to extract and manipulate plans & placements on census dates
    (with person details and EHCP primary need) from SEN2 Blade."
   (:require [clojure.string :as string]
