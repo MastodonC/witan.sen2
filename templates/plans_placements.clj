@@ -2,8 +2,8 @@
   "Extract & check plans & placements on census dates from SEN2 Blade."
   (:require [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
-            [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.plans-placements :as sen2-blade-plans-placements]))
+            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]
+            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]))
 
 
 ;;; # Parameters

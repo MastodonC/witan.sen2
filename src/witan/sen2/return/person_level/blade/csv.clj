@@ -1,4 +1,4 @@
-(ns witan.sen2.return.person-level.blade-export.csv
+(ns witan.sen2.return.person-level.blade.csv
   "Read SEN2 Blade CSV export."
   (:require [tablecloth.api :as tc])
   (:import [java.time LocalDate]

@@ -10,8 +10,8 @@
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-            [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.eda :as sen2-blade-eda]))
+            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]
+            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
 
 ^{;; Notebook header
   ::clerk/no-cache true}

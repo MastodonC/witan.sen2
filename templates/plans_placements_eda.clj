@@ -10,7 +10,7 @@
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-            [witan.sen2.return.person-level.blade-export.plans-placements :as sen2-blade-plans-placements]
+            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
             [witan.sen2.ehcp-stats :as ehcp-stats]))
 

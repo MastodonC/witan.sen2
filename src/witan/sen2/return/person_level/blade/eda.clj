@@ -1,10 +1,10 @@
-(ns witan.sen2.return.person-level.blade-export.eda
+(ns witan.sen2.return.person-level.blade.eda
   "Functions to facilitate EDA of SEN2 Blade."
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-            [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]))
+            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]))
 
 ;;; # Utilities
 (def module-order
