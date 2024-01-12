@@ -97,7 +97,7 @@ plans-placements/census-dates-ds
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels @plans-placements/plans-placements-on-census-dates
-                         sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label)
+                         plans-placements/plans-placements-on-census-dates-col-name->label)
 
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: %s:"
@@ -111,8 +111,7 @@ plans-placements/census-dates-ds
 ;; `plans-placements-on-census-dates-issues` dataset structure:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels @plans-placements/plans-placements-on-census-dates-issues
-                         (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
-                          sen2-blade-csv-plans-placements/checks))
+                         plans-placements/plans-placements-on-census-dates-issues-col-name->label)
 
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: %s:"
@@ -124,7 +123,7 @@ plans-placements/census-dates-ds
 ;; Summary of issues (& numbers of CYP & records) by `:census-date`:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (sen2-blade-csv-plans-placements/summarise-issues @plans-placements/plans-placements-on-census-dates-issues
-                                                  sen2-blade-csv-plans-placements/checks)
+                                                  plans-placements/checks)
 
 
 ;;; ## 4. Compare Totals with DfE Caseload
