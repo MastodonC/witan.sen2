@@ -1,5 +1,5 @@
 (ns plans-placements-eda
-  "Template notebook to report on plans & placements on census dates extracted from SEN2 return COLLECT Blade CSV export."
+  "Report on plans & placements on census dates extracted from SEN2 Blade."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -10,9 +10,7 @@
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-            [witan.sen2 :as sen2]
-            [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv.plans-placements :as sen2-blade-csv-plans-placements]
+            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
             [witan.sen2.ehcp-stats :as ehcp-stats]))
 
@@ -30,7 +28,7 @@
 
 
 ;;; # Plans & Placements
-;; 1. Read the CSV files from a SEN2 return Blade exported from COLLECT.
+;; 1. Get the SEN2 Blade.
 ;; 2. Extract plans & placements on census dates.
 ;; 3. Identify issues in the dataset of plans & placements and create an
 ;;    issues CSV file for review and entry of updates.
@@ -49,13 +47,12 @@
 
 
 
-;;; ## 1. SEN2 Blade CSV Export
-^{::clerk/viewer clerk/md}
-(format "Read from:  \n`%s`" plans-placements/sen2-blade-csv-dir)
+;;; ## 1. SEN2 Blade
+;; Read from:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-(-> plans-placements/sen2-blade-csv-file-names
-    ((fn [m] (tc/dataset {"File Name"  (vals m)
-                          "Module key" (keys m)}))))
+(-> plans-placements/sen2-blade-csv-file-paths
+    ((fn [m] (tc/dataset {"Module key" (keys m)
+                          "File Path"  (vals m)}))))
 
 ;; NOTE: The `person` module should be de-identified as follows:
 ;; - [x] Contents of the `surname` field deleted.
@@ -71,7 +68,7 @@
 ;;; ## 2. Plans & placements on census dates
 ^{::clerk/viewer   clerk/md
   ::clerk/no-cache true}
-((comp :doc meta) #'sen2-blade-csv-plans-placements/plans-placements-on-census-dates)
+((comp :doc meta) #'sen2-blade-plans-placements/plans-placements-on-census-dates)
 
 
 ;;; ### Census dates
@@ -100,7 +97,7 @@ plans-placements/census-dates-ds
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels @plans-placements/plans-placements-on-census-dates
-                         sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label)
+                         plans-placements/plans-placements-on-census-dates-col-name->label)
 
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: %s:"
@@ -114,8 +111,7 @@ plans-placements/census-dates-ds
 ;; `plans-placements-on-census-dates-issues` dataset structure:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels @plans-placements/plans-placements-on-census-dates-issues
-                         (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
-                          sen2-blade-csv-plans-placements/checks))
+                         plans-placements/plans-placements-on-census-dates-issues-col-name->label)
 
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: %s:"
@@ -126,8 +122,8 @@ plans-placements/census-dates-ds
 ;;; ### Issues summary
 ;; Summary of issues (& numbers of CYP & records) by `:census-date`:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(sen2-blade-csv-plans-placements/summarise-issues @plans-placements/plans-placements-on-census-dates-issues
-                                                  sen2-blade-csv-plans-placements/checks)
+(sen2-blade-plans-placements/summarise-issues @plans-placements/plans-placements-on-census-dates-issues
+                                              plans-placements/checks)
 
 
 ;;; ## 4. Compare Totals with DfE Caseload

@@ -1,9 +1,9 @@
 (ns plans-placements
-  "Extract & check plans & placements on census dates from SEN2 return Blade CSV Export."
+  "Extract & check plans & placements on census dates from SEN2 Blade."
   (:require [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
-            [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv.plans-placements :as sen2-blade-csv-plans-placements]))
+            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]
+            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]))
 
 
 ;;; # Parameters
@@ -19,9 +19,9 @@
   (sen2/census-years->census-dates-ds [2022 2023]))
 
 
-;;; ## SEN2 Blade CSV Export
-(def sen2-blade-csv-dir
-  "Directory containing SEN2 blade export CSV files"
+;;; ## SEN2 Blade
+(def sen2-blade-export-dir
+  "Directory containing SEN2 Blade export files"
   "./data/example-sen2-blade-csv-export/")
 
 (def sen2-blade-export-date-string
@@ -31,30 +31,32 @@
 
 
 ;;; # Read CSV files
-(def sen2-blade-csv-file-names
-  "Map of the SEN2 Blade CSV file names"
-  (sen2-blade-csv/file-names sen2-blade-export-date-string))
+(def sen2-blade-csv-file-paths
+  "Map of the SEN2 Blade export CSV file paths."
+  (sen2-blade-csv/file-paths sen2-blade-export-dir
+                             sen2-blade-export-date-string))
 
 (def sen2-blade-csv-ds-map
-  "Map of SEN2 Blade CSV Export datasets."
-  (delay (sen2-blade-csv/->ds-map sen2-blade-csv-dir
-                                  sen2-blade-csv-file-names)))
+  "Map of SEN2 Blade export CSV datasets."
+  (delay (sen2-blade-csv/file-paths->ds-map sen2-blade-csv-file-paths)))
 
 
 
 ;;; # Extract plans & placements on census dates
 (def plans-placements-on-census-dates
-  "Plans & placements on census dates (with person information)
-   from `sen2-blade-ds-map` for `:census-dates` in `census-dates-ds`."
-  (delay (sen2-blade-csv-plans-placements/plans-placements-on-census-dates @sen2-blade-csv-ds-map
-                                                                           census-dates-ds)))
+  "Plans & placements on census dates (with person information)."
+  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates @sen2-blade-csv-ds-map
+                                                                       census-dates-ds)))
 
+(def plans-placements-on-census-dates-col-name->label
+  "Column labels for display."
+  sen2-blade-plans-placements/plans-placements-on-census-dates-col-name->label)
 
 ;;; ## Write plans & placements file
 (comment
   (let [ds              @plans-placements-on-census-dates
         file-name-stem  (tc/dataset-name ds)
-        col-name->label sen2-blade-csv-plans-placements/plans-placements-on-census-dates-col-name->label]
+        col-name->label plans-placements-on-census-dates-col-name->label]
     (tc/write! (tc/dataset {:column-number (iterate inc 1)
                             :column-name   (map name   (tc/column-names ds))
                             :column-label  (map col-name->label (tc/column-names ds))})
@@ -66,20 +68,29 @@
 
 
 ;;; # Check for issues
+(def checks
+  "Definitions for checks for issues in dataset of plans & placements on census dates."
+  sen2-blade-plans-placements/checks)
+
 (def plans-placements-on-census-dates-issues
   "Selected columns of the `plans-placements-on-census-dates` dataset,
    for rows with issues flagged by `checks`,
    with issue flag columns,
-  and blank columns for manual updates."
-  (delay (sen2-blade-csv-plans-placements/issues->ds @plans-placements-on-census-dates
-                                                     sen2-blade-csv-plans-placements/checks)))
+   and blank columns for manual updates."
+  (delay (sen2-blade-plans-placements/issues->ds @plans-placements-on-census-dates
+                                                 checks)))
+
+(def plans-placements-on-census-dates-issues-col-name->label
+  "Column labels for display."
+  (sen2-blade-plans-placements/plans-placements-on-census-dates-issues-col-name->label
+   checks))
+
 
 ;;; ### Write issues file
 (comment
   (let [ds              @plans-placements-on-census-dates-issues
         file-name-stem  (tc/dataset-name ds)
-        col-name->label (sen2-blade-csv-plans-placements/plans-placements-on-census-dates-issues-col-name->label
-                         sen2-blade-csv-plans-placements/checks)]
+        col-name->label plans-placements-on-census-dates-issues-col-name->label]
     (tc/write! (tc/dataset {:column-number (iterate inc 1)
                             :column-name   (map name   (tc/column-names ds))
                             :column-label  (map col-name->label (tc/column-names ds))})

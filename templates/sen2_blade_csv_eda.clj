@@ -1,5 +1,5 @@
 (ns sen2-blade-csv-eda
-  "Template notebook to read and document a SEN2 return COLLECT Blade CSV Export."
+  "EDA of SEN2 Blade read from from SEN2 Blade CSV export."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -10,8 +10,8 @@
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-            [witan.sen2.return.person-level.blade-export.csv :as sen2-blade-csv]
-            [witan.sen2.return.person-level.blade-export.csv.eda :as sen2-blade-csv-eda]))
+            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]
+            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
 
 ^{;; Notebook header
   ::clerk/no-cache true}
@@ -24,7 +24,7 @@
 
 
 
-;;; # SEN2 Blade CSV Export EDA
+;;; # SEN2 Blade EDA
 ;;; ## Parameters
 ;;; ### Output directory
 ^{::clerk/visibility {:result :hide}}
@@ -35,13 +35,13 @@
 (format "%s: `%s`." ((comp :doc meta) #'out-dir) out-dir)
 
 
-;;; ### SEN2 Blade CSV Export
+;;; ### SEN2 Blade Export
 ^{::clerk/visibility {:result :hide}}
-(def sen2-blade-csv-dir
-  "Directory containing SEN2 blade export CSV files"
+(def sen2-blade-export-dir
+  "Directory containing SEN2 Blade CSV export."
   "./data/example-sen2-blade-csv-export/")
 ^{::clerk/viewer clerk/md}
-(format "%s:  \n`%s`." ((comp :doc meta) #'sen2-blade-csv-dir) sen2-blade-csv-dir)
+(format "%s:  \n`%s`." ((comp :doc meta) #'sen2-blade-export-dir) sen2-blade-export-dir)
 
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-export-date-string
@@ -64,32 +64,40 @@
 ;;; ## Read CSV files
 ^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-file-names
-  "Map of the SEN2 Blade CSV file names"
+  "Map of the SEN2 Blade CSV export file names."
   (sen2-blade-csv/file-names sen2-blade-export-date-string))
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
 (into [["Key" "File Name" "Exists?"]]
       (map (fn [[k v]]
-             (let [path (str sen2-blade-csv-dir v)]
+             (let [path (str sen2-blade-export-dir v)]
                [k v (if (.exists (io/file path)) "✅" "❌")])))
       sen2-blade-csv-file-names)
 
 ^{::clerk/visibility {:result :hide}}
+(def sen2-blade-csv-file-paths
+  "Map of the SEN2 Blade CSV export file paths."
+  (update-vals sen2-blade-csv-file-names (partial str sen2-blade-export-dir)))
+
+^{::clerk/visibility {:result :hide}}
 (def sen2-blade-csv-ds-map
-  "Map of SEN2 Blade CSV Export datasets."
-  (sen2-blade-csv/->ds-map sen2-blade-csv-dir
-                           sen2-blade-csv-file-names))
+  "Map of SEN2 Blade datasets read from Blade CSV export."
+  (sen2-blade-csv/file-paths->ds-map sen2-blade-csv-file-paths))
 
 
 
 ;;; ## Dataset structure & categorical values
-(sen2-blade-csv-eda/report-csv-ds-map-info-all sen2-blade-csv-ds-map)
+(sen2-blade-eda/report-all-module-info
+ sen2-blade-csv-ds-map
+ {:module-titles                       sen2-blade-csv/module-titles
+  :module-col-name->label              sen2-blade-csv/module-col-name->label
+  :module-src-col-name->col-name       sen2-blade-csv/module-src-col-name->col-name})
 
 
 
 ;;; ## Database structure
-(sen2-blade-csv-eda/report-expected-schema)
-(sen2-blade-csv-eda/report-table-keys)
+(sen2-blade-eda/report-expected-schema)
+(sen2-blade-eda/report-table-keys)
 
 
 
@@ -99,7 +107,7 @@
 ;; - all foreign keys in child are contained in parent
 ;; - not all parent records have children
 ;; - some parents have multiple children
-(sen2-blade-csv-eda/report-key-relationships sen2-blade-csv-ds-map)
+(sen2-blade-eda/report-key-relationships sen2-blade-csv-ds-map)
 
 
 
@@ -109,13 +117,13 @@
   "Dataset of `:*table-id` key relationships."
   (sen2-blade-csv/ds-map->table-id-ds sen2-blade-csv-ds-map))
 
-(sen2-blade-csv-eda/report-table-id-ds sen2-blade-csv-table-id-ds)
+(sen2-blade-eda/report-table-id-ds sen2-blade-csv-table-id-ds)
 
 
 
 ;;; ## Composite keys
 ;; Note: OK if not a unique key without `requests-table-id`,
-(sen2-blade-csv-eda/report-composite-keys sen2-blade-csv-ds-map)
+(sen2-blade-eda/report-composite-keys sen2-blade-csv-ds-map)
 
 
 
