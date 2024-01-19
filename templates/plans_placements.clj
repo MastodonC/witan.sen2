@@ -50,13 +50,13 @@
 
 (def plans-placements-on-census-dates-col-name->label
   "Column labels for display."
-  sen2-blade-plans-placements/plans-placements-on-census-dates-col-name->label)
+  (delay sen2-blade-plans-placements/plans-placements-on-census-dates-col-name->label))
 
 ;;; ## Write plans & placements file
 (comment
   (let [ds              @plans-placements-on-census-dates
         file-name-stem  (tc/dataset-name ds)
-        col-name->label plans-placements-on-census-dates-col-name->label]
+        col-name->label @plans-placements-on-census-dates-col-name->label]
     (tc/write! (tc/dataset {:column-number (iterate inc 1)
                             :column-name   (map name   (tc/column-names ds))
                             :column-label  (map col-name->label (tc/column-names ds))})
@@ -82,15 +82,14 @@
 
 (def plans-placements-on-census-dates-issues-col-name->label
   "Column labels for display."
-  (sen2-blade-plans-placements/plans-placements-on-census-dates-issues-col-name->label
-   checks))
+  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates-issues-col-name->label checks)))
 
 
 ;;; ### Write issues file
 (comment
   (let [ds              @plans-placements-on-census-dates-issues
         file-name-stem  (tc/dataset-name ds)
-        col-name->label plans-placements-on-census-dates-issues-col-name->label]
+        col-name->label @plans-placements-on-census-dates-issues-col-name->label]
     (tc/write! (tc/dataset {:column-number (iterate inc 1)
                             :column-name   (map name   (tc/column-names ds))
                             :column-label  (map col-name->label (tc/column-names ds))})
