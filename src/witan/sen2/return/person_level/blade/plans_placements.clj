@@ -26,10 +26,9 @@
   (distinct (concat [:person-table-id] person-id-cols
                     [:requests-table-id]
                     [:census-year :census-date]
-                    [#_:age-at-start-of-school-year :ncy-nominal]
+                    [:ncy-nominal]
                     sen2-estab-keys
                     [:sen-type])))
-
 
 
 
@@ -327,7 +326,6 @@
 
 
 
-
 ;;; # Checks
 (def checks
   "Definitions for standard checks for issues in dataset of plans & placements on census dates."
@@ -606,52 +604,96 @@
 
 
 ;;; # CSV file read
+(def parser-fn
+  "Parser function for reading plans-placements-on-census-dates from CSV files."
+  {:sen2-table-id                     :string
+   :person-table-id                   :string
+   :requests-table-id                 :string
+   :assessment-table-id               :string
+   :named-plan-table-id               :string
+   :active-plans-table-id             :string
+   :placement-detail-table-id         :string
+   :sen-need-table-id                 :string
+   :census-year                       :int16
+   :census-date                       :local-date
+   :person?                           :boolean
+   :person-order-seq-column           :int32
+   :upn                               :string
+   :unique-learner-number             :string
+   :person-birth-date                 :local-date
+   :age-at-start-of-school-year       [:int8 parse-long]
+   :ncy-nominal                       [:int8 parse-long]
+   :named-plan?                       :boolean
+   :named-plan-order-seq-column       :int32
+   :start-date                        :local-date
+   :cease-date                        :local-date
+   :cease-reason                      [:int8 parse-long]
+   :active-plans?                     :boolean
+   :active-plans-order-seq-column     :int32
+   :transfer-la                       :string
+   :placement-detail?                 :boolean
+   :placement-detail-order-seq-column :int32
+   :urn                               :string
+   :ukprn                             :string
+   :sen-setting-other                 :string
+   :placement-rank                    [:int8 parse-long]
+   :entry-date                        :local-date
+   :leaving-date                      :local-date
+   :sen-unit-indicator                :boolean
+   :resourced-provision-indicator     :boolean
+   :sen-setting                       :string
+   :sen-need?                         :boolean
+   :sen-need-order-seq-column         :int32
+   :sen-type-rank                     [:int8 parse-long]
+   :sen-type                          :string})
+
 (defn csv-file->ds
   "Read columns required to construct census
    from CSV file of `plans-placements-on-census-dates` into a dataset."
-  [filepath]
+  [filepath & {:keys [column-allowlist key-fn parser-fn]
+               :or   {column-allowlist (map name cols-for-census)
+                      key-fn           keyword
+                      parser-fn        parser-fn}}]
   (tc/dataset filepath
-              {:column-allowlist (map name cols-for-census)
-               :key-fn           keyword
-               :parser-fn        (merge (select-keys sen2-blade-csv/parser-fn
-                                                     cols-for-census)
-                                        {:census-date                 :packed-local-date
-                                         :census-year                 :int16
-                                         :age-at-start-of-school-year [:int8 parse-long]
-                                         :ncy-nominal                 [:int8 parse-long]})}))
+              {:column-allowlist column-allowlist
+               :key-fn           key-fn
+               :parser-fn        parser-fn}))
 
 (defn updates-csv-file->ds
   "Read columns required to update columns for census
    from CSV file of `plans-placements-on-census-dates-issues`
    with update columns filled in into a dataset."
-  [filepath]
+  [filepath & {:keys [column-allowlist key-fn parser-fn]
+               :or   {column-allowlist (map name [:person-table-id
+                                                  :census-date
+                                                  :requests-table-id
+                                                  :update-drop?
+                                                  :update-ncy-nominal
+                                                  :update-urn
+                                                  :update-ukprn
+                                                  :update-sen-unit-indicator
+                                                  :update-resourced-provision-indicator
+                                                  :update-sen-setting
+                                                  :update-sen-type])
+                      key-fn           keyword
+                      parser-fn        (merge (select-keys parser-fn [:person-table-id
+                                                                      :census-date
+                                                                      :census-year
+                                                                      :requests-table-id])
+                                              {:update-drop? :boolean}
+                                              (-> parser-fn
+                                                  (select-keys [:ncy-nominal
+                                                                :urn
+                                                                :ukprn
+                                                                :sen-unit-indicator
+                                                                :resourced-provision-indicator
+                                                                :sen-setting
+                                                                :sen-type])
+                                                  (update-keys (comp keyword (partial str "update-") name))))}}]
   (tc/dataset filepath
-              {:column-allowlist (map name [:person-table-id
-                                            :census-date
-                                            :requests-table-id
-                                            :update-drop?
-                                            :update-ncy-nominal
-                                            :update-urn
-                                            :update-ukprn
-                                            :update-sen-unit-indicator
-                                            :update-resourced-provision-indicator
-                                            :update-sen-setting
-                                            :update-sen-type])
-               :key-fn           keyword
-               :parser-fn        (merge {:person-table-id    (sen2-blade-csv/parser-fn :person-table-id)
-                                         :census-date        :packed-local-date
-                                         :census-year        :int16
-                                         :requests-table-id  (sen2-blade-csv/parser-fn :requests-table-id)
-                                         :update-drop?       :boolean
-                                         :update-ncy-nominal [:int8 parse-long]}
-                                        (update-vals   {:update-urn                           :urn
-                                                        :update-ukprn                         :ukprn
-                                                        :update-sen-unit-indicator            :sen-unit-indicator
-                                                        :update-resourced-provision-indicator :resourced-provision-indicator
-                                                        :update-sen-setting                   :sen-setting
-                                                        :update-sen-type                      :sen-type}
-                                                       sen2-blade-csv/parser-fn))}))
-
+              {:column-allowlist column-allowlist
+               :key-fn           key-fn
+               :parser-fn        parser-fn}))
 
 
 
@@ -667,8 +709,8 @@
                                                   :update-sen-setting]
                       (fn [& args] (some some? args)))
       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
-      (tc/update-columns [:update-drop?] (partial map #(if % "✓" " ")))
-      (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "Δ" " ")))
+      (tc/update-columns [:update-drop?] (partial map #(if % "X" " ")))
+      (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "*" " ")))
       (tc/group-by [:census-date :update-drop? :update-ncy-nominal :update-sen2-establishment :update-sen-type])
       (tc/aggregate {:row-count tc/row-count})
       (tc/pivot->wider :census-date :row-count {:drop-missing? false})
