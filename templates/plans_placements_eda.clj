@@ -97,7 +97,7 @@ plans-placements/census-dates-ds
 
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels @plans-placements/plans-placements-on-census-dates
-                         plans-placements/plans-placements-on-census-dates-col-name->label)
+                         @plans-placements/plans-placements-on-census-dates-col-name->label)
 
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: %s:"
@@ -111,7 +111,7 @@ plans-placements/census-dates-ds
 ;; `plans-placements-on-census-dates-issues` dataset structure:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (column-info-with-labels @plans-placements/plans-placements-on-census-dates-issues
-                         plans-placements/plans-placements-on-census-dates-issues-col-name->label)
+                         @plans-placements/plans-placements-on-census-dates-issues-col-name->label)
 
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: %s:"
