@@ -2,7 +2,7 @@
   "Extract & check plans & placements on census dates from SEN2 Blade."
   (:require [tablecloth.api :as tc]
             [witan.sen2 :as sen2]
-            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]
+            [sen2-blade :as sen2-blade] ; <- replace with workpackage specific version
             [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]))
 
 
@@ -19,38 +19,17 @@
   (sen2/census-years->census-dates-ds [2022 2023]))
 
 
-;;; ## SEN2 Blade
-(def sen2-blade-export-dir
-  "Directory containing SEN2 Blade export files"
-  "./data/example-sen2-blade-csv-export/")
-
-(def sen2-blade-export-date-string
-  "Date (string) of COLLECT `Blade-Export`"
-  "31-03-2023")
-
-
-
-;;; # Read CSV files
-(def sen2-blade-csv-file-paths
-  "Map of the SEN2 Blade export CSV file paths."
-  (sen2-blade-csv/file-paths sen2-blade-export-dir
-                             sen2-blade-export-date-string))
-
-(def sen2-blade-csv-ds-map
-  "Map of SEN2 Blade export CSV datasets."
-  (delay (sen2-blade-csv/file-paths->ds-map sen2-blade-csv-file-paths)))
-
-
 
 ;;; # Extract plans & placements on census dates
 (def plans-placements-on-census-dates
   "Plans & placements on census dates (with person information)."
-  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates @sen2-blade-csv-ds-map
+  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates @sen2-blade/ds-map
                                                                        census-dates-ds)))
 
 (def plans-placements-on-census-dates-col-name->label
   "Column labels for display."
   (delay sen2-blade-plans-placements/plans-placements-on-census-dates-col-name->label))
+
 
 ;;; ## Write plans & placements file
 (comment
