@@ -44,7 +44,7 @@
 (into [["Module Key" "File Path" "Exists?"]]
       (map (fn [[k v]]
              [k v (if (.exists (io/file v)) "✅" "❌")]))
-      sen2-blade/csv-file-paths)
+      sen2-blade/file-paths)
 
 ;; NOTE: The `person` module should be de-identified as follows:
 ;; - [x] Contents of the `surname` field deleted.

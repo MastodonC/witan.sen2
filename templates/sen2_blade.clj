@@ -17,14 +17,14 @@
 
 
 ;;; # Read SEN2 Blade from CSV files
-(def csv-file-paths
+(def file-paths
   "Map of the SEN2 Blade export CSV file paths."
-  (sen2-blade-csv/file-paths export-dir
-                             export-date-string))
+  (sen2-blade-csv/make-file-paths export-dir
+                                  export-date-string))
 
 (def ds-map
   "Map of SEN2 Blade datasets."
-  (delay (sen2-blade-csv/file-paths->ds-map csv-file-paths)))
+  (delay (sen2-blade-csv/file-paths->ds-map file-paths)))
 
 (def table-id-ds
   "Dataset of `:*table-id` key relationships."

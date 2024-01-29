@@ -52,7 +52,7 @@
 ;;; ## 1. SEN2 Blade
 ;; Read by ns `sen2-blade` from:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-(-> sen2-blade/csv-file-paths
+(-> sen2-blade/file-paths
     ((fn [m] (tc/dataset {"Module key" (keys m)
                           "File Path"  (vals m)}))))
 
