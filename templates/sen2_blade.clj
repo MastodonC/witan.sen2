@@ -6,7 +6,7 @@
 
 ;;; # Parameters
 ;;; ## SEN2 Blade
-(def export-dir
+(def data-dir
   "Directory containing SEN2 Blade export files"
   "./data/example-sen2-blade-csv-export/")
 
@@ -17,10 +17,14 @@
 
 
 ;;; # Read SEN2 Blade from CSV files
+(def file-names
+  "Map of the SEN2 Blade export CSV file names."
+  (sen2-blade-csv/make-file-names export-date-string))
+
 (def file-paths
   "Map of the SEN2 Blade export CSV file paths."
-  (sen2-blade-csv/make-file-paths export-dir
-                                  export-date-string))
+  (sen2-blade-csv/make-file-paths export-date-string
+                                  data-dir))
 
 (def ds-map
   "Map of SEN2 Blade datasets."

@@ -36,12 +36,13 @@
 
 
 ;;; ### SEN2 Blade
-;; Read from:
+^{::clerk/viewer clerk/md}
+(format "Read from: `%s`:" sen2-blade/data-dir)
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-(into [["Module Key" "File Path" "Exists?"]]
+(into [["Module Key" "File Name" "Exists?"]]
       (map (fn [[k v]]
-             [k v (if (.exists (io/file v)) "✅" "❌")]))
-      sen2-blade/file-paths)
+             [k v (if (.exists (io/file (str sen2-blade/data-dir v))) "✅" "❌")]))
+      sen2-blade/file-names)
 
 ;; NOTE: The `person` module should be de-identified as follows:
 ;; - [x] Contents of the `surname` field deleted.

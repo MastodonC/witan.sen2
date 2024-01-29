@@ -4,6 +4,8 @@
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter]))
 
+
+
 ;;; # Utility functions
 (defn- parse-date
   "Function to parse date strings of the form \"2022-Sep-28 00:00:00\" to `:local-date`"
@@ -62,9 +64,9 @@
    (fn [v] (format v export-date))))
 
 (defn make-file-paths
-  "Generate default Blade CSV export file paths for `export-date` (as string in \"DD-MM-YYYY\" format) in `export-dir`."
-  [export-dir export-date]
-  (update-vals (make-file-names export-date) (partial str export-dir)))
+  "Generate default Blade CSV export file paths for `export-date` (as string in \"DD-MM-YYYY\" format) in `data-dir`."
+  [export-date data-dir]
+  (update-vals (make-file-names export-date) (partial str data-dir)))
 
 
 ;;; ## Module 0: SEN2 metadata (`sen2`)

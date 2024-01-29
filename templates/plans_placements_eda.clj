@@ -11,9 +11,9 @@
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
 	    [witan.send.adroddiad.tablecloth-utils :as tc-utils]
+            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
             [sen2-blade :as sen2-blade] ; <- replace with workpackage specific version
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
-            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
             [witan.sen2.ehcp-stats :as ehcp-stats]))
 
 
@@ -29,7 +29,7 @@
 
 
 
-;;; # Plans & Placements
+;;; # Plans & Placements EDA
 ;; 1. Get the SEN2 Blade.
 ;; 2. Extract plans & placements on census dates.
 ;; 3. Identify issues in the dataset of plans & placements and create an
@@ -50,11 +50,12 @@
 
 
 ;;; ## 1. SEN2 Blade
-;; Read by ns `sen2-blade` from:
+^{::clerk/viewer clerk/md}
+(format "Read from: `%s`:" sen2-blade/data-dir)
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-(-> sen2-blade/file-paths
+(-> sen2-blade/file-names
     ((fn [m] (tc/dataset {"Module key" (keys m)
-                          "File Path"  (vals m)}))))
+                          "File Name"  (vals m)}))))
 
 
 
@@ -76,9 +77,9 @@ plans-placements/census-dates-ds
                                   @plans-placements/plans-placements-on-census-dates-col-name->label)
 
 ^{::clerk/viewer clerk/md}
-(format "Wrote `%s`  \nto working directory: %s:"
+(format "Wrote `%s`  \nto working directory: `%s`:"
         (tc/dataset-name @plans-placements/plans-placements-on-census-dates)
-        out-dir)
+        plans-placements/out-dir)
 
 
 
@@ -90,9 +91,9 @@ plans-placements/census-dates-ds
                                   @plans-placements/plans-placements-on-census-dates-issues-col-name->label)
 
 ^{::clerk/viewer clerk/md}
-(format "Wrote `%s`  \nto working directory: %s:"
+(format "Wrote `%s`  \nto working directory: `%s`:"
         (tc/dataset-name @plans-placements/plans-placements-on-census-dates-issues)
-        out-dir)
+        plans-placements/out-dir)
 
 
 ;;; ### Issues summary
