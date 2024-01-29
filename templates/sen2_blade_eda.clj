@@ -38,9 +38,6 @@
 ;;; ### SEN2 Blade
 ;; Read from:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-#_(-> sen2-blade/sen2-blade-csv-file-paths
-      ((fn [m] (tc/dataset {"Module key" (keys m)
-                            "File Path"  (vals m)}))))
 (into [["Module Key" "File Path" "Exists?"]]
       (map (fn [[k v]]
              [k v (if (.exists (io/file v)) "✅" "❌")]))
