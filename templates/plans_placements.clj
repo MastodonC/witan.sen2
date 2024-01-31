@@ -28,7 +28,9 @@
 
 (def plans-placements-on-census-dates-col-name->label
   "Column labels for display."
-  (delay sen2-blade-plans-placements/plans-placements-on-census-dates-col-name->label))
+  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates-col-name->label
+          :census-dates sen2/census-dates-col-name->label
+          sen2-blade/module-col-name->label)))
 
 
 ;;; ## Write plans & placements file
@@ -61,10 +63,12 @@
 
 (def plans-placements-on-census-dates-issues-col-name->label
   "Column labels for display."
-  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates-issues-col-name->label checks)))
+  (delay (sen2-blade-plans-placements/plans-placements-on-census-dates-issues-col-name->label
+          {:plans-placements-on-census-dates-col-name->label @plans-placements-on-census-dates-col-name->label
+           :checks                                           checks})))
 
 
-;;; ### Write issues file
+;;; ## Write issues file
 (comment
   (let [ds              @plans-placements-on-census-dates-issues
         file-name-stem  (tc/dataset-name ds)

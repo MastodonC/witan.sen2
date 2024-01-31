@@ -608,29 +608,13 @@
 
 
 ;;; # Functions to manipulate the SEN2 datasets
-(def col-name->label
-  "Map SEN2 dataset column names to display labels."
-  (merge sen2-col-name->label
-         person-col-name->label
-         requests-col-name->label
-         assessment-col-name->label
-         named-plan-col-name->label
-         plan-detail-col-name->label
-         active-plans-col-name->label
-         placement-detail-col-name->label
-         sen-need-col-name->label))
-
 (def parser-fn
   "Collated parser functions for all SEN2 modules."
-  (merge sen2-parser-fn
-         person-parser-fn
-         requests-parser-fn
-         assessment-parser-fn
-         named-plan-parser-fn
-         plan-detail-parser-fn
-         active-plans-parser-fn
-         placement-detail-parser-fn
-         sen-need-parser-fn))
+  (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg))
+
+(def col-name->label
+  "Map SEN2 dataset column names to display labels."
+  (apply merge (vals module-col-name->label)))
 
 
 

@@ -3,15 +3,19 @@
    (with person details and EHCP primary need) from SEN2 Blade."
   (:require [clojure.string :as string]
             [tablecloth.api :as tc]
-            [witan.sen2 :as sen2]
             [witan.sen2.ncy :as ncy]
-            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]
+            [witan.sen2.return.person-level.blade.csv :as sen2-blade]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]))
 
 
 
 
 ;;; # Definitions
+(def sen2-blade-table-id-col-names
+  "SEN2 Blade `:*-table-id` column names"
+  [:sen2-table-id :person-table-id :requests-table-id
+   :assessment-table-id :named-plan-table-id :plan-detail-table-id
+   :active-plans-table-id :placement-detail-table-id :sen-need-table-id])
 
 (def person-id-cols
   "Person ID columns to carry through from `person` table (in addition to `:person-table-id`)."
@@ -61,8 +65,8 @@
 (defn person-on-census-dates
   "Selected columns from `person` table with record for each of `census-dates-ds`,
    with age at the start of school year containing the `:census-date` and corresponding nominal NCY."
-  [sen2-blade-csv-ds-map census-dates-ds]
-  (-> (:person sen2-blade-csv-ds-map)
+  [sen2-blade-ds-map census-dates-ds]
+  (-> (:person sen2-blade-ds-map)
       (tc/select-columns (distinct (concat [:sen2-table-id :person-table-id]
                                            person-id-cols
                                            [:person-birth-date])))
@@ -73,13 +77,14 @@
                          :ncy-nominal                 :int8})
       (tc/set-dataset-name "person-on-census-dates")))
 
-(def person-on-census-dates-col-name->label
-  "Column labels for display."
-  (merge (select-keys sen2-blade-csv/person-col-name->label
-                      (distinct (concat [:sen2-table-id :person-table-id]
-                                        person-id-cols
-                                        [:person-birth-date])))
-         sen2/census-dates-col-name->label
+(defn person-on-census-dates-col-name->label
+  "Column labels for display, given mappings of col-name->label for `person` and `census-dates` datasets."
+  [& {:keys [person census-dates]}]
+  (merge (select-keys person
+                      (concat [:sen2-table-id :person-table-id]
+                              person-id-cols
+                              [:person-birth-date]))
+         census-dates
          {:age-at-start-of-school-year "Age at start of school year"
           :ncy-nominal                 "Nominal NCY for age"}))
 
@@ -99,22 +104,22 @@
     this may include plans that were with another LA,
     prior to transferring in later during the collection year.
   "
-  [sen2-blade-csv-ds-map census-dates-ds]
-  (-> (sen2-blade-csv-ds-map :named-plan)
+  [sen2-blade-ds-map census-dates-ds]
+  (-> (sen2-blade-ds-map :named-plan)
       (extract-episodes-on-census-dates census-dates-ds :start-date :cease-date)
-      (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds sen2-blade-csv-ds-map :named-plan-table-id)
+      (tc/left-join (sen2-blade/ds-map->ancestor-table-id-ds sen2-blade-ds-map :named-plan-table-id)
                     [:assessment-table-id])
       (tc/drop-columns [:table-id-ds.assessment-table-id])
-      (tc/order-by        (concat sen2-blade-csv/table-id-col-names [:census-date]))
-      (tc/reorder-columns (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds)))
+      (tc/order-by        (concat sen2-blade-table-id-col-names [:census-date]))
+      (tc/reorder-columns (concat sen2-blade-table-id-col-names (tc/column-names census-dates-ds)))
       (tc/set-dataset-name "named-plan-on-census-dates")))
 
-(def named-plan-on-census-dates-col-name->label
-  "Column labels for display."
-  (merge sen2-blade-csv/table-id-col-name->label
-         sen2/census-dates-col-name->label
-         sen2-blade-csv/named-plan-col-name->label))
-
+(defn named-plan-on-census-dates-col-name->label
+  "Column labels for display, given mappings of col-name->label for `named-plan` and `census-dates` datasets."
+  [& {:keys [named-plan census-dates]}]
+  (merge sen2-blade/table-id-col-name->label
+         census-dates
+         named-plan))
 
 
 ;;; ## `placement-detail`s on census dates
@@ -138,10 +143,10 @@
   1 placement on a census date ends before the next census date
   but the rank 2 placement continues beyond it.
   "
-  [sen2-blade-csv-ds-map census-dates-ds]
-  (-> (sen2-blade-csv-ds-map :placement-detail)
+  [sen2-blade-ds-map census-dates-ds]
+  (-> (sen2-blade-ds-map :placement-detail)
       (extract-episodes-on-census-dates census-dates-ds :entry-date :leaving-date )
-      (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds sen2-blade-csv-ds-map :placement-detail-table-id)
+      (tc/left-join (sen2-blade/ds-map->ancestor-table-id-ds sen2-blade-ds-map :placement-detail-table-id)
                     [:active-plans-table-id])
       (tc/drop-columns [:table-id-ds.active-plans-table-id])
       ;; Add `:census-date-placement-idx` to index multiple placements in `:placement-rank` order.
@@ -150,16 +155,17 @@
       (tc/add-column :census-date-placement-idx (range))
       (tc/ungroup)
       ;; Order
-      (tc/order-by        (concat sen2-blade-csv/table-id-col-names [:census-date] [:placement-rank]))
-      (tc/reorder-columns (concat sen2-blade-csv/table-id-col-names (tc/column-names census-dates-ds) [:census-date-placement-idx]))
+      (tc/order-by        (concat sen2-blade-table-id-col-names [:census-date] [:placement-rank]))
+      (tc/reorder-columns (concat sen2-blade-table-id-col-names (tc/column-names census-dates-ds) [:census-date-placement-idx]))
       (tc/set-dataset-name "placement-detail-on-census-dates")))
 
-(def placement-detail-on-census-dates-col-name->label
-  "Column labels for display."
-  (merge sen2-blade-csv/table-id-col-name->label
-         sen2/census-dates-col-name->label
+(defn placement-detail-on-census-dates-col-name->label
+  "Column labels for display, given mappings of col-name->label for `placement-detail` and `census-dates` datasets."
+  [& {:keys [placement-detail census-dates]}]
+  (merge sen2-blade/table-id-col-name->label
+         census-dates
          {:census-date-placement-idx "Census date placement index"}
-         sen2-blade-csv/placement-detail-col-name->label))
+         placement-detail))
 
 
 
@@ -167,20 +173,21 @@
 
 (defn sen-need-primary
   "Primary SEN need from `sen-need`, where primary is `:sen-type-rank`=1, with ancestor table IDs."
-  [sen2-blade-csv-ds-map] 
-  (-> (sen2-blade-csv-ds-map :sen-need)
+  [sen2-blade-ds-map]
+  (-> (sen2-blade-ds-map :sen-need)
       (tc/select-rows #(= 1 (:sen-type-rank %)))
-      (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds sen2-blade-csv-ds-map :sen-need-table-id)
+      (tc/left-join (sen2-blade/ds-map->ancestor-table-id-ds sen2-blade-ds-map :sen-need-table-id)
                     [:active-plans-table-id])
       (tc/drop-columns [:table-id-ds.active-plans-table-id])
-      (tc/order-by        sen2-blade-csv/table-id-col-names)
-      (tc/reorder-columns sen2-blade-csv/table-id-col-names)
+      (tc/order-by        sen2-blade-table-id-col-names)
+      (tc/reorder-columns sen2-blade-table-id-col-names)
       (tc/set-dataset-name "sen-need-primary")))
 
-(def sen-need-primary-col-name->label
-  "Column labels for display."
-  (merge sen2-blade-csv/table-id-col-name->label
-         sen2-blade-csv/sen-need-col-name->label))
+(defn sen-need-primary-col-name->label
+  "Column labels for display, given mappings of col-name->label for `sen-need` dataset."
+  [& {:keys [sen-need]}]
+  (merge sen2-blade/table-id-col-name->label
+         sen-need))
 
 
 
@@ -224,100 +231,100 @@
      (rather than `:calendar-year` & `:academic-year`).
    - Unique key is [`:person-table-id` `:requests-table-id` `:census-date`]:
      CYP with `named-plan`s or `placement-detail`s from more than one `request`
-     on a `:census-date` will have more than one record for that `:census-date`.
-  "
-  ([sen2-blade-csv-ds-map census-dates-ds] (plans-placements-on-census-dates sen2-blade-csv-ds-map census-dates-ds {}))
-  ([sen2-blade-csv-ds-map census-dates-ds {:keys [person-on-census-dates-ds
-                                                  named-plan-on-census-dates-ds
-                                                  placement-detail-on-census-dates-ds
-                                                  sen-need-primary-ds]}]
-   (let [person-on-census-dates-ds           (or person-on-census-dates-ds
-                                                 (person-on-census-dates sen2-blade-csv-ds-map census-dates-ds))
-         named-plan-on-census-dates-ds       (or named-plan-on-census-dates-ds
-                                                 (named-plan-on-census-dates sen2-blade-csv-ds-map census-dates-ds))
-         placement-detail-on-census-dates-ds (or placement-detail-on-census-dates-ds
-                                                 (placement-detail-on-census-dates sen2-blade-csv-ds-map census-dates-ds))
-         sen-need-primary-ds                 (or sen-need-primary-ds
-                                                 (sen-need-primary sen2-blade-csv-ds-map))]
-     (-> (tc/full-join (-> named-plan-on-census-dates-ds
-                           (tc/select-columns [:sen2-table-id :person-table-id :requests-table-id :assessment-table-id
-                                               :named-plan-table-id :named-plan-order-seq-column
-                                               :census-date
-                                               :start-date :cease-date :cease-reason])
-                           (tc/add-column :named-plan? true)
-                           (tc/set-dataset-name "named-plan"))
-                       (-> placement-detail-on-census-dates-ds
-                           (tc/select-rows (comp zero? :census-date-placement-idx))
-                           (tc/select-columns (distinct (concat [:sen2-table-id :person-table-id :requests-table-id :active-plans-table-id
-                                                                 :placement-detail-table-id :placement-detail-order-seq-column
-                                                                 :census-date
-                                                                 :entry-date :leaving-date :placement-rank]
-                                                                sen2-estab-keys
-                                                                [:sen-setting-other])))
-                           (tc/add-column :placement-detail? true)
-                           (tc/set-dataset-name "placement-detail"))
-                       [:sen2-table-id :person-table-id :requests-table-id :census-date])
-         ;; As full (outer) join the join keys may be nil in either dataset so coalesce into single column.
-         (tc/map-columns :sen2-table-id      [:sen2-table-id     :placement-detail.sen2-table-id    ] #(or %1 %2))
-         (tc/map-columns :person-table-id    [:person-table-id   :placement-detail.person-table-id  ] #(or %1 %2))
-         (tc/map-columns :requests-table-id  [:requests-table-id :placement-detail.requests-table-id] #(or %1 %2))
-         (tc/map-columns :census-date        [:census-date       :placement-detail.census-date      ] #(or %1 %2))
-         (tc/drop-columns #"^:placement-detail\..+$")
-         ;;
-         ;; Merge in `sen-need` EHCP primary need (if available)
-         (tc/left-join (-> sen-need-primary-ds
-                           (tc/select-columns [:sen2-table-id :person-table-id :requests-table-id :active-plans-table-id
-                                               :sen-need-table-id :sen-need-order-seq-column
-                                               :sen-type-rank :sen-type])
-                           (tc/add-column :sen-need? true)
-                           (tc/set-dataset-name "sen-need"))
-                       [:sen2-table-id :person-table-id :requests-table-id])
-         ;; As may have merged in a `sen-need` record for a `named-plan-on-census-dates-ds` without
-         ;; a `placement-detail-on-census-dates-ds`, coalesce the `:active-plans-table-id`.
-         (tc/map-columns :active-plans-table-id [:active-plans-table-id :sen-need.active-plans-table-id] #(or %1 %2))
-         (tc/drop-columns #"^:sen-need\..+$")
-         ;;
-         ;; Merge in `active-plans` (if available)
-         (tc/left-join (-> (sen2-blade-csv-ds-map :active-plans)
-                           (tc/select-columns [:requests-table-id
-                                               :active-plans-table-id :active-plans-order-seq-column
-                                               :transfer-la])
-                           (tc/add-column :active-plans? true)
-                           (tc/set-dataset-name "active-plans"))
-                       [:requests-table-id])
-         (tc/drop-columns #"^:active-plans\..+$")
-         ;;
-         ;; Merge in `personal` details, inc. age & NCY for census dates (also bring in other `census-dates-ds` columns here)
-         (tc/left-join (-> person-on-census-dates-ds
-                           #_(tc/select-columns (distinct (concat [:sen2-table-id :person-table-id]
-                                                                  person-id-cols
-                                                                  [:person-birth-date]
-                                                                  (tc/column-names census-dates-ds)
-                                                                  [:age-at-start-of-school-year :ncy-nominal])))
-                           (tc/add-column :person? true)
-                           (tc/set-dataset-name "person"))
-                       [:sen2-table-id :person-table-id :census-date])
-         (tc/drop-columns #"^:person\..+$")
-         ;; Arrange dataset
-         (tc/reorder-columns (distinct (concat sen2-blade-csv/table-id-col-names
-                                               [                  ] (tc/column-names census-dates-ds)
-                                               [:person?          ] (tc/column-names person-on-census-dates-ds)
-                                               [:named-plan?      ] (tc/column-names named-plan-on-census-dates-ds)
-                                               [:active-plans?    ] (tc/column-names (sen2-blade-csv-ds-map :active-plans))
-                                               [:placement-detail?] (tc/column-names placement-detail-on-census-dates-ds)
-                                               [:sen-need?        ] (tc/column-names sen-need-primary-ds))))
-         (tc/order-by [:person-table-id :census-date :requests-table-id])
-         (tc/set-dataset-name "plans-placements-on-census-dates")))))
+     on a `:census-date` will have more than one record for that `:census-date`."
+  [sen2-blade-ds-map census-dates-ds & {:keys [person-on-census-dates-ds
+                                               named-plan-on-census-dates-ds
+                                               placement-detail-on-census-dates-ds
+                                               sen-need-primary-ds]}]
+  (let [person-on-census-dates-ds           (or person-on-census-dates-ds
+                                                (person-on-census-dates sen2-blade-ds-map census-dates-ds))
+        named-plan-on-census-dates-ds       (or named-plan-on-census-dates-ds
+                                                (named-plan-on-census-dates sen2-blade-ds-map census-dates-ds))
+        placement-detail-on-census-dates-ds (or placement-detail-on-census-dates-ds
+                                                (placement-detail-on-census-dates sen2-blade-ds-map census-dates-ds))
+        sen-need-primary-ds                 (or sen-need-primary-ds
+                                                (sen-need-primary sen2-blade-ds-map))]
+    (-> (tc/full-join (-> named-plan-on-census-dates-ds
+                          (tc/select-columns [:sen2-table-id :person-table-id :requests-table-id :assessment-table-id
+                                              :named-plan-table-id :named-plan-order-seq-column
+                                              :census-date
+                                              :start-date :cease-date :cease-reason])
+                          (tc/add-column :named-plan? true)
+                          (tc/set-dataset-name "named-plan"))
+                      (-> placement-detail-on-census-dates-ds
+                          (tc/select-rows (comp zero? :census-date-placement-idx))
+                          (tc/select-columns (distinct (concat [:sen2-table-id :person-table-id :requests-table-id :active-plans-table-id
+                                                                :placement-detail-table-id :placement-detail-order-seq-column
+                                                                :census-date
+                                                                :entry-date :leaving-date :placement-rank]
+                                                               sen2-estab-keys
+                                                               [:sen-setting-other])))
+                          (tc/add-column :placement-detail? true)
+                          (tc/set-dataset-name "placement-detail"))
+                      [:sen2-table-id :person-table-id :requests-table-id :census-date])
+        ;; As full (outer) join the join keys may be nil in either dataset so coalesce into single column.
+        (tc/map-columns :sen2-table-id      [:sen2-table-id     :placement-detail.sen2-table-id    ] #(or %1 %2))
+        (tc/map-columns :person-table-id    [:person-table-id   :placement-detail.person-table-id  ] #(or %1 %2))
+        (tc/map-columns :requests-table-id  [:requests-table-id :placement-detail.requests-table-id] #(or %1 %2))
+        (tc/map-columns :census-date        [:census-date       :placement-detail.census-date      ] #(or %1 %2))
+        (tc/drop-columns #"^:placement-detail\..+$")
+        ;;
+        ;; Merge in `sen-need` EHCP primary need (if available)
+        (tc/left-join (-> sen-need-primary-ds
+                          (tc/select-columns [:sen2-table-id :person-table-id :requests-table-id :active-plans-table-id
+                                              :sen-need-table-id :sen-need-order-seq-column
+                                              :sen-type-rank :sen-type])
+                          (tc/add-column :sen-need? true)
+                          (tc/set-dataset-name "sen-need"))
+                      [:sen2-table-id :person-table-id :requests-table-id])
+        ;; As may have merged in a `sen-need` record for a `named-plan-on-census-dates-ds` without
+        ;; a `placement-detail-on-census-dates-ds`, coalesce the `:active-plans-table-id`.
+        (tc/map-columns :active-plans-table-id [:active-plans-table-id :sen-need.active-plans-table-id] #(or %1 %2))
+        (tc/drop-columns #"^:sen-need\..+$")
+        ;;
+        ;; Merge in `active-plans` (if available)
+        (tc/left-join (-> (sen2-blade-ds-map :active-plans)
+                          (tc/select-columns [:requests-table-id
+                                              :active-plans-table-id :active-plans-order-seq-column
+                                              :transfer-la])
+                          (tc/add-column :active-plans? true)
+                          (tc/set-dataset-name "active-plans"))
+                      [:requests-table-id])
+        (tc/drop-columns #"^:active-plans\..+$")
+        ;;
+        ;; Merge in `personal` details, inc. age & NCY for census dates (also bring in other `census-dates-ds` columns here)
+        (tc/left-join (-> person-on-census-dates-ds
+                          #_(tc/select-columns (distinct (concat [:sen2-table-id :person-table-id]
+                                                                 person-id-cols
+                                                                 [:person-birth-date]
+                                                                 (tc/column-names census-dates-ds)
+                                                                 [:age-at-start-of-school-year :ncy-nominal])))
+                          (tc/add-column :person? true)
+                          (tc/set-dataset-name "person"))
+                      [:sen2-table-id :person-table-id :census-date])
+        (tc/drop-columns #"^:person\..+$")
+        ;; Arrange dataset
+        (tc/reorder-columns (distinct (concat sen2-blade-table-id-col-names
+                                              [                  ] (tc/column-names census-dates-ds)
+                                              [:person?          ] (tc/column-names person-on-census-dates-ds)
+                                              [:named-plan?      ] (tc/column-names named-plan-on-census-dates-ds)
+                                              [:active-plans?    ] (tc/column-names (sen2-blade-ds-map :active-plans))
+                                              [:placement-detail?] (tc/column-names placement-detail-on-census-dates-ds)
+                                              [:sen-need?        ] (tc/column-names sen-need-primary-ds))))
+        (tc/order-by [:person-table-id :census-date :requests-table-id])
+        (tc/set-dataset-name "plans-placements-on-census-dates"))))
 
-(def plans-placements-on-census-dates-col-name->label
-  "Column labels for display."
-  (merge  sen2-blade-csv/table-id-col-name->label
-          sen2/census-dates-col-name->label
-          person-on-census-dates-col-name->label
-          named-plan-on-census-dates-col-name->label
-          placement-detail-on-census-dates-col-name->label
-          sen2-blade-csv/active-plans-col-name->label
-          sen-need-primary-col-name->label
+(defn plans-placements-on-census-dates-col-name->label
+  "Column labels for display, given mappings of col-name->label for `person`, `named-plan`,
+  `placement-detail`, `active-plans`, `sen-need` and `census-dates` datasets."
+  [& {:keys [person named-plan placement-detail active-plans sen-need census-dates]}]
+  (merge  sen2-blade/table-id-col-name->label
+          census-dates
+          (person-on-census-dates-col-name->label :person person)
+          (named-plan-on-census-dates-col-name->label :named-plan named-plan)
+          (placement-detail-on-census-dates-col-name->label :placement-detail placement-detail)
+          active-plans
+          (sen-need-primary-col-name->label :sen-need sen-need)
           {:person?           "Got CYP details from `person`?"
            :named-plan?       "Got named plan from `named-plan`?"
            :active-plans?     "Got active plan from `active plans`?"
@@ -473,11 +480,11 @@
 
 (defn plans-placements-on-census-dates-issues-flagged-col-name->label
   "Column labels for display"
-  ([]
-   (plans-placements-on-census-dates-issues-flagged-col-name->label checks))
-  ([checks']
-   (merge plans-placements-on-census-dates-col-name->label
-          (update-vals checks' :label))))
+  [& {:keys [plans-placements-on-census-dates-col-name->label
+             checks]
+      :or   {checks checks}}]
+  (merge plans-placements-on-census-dates-col-name->label
+         (update-vals checks :label)))
 
 (def names-of-update-cols
   "Names of columns to add to issues dataset for updates."
@@ -536,17 +543,17 @@
 
 (defn plans-placements-on-census-dates-issues-col-name->label
   "Column labels for display."
-  ([]
-   (plans-placements-on-census-dates-issues-col-name->label checks))
-  ([checks']
-   (merge plans-placements-on-census-dates-col-name->label
-          (update-vals checks' :label)
-          (reduce (fn [m k] (assoc m k (-> k
-                                           name
-                                           (#(string/replace % "update-" ""))
-                                           (#(plans-placements-on-census-dates-col-name->label (keyword %) %))
-                                           ((partial str "Update: ")))))
-                  {} names-of-update-cols))))
+  [& {:keys [plans-placements-on-census-dates-col-name->label
+             checks]
+      :or   {checks checks}}]
+  (merge plans-placements-on-census-dates-col-name->label
+         (update-vals checks :label)
+         (reduce (fn [m k] (assoc m k (-> k
+                                          name
+                                          (#(string/replace % "update-" ""))
+                                          (#(plans-placements-on-census-dates-col-name->label (keyword %) %))
+                                          ((partial str "Update: ")))))
+                 {} names-of-update-cols)))
 
 (defn issues->ds
   "Run `checks'` on `plans-placements-on-census-dates` dataset, extracting
