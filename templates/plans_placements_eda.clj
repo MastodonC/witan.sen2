@@ -10,7 +10,9 @@
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
+	    [witan.send.adroddiad.tablecloth-utils :as tc-utils]
             [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
+            [sen2-blade :as sen2-blade] ; <- replace with workpackage specific version
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
             [witan.sen2.ehcp-stats :as ehcp-stats]))
 
@@ -27,7 +29,7 @@
 
 
 
-;;; # Plans & Placements
+;;; # Plans & Placements EDA
 ;; 1. Get the SEN2 Blade.
 ;; 2. Extract plans & placements on census dates.
 ;; 3. Identify issues in the dataset of plans & placements and create an
@@ -48,20 +50,12 @@
 
 
 ;;; ## 1. SEN2 Blade
-;; Read from:
+^{::clerk/viewer clerk/md}
+(format "Read from: `%s`:" sen2-blade/data-dir)
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-(-> plans-placements/sen2-blade-csv-file-paths
+(-> sen2-blade/file-names
     ((fn [m] (tc/dataset {"Module key" (keys m)
-                          "File Path"  (vals m)}))))
-
-;; NOTE: The `person` module should be de-identified as follows:
-;; - [x] Contents of the `surname` field deleted.
-;; - [x] Contents of the `forename` field deleted.
-;; - [x] Contents of `personbirthdate`
-;;       (which were of the form "YYYY-Mmm-DD 00:00:00")
-;;       edited to first day of the month
-;;       (so of the form "YYYY-Mmm-01 00:00:00").
-;; - [x] Contents of the `postcode` field deleted.
+                          "File Name"  (vals m)}))))
 
 
 
@@ -78,31 +72,14 @@ plans-placements/census-dates-ds
 
 ;;; ### `plans-placements-on-census-dates` dataset 
 ;; `plans-placements-on-census-dates` dataset structure:
-^{::clerk/visibility {:result :hide}}
-(defn- column-info-with-labels
-  "Selected column info with labels."
-  [ds ds-col-name->label]
-  (-> ds
-      tc/info
-      (tc/select-columns [:col-name :datatype :n-valid :n-missing :min :max])
-      (tc/map-columns :col-label [:col-name] ds-col-name->label)
-      (tc/reorder-columns [:col-name :col-label])
-      (tc/rename-columns {:col-name  "Column Name"
-                          :col-label "Column Label"
-                          :datatype  "Data Type"
-                          :n-valid   "# Valid"
-                          :n-missing "# Missing"
-                          :min       "Min"
-                          :max       "Max"})))
-
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(column-info-with-labels @plans-placements/plans-placements-on-census-dates
-                         @plans-placements/plans-placements-on-census-dates-col-name->label)
+(tc-utils/column-info-with-labels @plans-placements/plans-placements-on-census-dates
+                                  @plans-placements/plans-placements-on-census-dates-col-name->label)
 
 ^{::clerk/viewer clerk/md}
-(format "Wrote `%s`  \nto working directory: %s:"
+(format "Wrote `%s`  \nto working directory: `%s`:"
         (tc/dataset-name @plans-placements/plans-placements-on-census-dates)
-        out-dir)
+        plans-placements/out-dir)
 
 
 
@@ -110,13 +87,13 @@ plans-placements/census-dates-ds
 ;;; ### Issues dataset
 ;; `plans-placements-on-census-dates-issues` dataset structure:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(column-info-with-labels @plans-placements/plans-placements-on-census-dates-issues
-                         @plans-placements/plans-placements-on-census-dates-issues-col-name->label)
+(tc-utils/column-info-with-labels @plans-placements/plans-placements-on-census-dates-issues
+                                  @plans-placements/plans-placements-on-census-dates-issues-col-name->label)
 
 ^{::clerk/viewer clerk/md}
-(format "Wrote `%s`  \nto working directory: %s:"
+(format "Wrote `%s`  \nto working directory: `%s`:"
         (tc/dataset-name @plans-placements/plans-placements-on-census-dates-issues)
-        out-dir)
+        plans-placements/out-dir)
 
 
 ;;; ### Issues summary
