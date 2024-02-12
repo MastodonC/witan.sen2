@@ -51,7 +51,7 @@
 ;;; # Check for issues
 (def checks
   "Definitions for checks for issues in dataset of plans & placements on census dates."
-  sen2-blade-plans-placements/checks)
+  (sen2-blade-plans-placements/checks))
 
 (def plans-placements-on-census-dates-issues
   "Selected columns of the `plans-placements-on-census-dates` dataset,

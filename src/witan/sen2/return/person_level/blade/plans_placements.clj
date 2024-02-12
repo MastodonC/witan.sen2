@@ -1,12 +1,12 @@
 (ns witan.sen2.return.person-level.blade.plans-placements
   "Tools to extract and manipulate plans & placements on census dates
    (with person details and EHCP primary need) from SEN2 Blade."
-  (:require [clojure.string :as string]
+  (:require [clojure.set :as set]
+            [clojure.string :as string]
             [tablecloth.api :as tc]
             [witan.sen2.ncy :as ncy]
             [witan.sen2.return.person-level.blade.csv :as sen2-blade]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]))
-
 
 
 
@@ -64,9 +64,7 @@
       (tc/select-rows #(episode-on-census-date? (:census-date %) (% episode-start-date-col) (% episode-end-date-col)))))
 
 
-
 ;;; ## Person information
-
 (defn person-on-census-dates
   "Columns from `person` table with record for each of `census-dates-ds`,
    with age at the start of school year containing the `:census-date` and corresponding nominal NCY."
@@ -89,9 +87,7 @@
           :ncy-nominal                 "Nominal NCY for age"}))
 
 
-
 ;;; ## `named-plan`s on census dates
-
 (defn named-plan-on-census-dates
   "All `named-plan` records on census dates, with ancestor table IDs.
 
@@ -124,7 +120,6 @@
 
 
 ;;; ## `placement-detail`s on census dates
-
 (defn placement-detail-on-census-dates
   "All `placement-detail` records on census dates, with ancestor table IDs.
   
@@ -170,9 +165,7 @@
          placement-detail-col-name->label))
 
 
-
 ;;; ## EHCP primary need from `sen-need`
-
 (defn sen-need-primary
   "Primary SEN need from `sen-need`, where primary is `:sen-type-rank`=1, with ancestor table IDs."
   [sen2-blade-ds-map]
@@ -193,10 +186,7 @@
 
 
 
-
 ;;; # Collate
-
-
 (defn plans-placements-on-census-dates
   "Collate `named-plan`s and highest ranking `placement-detail`s on census dates,
    with primary `sen-need`, `active-plans` and `person` details including age & nominal NCY for age.
@@ -341,154 +331,241 @@
 
 
 ;;; # Checks
-(def checks
-  "Definitions for standard checks for issues in dataset of plans & placements on census dates."
+(defn checks
+  "Definitions of checks for issues in dataset of plans & placements on census dates."
+  [& {:keys [sen-settings sen-types]
+      :or   {sen-settings sen2-dictionary/sen-settings
+             sen-types    sen2-dictionary/sen-types}}]
   (let [count-true? #(comp count (partial filter true?) %)
         ;; Check definitions:
-        ;; - `:col-fn`s:
-        ;;   - are applied to the dataset in turn.
-        ;;   - should (only) add a single column to the dataset, with name matching the check key.
-        ;;   - should otherwise leave the dataset intact.
-        m           {:issue-non-unique-key
+        ;; - `:col-fn`s: check function supplied to tc/add-column so receives dataset as single argument and
+        ;;               must return either a column, sequence or single value with truthy values indicating an issue.
+        m           {:issue-missing-person-table-id
                      {:idx           001
+                      :label         "Missing :person-table-id"
+                      :cols-required #{:person-table-id}
+                      :col-fn        #(->> % :person-table-id (map nil?))
+                      :summary-fn    (count-true? :issue-missing-person-table-id)
+                      :summary-label "#rows"
+                      :action        "Required: fill in the blanks."}
+                     :issue-missing-census-year
+                     {:idx           002
+                      :label         "Missing :census-year"
+                      :cols-required #{:census-year}
+                      :col-fn        #(->> % :census-year (map nil?))
+                      :summary-fn    (count-true? :issue-missing-census-year)
+                      :summary-label "#rows"
+                      :action        "Required: fill in the blanks."}
+                     :issue-missing-census-date
+                     {:idx           003
+                      :label         "Missing :census-date"
+                      :cols-required #{:census-date}
+                      :col-fn        #(->> % :census-date (map nil?))
+                      :summary-fn    (count-true? :issue-missing-census-date)
+                      :summary-label "#rows"
+                      :action        "Required: fill in the blanks."}
+                     :issue-missing-requests-table-id
+                     {:idx           004
+                      :label         "Missing :requests-table-id"
+                      :cols-required #{:requests-table-id}
+                      :col-fn        #(->> % :requests-table-id (map nil?))
+                      :summary-fn    (count-true? :issue-missing-requests-table-id)
+                      :summary-label "#rows"
+                      :action        "Required: fill in the blanks."}
+                     :issue-non-unique-key
+                     {:idx           005
                       :label         "[:person-table-id :census-date :requests-table-id] not unique key"
-                      :action        ["- Should be unique."]
+                      :cols-required #{:person-table-id :census-date :requests-table-id}
                       :col-fn        (fn [ds] (-> ds
                                                   (tc/group-by [:person-table-id :census-date :requests-table-id])
-                                                  (tc/add-column :issue-non-unique-key tc/row-count)
+                                                  (tc/add-column :row-count tc/row-count)
                                                   (tc/ungroup)
-                                                  (tc/map-columns :issue-non-unique-key
-                                                                  [:issue-non-unique-key]
-                                                                  (partial < 1))))
+                                                  (tc/map-columns :issue [:row-count] (partial < 1))
+                                                  :issue))
                       :summary-fn    #(-> %
                                           (tc/select-rows :issue-non-unique-key)
                                           (tc/unique-by [:person-table-id :census-date :requests-table-id])
                                           tc/row-count)
-                      :summary-label "#keys"}
+                      :summary-label "#keys"
+                      :action        "Should be unique."}
                      :issue-multiple-requests
                      {:idx           101
                       :label         "CYP has plans|placements from multiple requests"
-                      :action        ["- Drop all but one."]
+                      :cols-required #{:person-table-id :census-date}
                       :col-fn        (fn [ds] (-> ds
                                                   (tc/group-by [:person-table-id :census-date])
-                                                  (tc/add-column :issue-multiple-requests tc/row-count)
+                                                  (tc/add-column :row-count tc/row-count)
                                                   (tc/ungroup)
-                                                  (tc/map-columns :issue-multiple-requests
-                                                                  [:issue-multiple-requests]
-                                                                  (partial < 1))))
+                                                  (tc/map-columns :issue [:row-count] (partial < 1))
+                                                  :issue))
                       :summary-fn    (comp count distinct :person-table-id
                                            #(tc/select-rows % :issue-multiple-requests))
-                      :summary-label "#CYP"}
-                     :issue-no-age-at-start-of-school-year
+                      :summary-label "#CYP"
+                      :action        "Drop all but one."}
+                     :issue-unknown-age-at-start-of-school-year
                      {:idx           102
                       :label         "Could not calculate age at the start of the school year"
-                      :action        ["- Get DoB or otherwise assign NCY."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-no-age-at-start-of-school-year
-                                                              [:age-at-start-of-school-year]
-                                                              nil?))
+                      :cols-required #{:age-at-start-of-school-year}
+                      :col-fn        #(->> % :age-at-start-of-school-year (map nil?))
                       :summary-fn    (comp count distinct :person-table-id
-                                           #(tc/select-rows % :issue-no-age-at-start-of-school-year))
-                      :summary-label "#CYP"}
-                     :issue-cyp-age-25-plus
-                     {:idx           111
-                      :label         "CYP aged 25+ at the start of the school year"
-                      :action        ["- Consider dropping."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-cyp-age-25-plus
-                                                              [:age-at-start-of-school-year]
-                                                              #(when % (<= 25 %))))
+                                           #(tc/select-rows % :issue-unknown-age-at-start-of-school-year))
+                      :summary-label "#CYP"
+                      :action        "Get DoB and/or otherwise assign NCY."}
+                     :issue-not-send-age
+                     {:idx           103
+                      :label         "CYP outside SEND age at start of the school year"
+                      :cols-required #{:age-at-start-of-school-year}
+                      :col-fn        #(->> % :age-at-start-of-school-year
+                                           (map (complement (partial contains? (conj (apply sorted-set (range 0 25)) nil)))))
+                      :summary-fn    (count-true? :issue-not-send-age)
+                      :summary-label "#rows"
+                      :action        "Consider dropping."}
+                     :issue-missing-ncy-nominal
+                     {:idx           104
+                      :label         "Missing NCY (nominal)"
+                      :cols-required #{:ncy-nominal}
+                      :col-fn        #(->> % :ncy-nominal (map nil?))
                       :summary-fn    (comp count distinct :person-table-id
-                                           #(tc/select-rows % :issue-cyp-age-25-plus))
-                      :summary-label "#CYP"}
+                                           #(tc/select-rows % :issue-missing-ncy-nominal))
+                      :summary-label "#CYP"
+                      :action        "Required: Assign, impute or drop."}
+                     :issue-invalid-ncy-nominal
+                     {:idx           105
+                      :label         "Invalid (non nil) NCY"
+                      :cols-required #{:ncy-nominal}
+                      :col-fn        #(->> % :ncy-nominal
+                                           (map (complement (partial contains? (conj (apply sorted-set (range -4 21)) nil)))))
+                      :summary-fn    (count-true? :issue-invalid-ncy-nominal)
+                      :summary-label "#rows"
+                      :action        "Consider dropping."}
                      :issue-no-named-plan
                      {:idx           211
                       :label         "No named-plan on census date"
-                      :action        ["- Not an issue for modelling as don't need any details from named-plan."
-                                      "- Flag to client as incomplete/incoherent data and consider dropping."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-no-named-plan
-                                                              [:named-plan?]
-                                                              not))
+                      :cols-required #{:named-plan?}
+                      :col-fn        #(->> % :named-plan? (map not))
                       :summary-fn    (count-true? :issue-no-named-plan)
-                      :summary-label "#rows"}
+                      :summary-label "#rows"
+                      :action        (str "Not an issue for modelling as don't need any details from named-plan: "
+                                          "Flag to client as incomplete/incoherent data and consider dropping.")}
                      :issue-no-placement-detail
                      {:idx           221
-                      :label         "No placement-detail"
-                      :action        ["- Drop if transferred in after `:census-date`."
-                                      "- Otherwise get `placement-detail` (or will be considered unknown)."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-no-placement-detail
-                                                              [:placement-detail?]
-                                                              not))
+                      :label         "No placement-detail on census date"
+                      :cols-required #{:placement-detail?}
+                      :col-fn        #(->> % :placement-detail? (map not))
                       :summary-fn    (count-true? :issue-no-placement-detail)
-                      :summary-label "#rows"}
+                      :summary-label "#rows"
+                      :action        (str "Drop if transferred in after `:census-date`, "
+                                          "otherwise get `placement-detail` to determine setting.")}
                      :issue-no-placement-detail-transferred-in
                      {:idx           222
                       :label         "No placement-detail - transferred in"
-                      :action        ["- Drop if transferred in after `:census-date`."
-                                      "- Otherwise get `placement-detail` (or will be considered unknown)."]
-                      :col-fn        (fn [ds]  (tc/map-columns ds
-                                                               :issue-no-placement-detail-transferred-in
-                                                               [:placement-detail? :transfer-la]
-                                                               #(and (not %1) (some? %2))))
+                      :cols-required #{:placement-detail? :transfer-la}
+                      :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
+                                       (map #(and (not %1) (some? %2)) placement-detail? transfer-la))
                       :summary-fn    (count-true? :issue-no-placement-detail-transferred-in)
-                      :summary-label "#rows"}
+                      :summary-label "#rows"
+                      :action        (str "Drop if transferred in after `:census-date`, "
+                                          "otherwise get `placement-detail` to determine setting.")}
                      :issue-no-placement-detail-not-transferred-in
                      {:idx           223
                       :label         "No placement-detail - not transferred in"
-                      :action        ["- Get `placement-detail` (or will be considered unknown)."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-no-placement-detail-not-transferred-in
-                                                              [:placement-detail? :transfer-la]
-                                                              #(and (not %1) (nil?  %2))))
+                      :cols-required #{:placement-detail? :transfer-la}
+                      :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
+                                       (map #(and (not %1) (nil? %2)) placement-detail? transfer-la))
                       :summary-fn    (count-true? :issue-no-placement-detail-not-transferred-in)
-                      :summary-label "#rows"}
+                      :summary-label "#rows"
+                      :action        "Get `placement-detail` to determine setting."}
+                     :issue-missing-sen2-estab
+                     {:idx           224
+                      :label         "Missing placement SEN2 Estab"
+                      :cols-required #{:urn :ukprn :sen-setting}
+                      :col-fn        (fn [{:keys [urn ukprn sen-setting]}]
+                                       (map #(every? nil? %&) urn ukprn sen-setting))
+                      :summary-fn    (count-true? :issue-missing-sen2-estab)
+                      :summary-label "#rows"
+                      :action        "Specify urn|ukprn (with indicators) or sen-setting."}
+                     :issue-sen2-estab-indicator-not-set
+                     {:idx           225
+                      :label         "URN|UKPRN|SENsetting specified but SENU & RP indicators not set"
+                      :cols-required #{:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting}
+                      :col-fn        (fn [ds] (-> ds
+                                                  (tc/map-columns :issue [:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting]
+                                                                  #(and (not-every? nil?     [%1 %2 %5])
+                                                                        (not-every? boolean? [%3 %4])))
+                                                  :issue))
+                      :summary-fn    (count-true? :issue-sen2-estab-indicator-not-set)
+                      :summary-label "#rows"
+                      :action        "Specify sen-unit-indicator & resourced-provision-indicator."}
                      :issue-invalid-sen-setting
-                     {:idx           228
-                      :label         "Invalid sen-setting"
-                      :action        ["- Assign a recognised SENsetting."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-invalid-sen-setting
-                                                              [:sen-setting]
-                                                              (complement (partial contains? (conj sen2-dictionary/sen-settings nil)))))
+                     {:idx           229
+                      :label         "Invalid (non-nil) sen-setting"
+                      :cols-required #{:sen-setting}
+                      :col-fn        #(->> % :sen-setting (map (complement (partial contains? (conj sen-settings nil)))))
                       :summary-fn    (count-true? :issue-invalid-sen-setting)
-                      :summary-label "#rows"}
-                     :issue-no-sen-type
+                      :summary-label "#rows"
+                      :action        "Assign a recognised sen-setting."}
+                     :issue-missing-sen-type
                      {:idx           231
-                      :label         "No sen-type (EHCP need)"
-                      :action        ["- Get sen-type (or will be considered unknown)."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-no-sen-type
-                                                              [:sen-type]
-                                                              nil?))
-                      :summary-fn    (count-true? :issue-no-sen-type)
-                      :summary-label "#rows"}
+                      :label         "Missing sen-type (EHCP need)"
+                      :cols-required #{:sen-type}
+                      :col-fn        #(->> % :sen-type (map nil?))
+                      :summary-fn    (count-true? :issue-missing-sen-type)
+                      :summary-label "#rows"
+                      :action        "Get sen-type (or will be considered unknown)."}
                      :issue-invalid-sen-type
                      {:idx           232
-                      :label         "Invalid sen-type (EHCP need)"
-                      :action        ["- Correct or consider as custom EHCP primary need."]
-                      :col-fn        (fn [ds] (tc/map-columns ds
-                                                              :issue-invalid-sen-type
-                                                              [:sen-type]
-                                                              (complement (partial contains? (conj sen2-dictionary/sen-types nil)))))
+                      :label         "Invalid (non-nil) sen-type (EHCP need)"
+                      :cols-required #{:sen-type}
+                      :col-fn        #(->> % :sen-type (map (complement (partial contains? (conj sen-types nil)))))
                       :summary-fn    (count-true? :issue-invalid-sen-type)
-                      :summary-label "#rows"}}]
+                      :summary-label "#rows"
+                      :action        "Correct or consider as custom EHCP primary need."}}]
     (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
                                               [(get-in m [k2 :idx]) k2]))) m)))
 
+(def checks-totals
+  "Additional summaries of #rows and #CYP that can be merged onto checks."
+  {:issue-row-count {:idx           996
+                     :label         "TOTAL number of records with issues flagged"
+                     :summary-fn    #(-> %
+                                         (tc/join-columns :issue? #"^:issue-.*$" {:result-type (partial some boolean)})
+                                         (tc/select-rows :issue?)
+                                         tc/row-count)
+                     :summary-label "#rows"}
+   :issue-num-cyp   {:idx           997
+                     :label         "TOTAL number of CYP with issues flagged"
+                     :summary-fn    #(-> %
+                                         (tc/join-columns :issue? #"^:issue-.*$" {:result-type (partial some boolean)})
+                                         (tc/select-rows :issue?)
+                                         (tc/unique-by [:person-table-id])
+                                         tc/row-count)
+                     :summary-label "#CYP"}
+   :total-row-count {:idx           998
+                     :label         "TOTAL number of records"
+                     :summary-fn    tc/row-count
+                     :summary-label "#rows"
+                     }
+   :total-num-cyp   {:idx           999
+                     :label         "TOTAL number of CYP"
+                     :summary-fn    (comp count distinct :person-table-id)
+                     :summary-label "#CYP"}})
+
 (defn flag-issues
-  "Run `checks` on `plans-placements-on-census-dates` dataset, adding issue flag columns."
-  [plans-placements-on-census-dates checks]
-  (-> plans-placements-on-census-dates
-      ((apply comp (reverse (map :col-fn (vals checks)))))
-      (tc/set-dataset-name "plans-placements-on-census-dates-issues-flagged")))
+  "Run `checks` on dataset `ds`, adding issue flag columns."
+  [ds checks]
+  (as-> ds $
+    (reduce-kv (fn [ds' k v]
+                 (if (set/subset? (:cols-required v) (set (tc/column-names ds')))
+                   (tc/add-column ds' k (:col-fn v))
+                   ds'))
+               $
+               checks)
+    (tc/set-dataset-name $ (str (tc/dataset-name $) "-issues-flagged"))))
 
 (defn plans-placements-on-census-dates-issues-flagged-col-name->label
   "Column labels for display"
   [& {:keys [plans-placements-on-census-dates-col-name->label
-             checks]
-      :or   {checks checks}}]
+             checks]}]
   (merge plans-placements-on-census-dates-col-name->label
          (update-vals checks :label)))
 
@@ -546,8 +623,7 @@
 (defn plans-placements-on-census-dates-issues-col-name->label
   "Column labels for display."
   [& {:keys [plans-placements-on-census-dates-col-name->label
-             checks]
-      :or   {checks checks}}]
+             checks]}]
   (merge plans-placements-on-census-dates-col-name->label
          (update-vals checks :label)
          (reduce (fn [m k] (assoc m k (-> k
@@ -568,46 +644,29 @@
       (flagged-issues->ds checks opts)))
 
 (defn summarise-issues
-  "Summarise issues flagged in `plans-placements-on-census-dates-issues-flagged` as a result of running `checks'`."
-  ([plans-placements-on-census-dates-issues-flagged]
-   (summarise-issues plans-placements-on-census-dates-issues-flagged checks))
-  ([plans-placements-on-census-dates-issues-flagged checks']
-   (-> plans-placements-on-census-dates-issues-flagged
-       (tc/group-by [:census-date])
-       (tc/aggregate (merge (update-vals checks' :summary-fn)
-                            {:num-cyp   (comp count distinct :person-table-id)
-                             :row-count tc/row-count}))
-       (tc/order-by [:census-date])
-       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
-       (tc/pivot->longer (complement #{:census-date}))
-       (tc/pivot->wider :census-date :$value)
-       (tc/rename-columns {:$column :issue-key})
-       (tc/map-columns :idx [:issue-key] (merge (update-vals checks' :idx)
-                                                {:num-cyp   200
-                                                 :row-count 300}))
-       (tc/map-columns :label [:issue-key] (merge (update-vals checks' :label)
-                                                  {:num-cyp   "TOTAL number of CYP"
-                                                   :row-count "TOTAL number of records"}))
-       (tc/map-columns :summary-label [:issue-key] (merge (update-vals checks' :summary-label)
-                                                          {:num-cyp   "#CYP"
-                                                           :row-count "#rows"}))
-       (tc/map-columns :desc [:issue-key] (merge (update-vals checks'
-                                                              #(apply format "%03d: %s (%s)"
-                                                                      ((juxt :idx :label :summary-label) %)))
-                                                 {:num-cyp   "(#CYP)"
-                                                  :row-count "(#rows)"}))
-       (tc/order-by [(comp (merge (update-vals checks' :idx)
-                                  {:num-cyp   200
-                                   :row-count 300})
-                           :issue-key)])
-       (tc/reorder-columns [:issue-key :idx :label :summary-label])
-       (tc/drop-columns [:issue-key :desc])
-       (tc/rename-columns {:issue-key     "key"
-                           :idx           "Index"
-                           :label         "Issue | TOTAL"
-                           :summary-label "Summary"
-                           :desc          "Index: Issue (summary statistic)"}))))
-
+  "Summarise issues flagged in `ds` as a result of running `checks`."
+  [ds checks]
+  (-> ds
+      (tc/group-by [:census-date])
+      ((fn [ds] (tc/aggregate ds (update-vals (select-keys checks (concat (tc/column-names ds)
+                                                                          (keys checks-totals)))
+                                              :summary-fn))))
+      (tc/order-by [:census-date])
+      (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
+      (tc/pivot->longer (complement #{:census-date}))
+      (tc/pivot->wider :census-date :$value)
+      (tc/rename-columns {:$column :issue-key})
+      (tc/map-columns :idx           [:issue-key] (update-vals checks :idx))
+      (tc/map-columns :label         [:issue-key] (update-vals checks :label))
+      (tc/map-columns :summary-label [:issue-key] (update-vals checks :summary-label))
+      (tc/order-by [:idx])
+      (tc/reorder-columns [:issue-key :idx :label :summary-label])
+      (tc/drop-columns [:issue-key])
+      (tc/rename-columns {:issue-key     "key"
+                          :idx           "Index"
+                          :label         "Issue | TOTAL"
+                          :summary-label "Summary"})
+      (tc/set-dataset-name "issue-summary")))
 
 
 
