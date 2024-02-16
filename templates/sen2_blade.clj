@@ -30,13 +30,13 @@
   "Map of SEN2 Blade datasets."
   (delay (sen2-blade-csv/file-paths->ds-map file-paths)))
 
-(def table-id-ds
-  "Dataset of `:*table-id` key relationships."
-  (delay (sen2-blade-csv/ds-map->table-id-ds @sen2-blade/ds-map)))
-
 
 ;;; ## Bring in defs required for EDA/documentation
-;; Not required of not doing a sen2-blade-eda.
+;; Not required if not doing a sen2-blade-eda.
+(def table-id-ds
+  "Dataset of `:*table-id` key relationships."
+  (delay (sen2-blade-csv/ds-map->table-id-ds @ds-map)))
+
 (def module-titles
   sen2-blade-csv/module-titles)
 
@@ -45,3 +45,4 @@
 
 (def module-src-col-name->col-name
   sen2-blade-csv/module-src-col-name->col-name)
+

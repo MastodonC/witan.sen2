@@ -3,8 +3,7 @@
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [nextjournal.clerk :as clerk]
-            [tablecloth.api :as tc]
-            [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]))
+            [tablecloth.api :as tc]))
 
 ;;; # Utilities
 (def module-order
@@ -189,7 +188,8 @@
 
 
 
-;;; # Relational database structure: schema and `table-id` key relationships
+;;; # Relational database structure
+;;; ## Schema
 (defn report-expected-schema
   []
   (clerk/fragment
@@ -216,21 +216,23 @@
                   "(according to [2023 SEN2 guide v1.0]"
                   "(https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1099346/2023_SEN2_Person_level_-_Guide_Version_1.0.pdf))."))))
 
-(defn report-table-keys
-  []
-  (clerk/md (str "| table            | primary key                  | foreign key(s)           |\n"
-                 "|:-----------------|:-----------------------------|:-------------------------|\n"
-                 "| sen2             | `:sen2-table-id`             |                          |\n"
-                 "| person           | `:person-table-id`           | `:sen2-table-id`         |\n"
-                 "| requests         | `:requests-table-id`         | `:person-table-id`       |\n"
-                 "| assessment       | `:assessment-table-id`       | `:requests-table-id`     |\n"
-                 "| named-plan       | `:named-plan-table-id`       | `:assessment-table-id`   |\n"
-                 "| plan-detail      | `:plan-detail-table-id`      | `:named-plantable-id`    |\n"
-                 "| active-plans     | `:active-plans-table-id`     | `:requests-table-id`     |\n"
-                 "| placement-detail | `:placement-detail-table-id` | `:active-plans-table-id` |\n"
-                 "| sen-need         | `:sen-need-table-id`         | `:active-plans-table-id` |\n")))
 
-(defn report-key-relationship [ds-map module-key-child module-key-parent key-col expected-children-s]
+;;; ## COLLECT `:*-table-id`s
+(defn report-collect-keys
+  []
+  (clerk/md (str "|  | table            | primary key                  | foreign key(s)           |\n"
+                 "|:-|:-----------------|:-----------------------------|:-------------------------|\n"
+                 "|0 | sen2             | `:sen2-table-id`             |                          |\n"
+                 "|1 | person           | `:person-table-id`           | `:sen2-table-id`         |\n"
+                 "|2 | requests         | `:requests-table-id`         | `:person-table-id`       |\n"
+                 "|3 | assessment       | `:assessment-table-id`       | `:requests-table-id`     |\n"
+                 "|4a| named-plan       | `:named-plan-table-id`       | `:assessment-table-id`   |\n"
+                 "|4b| plan-detail      | `:plan-detail-table-id`      | `:named-plantable-id`    |\n"
+                 "|5a| active-plans     | `:active-plans-table-id`     | `:requests-table-id`     |\n"
+                 "|5b| placement-detail | `:placement-detail-table-id` | `:active-plans-table-id` |\n"
+                 "|5c| sen-need         | `:sen-need-table-id`         | `:active-plans-table-id` |\n")))
+
+(defn report-collect-key-relationship [ds-map module-key-child module-key-parent key-col expected-children-s]
   (let [ds-child                  (get ds-map module-key-child)
         ds-parent                 (get ds-map module-key-parent)
         ds-child-name             (name module-key-child)
@@ -281,21 +283,18 @@
                    (format "- Each key `%s` in parent table `%s` is present %d - %d times in child table `%s`. %s"
                            key-col ds-parent-name min-num-key-repeats max-num-key-repeats ds-child-name expected-children-s)))))
 
-(defn report-key-relationships
+(defn report-collect-key-relationships
   [ds-map]
   (clerk/fragment
-   (report-key-relationship ds-map :person           :sen2         :sen2-table-id         "")
-   (report-key-relationship ds-map :requests         :person       :person-table-id       "(Should be 1+  per 2023 SEN2 guide v1.0 Module 2 description on p18.)")
-   (report-key-relationship ds-map :assessment       :requests     :requests-table-id     "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 3 description on p21.)")
-   (report-key-relationship ds-map :named-plan       :assessment   :assessment-table-id   "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 3 description on p21 & Module 4 description on p24.)")
-   (report-key-relationship ds-map :plan-detail      :named-plan   :named-plan-table-id   "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 4 <PlanDetail> description on p26.)")
-   (report-key-relationship ds-map :active-plans     :requests     :requests-table-id     "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 5 <ActivePlans> description on p28.)")
-   (report-key-relationship ds-map :placement-detail :active-plans :active-plans-table-id "(Should be 1+  per 2023 SEN2 guide v1.0 Module 5 <PlacementDetail> description on p29.)")
-   (report-key-relationship ds-map :sen-need         :active-plans :active-plans-table-id "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 5 <SENtype> description on p31.)")))
+   (report-collect-key-relationship ds-map :person           :sen2         :sen2-table-id         "")
+   (report-collect-key-relationship ds-map :requests         :person       :person-table-id       "(Should be 1+  per 2023 SEN2 guide v1.0 Module 2 description on p18.)")
+   (report-collect-key-relationship ds-map :assessment       :requests     :requests-table-id     "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 3 description on p21.)")
+   (report-collect-key-relationship ds-map :named-plan       :assessment   :assessment-table-id   "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 3 description on p21 & Module 4 description on p24.)")
+   (report-collect-key-relationship ds-map :plan-detail      :named-plan   :named-plan-table-id   "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 4 <PlanDetail> description on p26.)")
+   (report-collect-key-relationship ds-map :active-plans     :requests     :requests-table-id     "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 5 <ActivePlans> description on p28.)")
+   (report-collect-key-relationship ds-map :placement-detail :active-plans :active-plans-table-id "(Should be 1+  per 2023 SEN2 guide v1.0 Module 5 <PlacementDetail> description on p29.)")
+   (report-collect-key-relationship ds-map :sen-need         :active-plans :active-plans-table-id "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 5 <SENtype> description on p31.)")))
 
-
-
-;;; # table-id's dataset
 (defn report-table-id-ds
   [table-id-ds]
   (clerk/fragment
@@ -325,8 +324,84 @@
 
 
 
+;;; # `:person-table-id` & `:requests-table-id``
+(defn report-table-keys
+  []
+  (clerk/md (str "| table               | primary key                             | foreign key(s)                          |\n"
+                 "|:--------------------|:----------------------------------------|:----------------------------------------|\n"
+                 "| 1:person            | `:person-table-id`                      |                                         |\n"
+                 "| 2:requests          | `:requests-table-id`                    | `:person-table-id`                      |\n"
+                 "| 3:~~assessment~~    | --                                      | --                                      |\n"
+                 "| 4a:named-plan       | `:requests-table-id`                    | `:person-table-id`                      |\n"
+                 "| 4b:~~plan-detail~~  | --                                      | --                                      |\n"
+                 "| 5a:active-plans     | `:requests-table-id`                    | `:person-table-id`                      |\n"
+                 "| 5b:placement-detail | ??                                      | `:person-table-id` `:requests-table-id` |\n"
+                 "| 5c:sen-need         | [`:requests-table-id` `:sen-type-rank`] | `:person-table-id` `:requests-table-id` |\n")))
+
+(defn report-key-relationship [ds-map module-key]
+  (let [ds                          (get ds-map module-key)
+        ds-name                     (tc/dataset-name ds)
+        row-count                   (tc/row-count ds)
+        num-unique-person-id        (-> ds
+                                        (tc/unique-by [:person-table-id])
+                                        (tc/row-count))
+        num-unknown-person          (-> ds
+                                        (tc/unique-by [:person-table-id])
+                                        (tc/anti-join (:person ds-map) [:person-table-id])
+                                        (tc/row-count))
+        num-records-per-person      (-> ds
+                                        (tc/group-by [:person-table-id])
+                                        (tc/aggregate {:row-count tc/row-count})
+                                        (tc/right-join (-> (:person ds-map)
+                                                           (tc/select-columns [:person-table-id])
+                                                           (tc/set-dataset-name "parent"))
+                                                       [:person-table-id])
+                                        (tc/replace-missing :row-count :value 0)
+                                        (tc/drop-columns [:person-table-id])
+                                        (tc/rename-columns {(keyword (str "parent." (name :person-table-id))) :person-table-id})
+                                        (tc/reorder-columns [:person-table-id]))
+        min-num-records-per-person  (reduce min (:row-count num-records-per-person ))
+        max-num-records-per-person  (reduce max(:row-count num-records-per-person ))
+        num-records-per-request     (-> ds
+                                        (tc/group-by [:person-table-id :requests-table-id])
+                                        (tc/aggregate {:row-count tc/row-count})
+                                        (tc/right-join (-> (:requests ds-map)
+                                                           (tc/select-columns [:person-table-id :requests-table-id])
+                                                           (tc/set-dataset-name "parent"))
+                                                       [:person-table-id :requests-table-id])
+                                        (tc/replace-missing :row-count :value 0)
+                                        (tc/drop-columns [:person-table-id :requests-table-id])
+                                        (tc/rename-columns {:parent.person-table-id   :person-table-id
+                                                            :parent.requests-table-id :requests-table-id})
+                                        (tc/reorder-columns [:person-table-id :requests-table-id]))
+        min-num-records-per-request (reduce min (:row-count num-records-per-request))
+        max-num-records-per-request (reduce max(:row-count num-records-per-request ))]
+    (clerk/md (str (format "`%s`:\n" ds-name)
+                   (format "- Has %,d rows on %,d distinct `:person-table-id`,  \n" row-count num-unique-person-id)
+                   (format " %s in the `person` dataset.\n" (if (= 0 num-unknown-person)
+                                                              "all of which are"
+                                                              (format "**%,d** of which are **NOT**" num-unknown-person)))
+                   (format "- Each `:person-table-id` in `person` table is present %d - %d times in `%s`.\n"
+                           min-num-records-per-person max-num-records-per-person ds-name)
+                   (format "- Each [`:person-table-id` `:requests-table-id`] in `requests` table  \noccurs %d - %d times in `%s`."
+                           min-num-records-per-request max-num-records-per-request ds-name)))))
+
+(defn report-key-relationships
+  [ds-map]
+  (clerk/fragment
+   (clerk/md (str "Q: For `named-plan`, `placement-detail` & `sen-need`:\n"
+                  "- How many rows, on how many `:person-table-id`s are there?  \n"
+                  "…and are all `:person-table-id`s in the `person` table?\n"
+                  "- How many times does a `:person-table-id` from the `person` table appear?\n"
+                  "- How many times do distinct [`:person-table-id` `:requests-table-id`] from the `requests` table appear?\n"))
+   (report-key-relationship ds-map :named-plan)
+   (report-key-relationship ds-map :placement-detail)
+   (report-key-relationship ds-map :sen-need)))
+
+
+
 ;;; # Dataset keys
-(defn report-unique-key? [ds key-cols]
+(defn report-unique-key [ds key-cols]
   (clerk/md (let [key-str        (str "[`:" ((comp (partial clojure.string/join "`, :`") (partial map name)) key-cols) "`]")
                   ds-name        (tc/dataset-name ds)
                   num-non-unique (-> ds
@@ -341,22 +416,21 @@
                       key-str
                       num-non-unique))))
 
-(defn report-composite-keys
+(defn report-unique-keys
   [ds-map]
-  (let [named-plan   (-> (ds-map :named-plan)
-                         (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds ds-map :named-plan-table-id) [:assessment-table-id])
-                         (tc/set-dataset-name "`named-plan` (with ancestor `table-id`s)"))
-        active-plans (-> (ds-map :active-plans)
-                         (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds ds-map :active-plans-table-id) [:requests-table-id])
-                         (tc/set-dataset-name "`active-plans` (with ancestor `table-id`s)"))
-        sen-need     (-> (ds-map :sen-need)
-                         (tc/left-join (sen2-blade-csv/ds-map->ancestor-table-id-ds ds-map :sen-need-table-id) [:active-plans-table-id])
-                         (tc/set-dataset-name "`sen-need` (with ancestor `table-id`s)"))]
+  (let [person       (-> (ds-map :person))
+        named-plan   (-> (ds-map :named-plan))
+        active-plans (-> (ds-map :active-plans))
+        sen-need     (-> (ds-map :sen-need))]
     (clerk/fragment
-     (report-unique-key? named-plan   [:person-table-id :requests-table-id])
-     (report-unique-key? named-plan   [:person-table-id])
-     (report-unique-key? active-plans [:person-table-id :requests-table-id])
-     (report-unique-key? active-plans [:person-table-id])
-     (report-unique-key? sen-need     [:person-table-id :requests-table-id :sen-type-rank])
-     (report-unique-key? sen-need     [:person-table-id :sen-type-rank]))))
+     (report-unique-key person       [:person-table-id])
+     (report-unique-key named-plan   [:person-table-id :requests-table-id])
+     (report-unique-key named-plan   [                 :requests-table-id])
+     (report-unique-key named-plan   [:person-table-id])
+     (report-unique-key active-plans [:person-table-id :requests-table-id])
+     (report-unique-key active-plans [                 :requests-table-id])
+     (report-unique-key active-plans [:person-table-id])
+     (report-unique-key sen-need     [:person-table-id :requests-table-id :sen-type-rank])
+     (report-unique-key sen-need     [                 :requests-table-id :sen-type-rank])
+     (report-unique-key sen-need     [:person-table-id                    :sen-type-rank]))))
 

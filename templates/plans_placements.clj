@@ -15,7 +15,7 @@
 
 ;;; ## Census dates
 (def census-dates-ds
-  "Dataset with column `:census-date` of dates to extract open plans & placements on"
+  "Dataset with column `:census-date` of dates to extract open plans & placements on."
   (sen2/census-years->census-dates-ds [2022 2023]))
 
 
@@ -49,10 +49,15 @@
 
 
 ;;; # Check for issues
+
+
+;;; ## Checks
 (def checks
   "Definitions for checks for issues in dataset of plans & placements on census dates."
   (sen2-blade-plans-placements/checks))
 
+
+;;; ## Run checks
 (def plans-placements-on-census-dates-issues
   "Selected columns of the `plans-placements-on-census-dates` dataset,
    for rows with issues flagged by `checks`,

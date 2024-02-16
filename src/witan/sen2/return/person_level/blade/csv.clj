@@ -15,10 +15,13 @@
 
 
 ;;; # SEN2 Person Level Return Modules
+(def modules
+  "SEN2 return module keys."
+  [:sen2 :person :requests :assessment :named-plan :plan-detail :active-plans :placement-detail :sen-need])
+
 (def module-order
   "Map SEN2 return module key to order."
-  (zipmap [:sen2 :person :requests :assessment :named-plan :plan-detail :active-plans :placement-detail :sen-need]
-          (range)))
+  (zipmap modules (range)))
 
 (def module-titles
   "Map of SEN2 return module titles"
@@ -549,24 +552,12 @@
    :sen-need-order-seq-column "SEN need order seq column"
    :source-id                 "Source ID"
    :active-plans-table-id     "Active plans table ID"
-   :sen-type-rank             "SEN type rank"
-   :sen-type                  "SEN type"})
+   :sen-type                  "SEN type"
+   :sen-type-rank             "SEN type rank"})
 
 
 
-;;; # Functions to read all modules
-(def module-src-col-name->col-name
-  "Map of maps mapping source data file column labels to column name for the dataset for each module."
-  {:sen2             sen2-src-col-name->col-name
-   :person           person-src-col-name->col-name
-   :requests         requests-src-col-name->col-name
-   :assessment       assessment-src-col-name->col-name
-   :named-plan       named-plan-src-col-name->col-name
-   :plan-detail      plan-detail-src-col-name->col-name
-   :active-plans     active-plans-src-col-name->col-name
-   :placement-detail placement-detail-src-col-name->col-name
-   :sen-need         sen-need-src-col-name->col-name})
-
+;;; # Definitions and functions to read all modules
 (def module-read-cfg
   "Map of configuration maps for reading each module into a dataset."
   {:sen2             sen2-read-cfg
@@ -579,55 +570,40 @@
    :placement-detail placement-detail-read-cfg
    :sen-need         sen-need-read-cfg})
 
-(def module-col-name->label
-  "Map of maps mapping dataset column names to display labels for each module."
-  {:sen2             sen2-col-name->label
-   :person           person-col-name->label
-   :requests         requests-col-name->label
-   :assessment       assessment-col-name->label
-   :named-plan       named-plan-col-name->label
-   :plan-detail      plan-detail-col-name->label
-   :active-plans     active-plans-col-name->label
-   :placement-detail placement-detail-col-name->label
-   :sen-need         sen-need-col-name->label})
-
-(defn file-paths->ds-map
+(defn file-paths->raw-ds-map
   "Read CSV files specified in `file-paths'` map
   using read configuration from corresponding key of `module-read-cfg'`
   into map of datasets with same keys."
-  ([file-paths'] (file-paths->ds-map file-paths' module-read-cfg))
-  ([file-paths' read-cfg'] (reduce-kv #(assoc %1 %2 (csv->ds %3 (get read-cfg' %2))) {} file-paths')))
-
-(defn ->ds-map
-  "Read CSV files specified in `file-names'` map from `data-dir`
-  using read configuration from corresponding key of `read-cfg'`
-  into map of datasets with same keys."
-  ([data-dir file-names'] (->ds-map data-dir file-names' module-read-cfg))
-  ([data-dir file-names' read-cfg'] (file-paths->ds-map (update-vals file-names' (partial str data-dir)) read-cfg')))
+  ([file-paths'] (file-paths->raw-ds-map file-paths' module-read-cfg))
+  ([file-paths' module-read-cfg'] (reduce-kv #(assoc %1 %2 (csv->ds %3 (get module-read-cfg' %2))) {} file-paths')))
 
 
 
-;;; # Functions to manipulate the SEN2 datasets
-(def parser-fn
-  "Collated parser functions for all SEN2 modules."
-  (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg))
+;;; # Definitions and functions to manage module hierarchy
+(def module-key->ancestors
+  "Map module-keys to vector of ancestor module-keys, parent last."
+  {:sen2             []
+   :person           [:sen2]
+   :requests         [:sen2 :person]
+   :assessment       [:sen2 :person :requests]
+   :named-plan       [:sen2 :person :requests :assessment]
+   :plan-detail      [:sen2 :person :requests :assessment :named-plan]
+   :active-plans     [:sen2 :person :requests]
+   :placement-detail [:sen2 :person :requests :active-plans]
+   :sen-need         [:sen2 :person :requests :active-plans]})
 
-(def col-name->label
-  "Map SEN2 dataset column names to display labels."
-  (apply merge (vals module-col-name->label)))
+(def module-key->parent
+  "Map module-key to module-key of parent."
+  (update-vals module-key->ancestors last))
 
+(defn module-key->table-id
+  "Return primary `:*-table-id` of module `module-key`."
+  [module-key]
+  (when module-key (-> module-key name (str "-table-id") keyword)))
 
-
-;;; # Definitions and functions to facilitate `:*table-id` usage
 (def table-id-col-names
   "Names of `:.+-table-id` columns."
-  [:sen2-table-id :person-table-id :requests-table-id
-   :assessment-table-id :named-plan-table-id :plan-detail-table-id
-   :active-plans-table-id :placement-detail-table-id :sen-need-table-id])
-
-(def table-id-col-name->label
-  "Map names of table-id columns to labels."
-  (select-keys col-name->label table-id-col-names))
+  (map module-key->table-id modules))
 
 (defn ds-map->table-id-ds
   "Return dataset of `:*table-id` key relationships, given map `ds-map` of module datasets.
@@ -655,29 +631,99 @@
       (tc/select-columns table-id-col-names)
       (tc/set-dataset-name "table-id-ds")))
 
-(def table-id->ancestors
-  "Map table-ids to vector of ancestor table-ids, parent last."
-  {:sen2-table-id             []
-   :person-table-id           [:sen2-table-id]
-   :requests-table-id         [:sen2-table-id :person-table-id]
-   :assessment-table-id       [:sen2-table-id :person-table-id :requests-table-id]
-   :named-plan-table-id       [:sen2-table-id :person-table-id :requests-table-id :assessment-table-id]
-   :plan-detail-table-id      [:sen2-table-id :person-table-id :requests-table-id :assessment-table-id :named-plan-table-id]
-   :active-plans-table-id     [:sen2-table-id :person-table-id :requests-table-id]
-   :placement-detail-table-id [:sen2-table-id :person-table-id :requests-table-id :active-plans-table-id]
-   :sen-need-table-id         [:sen2-table-id :person-table-id :requests-table-id :active-plans-table-id]})
-
-(def table-id->parent
-  "Map table-id to table-id of parent."
-  (update-vals table-id->ancestors last))
-
-(defn ds-map->ancestor-table-id-ds
-  "Return dataset of `:*table-id` key relationships for ancestors of table with primary key `table-id`,
-  given map `ds-map` of module datasets."
-  [ds-map table-id]
-  (-> ds-map
-      ds-map->table-id-ds
-      (tc/select-columns (table-id->ancestors table-id))
+(defn ancestor-table-id-ds
+  "Return sub-dataset of `table-id-ds` containing `:*table-id` key relationships for ancestors of module `module-key`."
+  [table-id-ds module-key]
+  (-> table-id-ds
+      (tc/select-columns (map module-key->table-id (module-key->ancestors module-key)))
       (tc/drop-missing)
       (tc/unique-by)))
 
+(defn add-ancestor-table-ids-to-module-ds
+  "Add ancestor `:*-table-id`s from `table-id-ds` to module `module-key` dataset `module-ds`."
+  [module-ds module-key table-id-ds]
+  (let [module-ds-name     (-> module-ds tc/dataset-name)
+        ancestor-modules   (module-key->ancestors module-key)
+        parent-module      (module-key->parent module-key)
+        ancestor-table-ids (mapv module-key->table-id ancestor-modules)
+        parent-table-id    (when parent-module (module-key->table-id parent-module))]
+    (-> (if (< (count ancestor-modules) 2)
+          module-ds          ; If 0 ancestors then no parents, if 1 then already have parent table-id in dataset.
+          (-> module-ds      ; Otherwise merge in ancestor table-ids.
+              (tc/left-join (-> (ancestor-table-id-ds table-id-ds module-key)
+                                (tc/set-dataset-name "ancestor-table-id-ds"))
+                            [parent-table-id])
+              (tc/drop-columns [(-> parent-table-id name ((partial format "ancestor-table-id-ds.%s")) keyword)])))
+        ;; Put ancestor table IDs at the front and reapply module dataset name
+        (tc/reorder-columns ancestor-table-ids)
+        (tc/set-dataset-name  module-ds-name))))
+
+(defn add-ancestor-table-ids-to-module-ds-map
+  "Add ancestor `:*-table-id`s from `:*-table-id-ds` to each module in `raw-ds-map` indexed by module-key."
+  [raw-ds-map table-id-ds]
+  (reduce-kv (fn [m k v] (assoc m k (add-ancestor-table-ids-to-module-ds v k table-id-ds)))
+             {}
+             raw-ds-map))
+
+
+
+;;; # Functions to read all modules and add ancestor `:*-table-id`s
+(defn file-paths->ds-map
+  "Read CSV files specified in `file-paths'` map
+  using read configuration from corresponding key of `module-read-cfg'`
+  into map of datasets with same keys and add ancestor `:*-table-id`s."
+  ([file-paths'] (file-paths->ds-map file-paths' module-read-cfg))
+  ([file-paths' module-read-cfg']
+   (let [raw-ds-map  (file-paths->raw-ds-map file-paths' module-read-cfg')
+         table-id-ds (ds-map->table-id-ds raw-ds-map)]
+     (add-ancestor-table-ids-to-module-ds-map raw-ds-map table-id-ds))))
+
+
+
+;;; # Collated column labels, for EDA and presentation
+(def module-src-col-name->col-name
+  "Map of maps mapping source data file column labels to column name for the dataset for each module."
+  {:sen2             sen2-src-col-name->col-name
+   :person           person-src-col-name->col-name
+   :requests         requests-src-col-name->col-name
+   :assessment       assessment-src-col-name->col-name
+   :named-plan       named-plan-src-col-name->col-name
+   :plan-detail      plan-detail-src-col-name->col-name
+   :active-plans     active-plans-src-col-name->col-name
+   :placement-detail placement-detail-src-col-name->col-name
+   :sen-need         sen-need-src-col-name->col-name})
+
+(def raw-module-col-name->label
+  "Map of maps mapping dataset column names to display labels for each module."
+  {:sen2             sen2-col-name->label
+   :person           person-col-name->label
+   :requests         requests-col-name->label
+   :assessment       assessment-col-name->label
+   :named-plan       named-plan-col-name->label
+   :plan-detail      plan-detail-col-name->label
+   :active-plans     active-plans-col-name->label
+   :placement-detail placement-detail-col-name->label
+   :sen-need         sen-need-col-name->label})
+
+(def col-name->label
+  "Map SEN2 dataset column names to display labels."
+  (apply merge (vals raw-module-col-name->label)))
+
+(def table-id-col-name->label
+  "Map names of table-id columns to labels."
+  (select-keys col-name->label table-id-col-names))
+
+(def module-col-name->label
+  "Map of maps mapping dataset column names (including ancestor `:*-table-id`s) to display labels for each module."
+  (reduce-kv (fn [m k v] (assoc m k (merge v
+                                           (select-keys table-id-col-name->label
+                                                        (-> k
+                                                            module-key->ancestors
+                                                            ((partial mapv module-key->table-id))
+                                                            butlast)))))
+             {}
+             raw-module-col-name->label))
+
+(def parser-fn
+  "Collated parser functions for all SEN2 modules."
+  (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg))

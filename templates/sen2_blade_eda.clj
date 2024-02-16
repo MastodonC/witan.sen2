@@ -66,16 +66,20 @@
 
 ;;; ## Database structure
 (sen2-blade-eda/report-expected-schema)
-(sen2-blade-eda/report-table-keys)
 
 
-;;; ### `*-table-id` Key relationships
+
+;;; ## COLLECT `:*-table-id`s
+(sen2-blade-eda/report-collect-keys)
+
+
+;;; ### Table relationships by COLLECT `:*-table-id`
 ;; The hierarchy is proper (due to COLLECT):
 ;; - primary keys are unique
 ;; - all foreign keys in child are contained in parent
 ;; - not all parent records have children
 ;; - some parents have multiple children
-(sen2-blade-eda/report-key-relationships @sen2-blade/ds-map)
+(sen2-blade-eda/report-collect-key-relationships @sen2-blade/ds-map)
 
 
 ;;; ### `table-id-ds`
@@ -83,9 +87,18 @@
 
 
 
-;;; ## Composite keys
-;; Note: OK if not a unique key without `requests-table-id`,
-(sen2-blade-eda/report-composite-keys @sen2-blade/ds-map)
+;;; ## `:person-table-id` & `:requests-table-id`
+;; For person, named-plan, placement-detail & sen-need modules with ancestor `:*-table-id`s.
+
+
+;;; ### Table relationships by `:person-table-id` & `:requests-table-id`
+(sen2-blade-eda/report-key-relationships @sen2-blade/ds-map)
+
+
+;;; ### Unique keys
+;; Note: Except for `person`, OK if not a unique key without `requests-table-id`,
+(sen2-blade-eda/report-unique-keys @sen2-blade/ds-map)
+(sen2-blade-eda/report-table-keys)
 
 
 

@@ -5,7 +5,6 @@
             [clojure.string :as string]
             [tablecloth.api :as tc]
             [witan.sen2.ncy :as ncy]
-            [witan.sen2.return.person-level.blade.csv :as sen2-blade]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]))
 
 
@@ -89,7 +88,7 @@
 
 ;;; ## `named-plan`s on census dates
 (defn named-plan-on-census-dates
-  "All `named-plan` records on census dates, with ancestor table IDs.
+  "All `named-plan` records on census dates.
 
   Note that `named-plan`s on census dates are identified based on their `:start-date` and `:cease-date`:
   - The `:start-date` is the date of the EHC plan,
@@ -103,9 +102,6 @@
   [sen2-blade-ds-map census-dates-ds]
   (-> (sen2-blade-ds-map :named-plan)
       (extract-episodes-on-census-dates census-dates-ds :start-date :cease-date)
-      (tc/left-join (sen2-blade/ds-map->ancestor-table-id-ds sen2-blade-ds-map :named-plan-table-id)
-                    [:assessment-table-id])
-      (tc/drop-columns [:table-id-ds.assessment-table-id])
       (tc/order-by        (concat sen2-blade-table-id-col-names [:census-date]))
       (tc/reorder-columns (concat sen2-blade-table-id-col-names (tc/column-names census-dates-ds)))
       (tc/set-dataset-name "named-plan-on-census-dates")))
@@ -114,14 +110,13 @@
   "Column labels for display, given mappings of col-name->label for `named-plan` and `census-dates` datasets."
   [& {named-plan-col-name->label   :named-plan
       census-dates-col-name->label :census-dates}]
-  (merge sen2-blade/table-id-col-name->label
-         census-dates-col-name->label
+  (merge census-dates-col-name->label
          named-plan-col-name->label))
 
 
 ;;; ## `placement-detail`s on census dates
 (defn placement-detail-on-census-dates
-  "All `placement-detail` records on census dates, with ancestor table IDs.
+  "All `placement-detail` records on census dates.
   
   Some `:person-table-id` will have a `:requests-table-id` with both
   `:placement-rank` 1 and `:placement-rank` 2 placements on a census date,
@@ -142,9 +137,6 @@
   [sen2-blade-ds-map census-dates-ds]
   (-> (sen2-blade-ds-map :placement-detail)
       (extract-episodes-on-census-dates census-dates-ds :entry-date :leaving-date )
-      (tc/left-join (sen2-blade/ds-map->ancestor-table-id-ds sen2-blade-ds-map :placement-detail-table-id)
-                    [:active-plans-table-id])
-      (tc/drop-columns [:table-id-ds.active-plans-table-id])
       ;; Add `:census-date-placement-idx` to index multiple placements in `:placement-rank` order.
       (tc/order-by [:person-table-id :requests-table-id :census-date :placement-rank])
       (tc/group-by [:person-table-id :requests-table-id :census-date])
@@ -159,21 +151,17 @@
   "Column labels for display, given mappings of col-name->label for `placement-detail` and `census-dates` datasets."
   [& {placement-detail-col-name->label :placement-detail
       census-dates-col-name->label     :census-dates}]
-  (merge sen2-blade/table-id-col-name->label
-         census-dates-col-name->label
+  (merge census-dates-col-name->label
          {:census-date-placement-idx "Census date placement index"}
          placement-detail-col-name->label))
 
 
 ;;; ## EHCP primary need from `sen-need`
 (defn sen-need-primary
-  "Primary SEN need from `sen-need`, where primary is `:sen-type-rank`=1, with ancestor table IDs."
+  "Primary SEN need from `sen-need`, where primary is `:sen-type-rank`=1."
   [sen2-blade-ds-map]
   (-> (sen2-blade-ds-map :sen-need)
       (tc/select-rows #(= 1 (:sen-type-rank %)))
-      (tc/left-join (sen2-blade/ds-map->ancestor-table-id-ds sen2-blade-ds-map :sen-need-table-id)
-                    [:active-plans-table-id])
-      (tc/drop-columns [:table-id-ds.active-plans-table-id])
       (tc/order-by        sen2-blade-table-id-col-names)
       (tc/reorder-columns sen2-blade-table-id-col-names)
       (tc/set-dataset-name "sen-need-primary")))
@@ -181,8 +169,7 @@
 (defn sen-need-primary-col-name->label
   "Column labels for display, given mappings of col-name->label for `sen-need` dataset."
   [& {sen-need-col-name->label :sen-need}]
-  (merge sen2-blade/table-id-col-name->label
-         sen-need-col-name->label))
+  (merge sen-need-col-name->label))
 
 
 
@@ -315,8 +302,7 @@
       active-plans-col-name->label     :active-plans
       sen-need-col-name->label         :sen-need
       census-dates-col-name->label     :census-dates}]
-  (merge  sen2-blade/table-id-col-name->label
-          census-dates-col-name->label
+  (merge  census-dates-col-name->label
           (person-on-census-dates-col-name->label :person person-col-name->label)
           (named-plan-on-census-dates-col-name->label :named-plan named-plan-col-name->label)
           (placement-detail-on-census-dates-col-name->label :placement-detail placement-detail-col-name->label)
