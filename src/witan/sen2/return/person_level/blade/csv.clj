@@ -149,7 +149,8 @@
    "surname"              :surname
    "forename"             :forename
    "personbirthdate"      :person-birth-date
-   "gendercurrent"        :gender-current
+   "gendercurrent"        :gender-current ; <v1.2
+   "sex"                  :sex            ; ≥v1.2
    "ethnicity"            :ethnicity
    "postcode"             :postcode
    "upn"                  :upn
@@ -166,7 +167,8 @@
    :surname                 :string
    :forename                :string
    :person-birth-date       [:local-date parse-date]
-   :gender-current          :string
+   :gender-current          :string     ; <v1.2
+   :sex                     :string     ; ≥v1.2
    :ethnicity               :string
    :postcode                :string
    :upn                     :string
@@ -189,7 +191,8 @@
    :surname                 "Surname"
    :forename                "Forename"
    :person-birth-date       "Date of birth"
-   :gender-current          "Gender"
+   :gender-current          "Gender"    ; <v1.2
+   :sex                     "Sex"       ; ≥v1.2
    :ethnicity               "Ethnicity"
    :postcode                "Post code"
    :upn                     "UPN – Unique Pupil Number"
@@ -421,8 +424,10 @@
    "sourceid"                  :source-id
    "requeststableid"           :requests-table-id
    "transferla"                :transfer-la
-   "res"                       :res
-   "wbp"                       :wbp
+   "res"                       :res            ; <v1.2
+   "wbp"                       :wbp            ; <v1.2
+   "reviewmeeting"             :review-meeting ; ≥v1.2
+   "reviewoutcome"             :review-outcome ; ≥v1.2
    "lastreview"                :last-review})
 
 (def active-plans-parser-fn
@@ -433,8 +438,10 @@
    :source-id                     :string
    :requests-table-id             :string
    :transfer-la                   :string
-   :res                           :string
-   :wbp                           :string
+   :res                           :string                  ; <v1.2
+   :wbp                           :string                  ; <v1.2
+   :review-meeting                [:local-date parse-date] ; ≥v1.2
+   :review-outcome                :string                  ; ≥v1.2
    :last-review                   [:local-date parse-date]})
 
 (def active-plans-read-cfg
@@ -451,9 +458,12 @@
    :source-id                     "Source ID"
    :requests-table-id             "Requests table ID"
    :transfer-la                   "EHC plan transferred in from another LA during calendar year"
-   :res                           "Residential settings"
-   :wbp                           "Work-based learning activity"
-   :last-review                   "EHC plan review decisions date"})
+   :res                           "Residential settings"          ; <v1.2
+   :wbp                           "Work-based learning activity"  ; <v1.2
+   :review-meeting                "Annual review meeting date"    ; ≥v1.2
+   :review-outcome                "Annual review decision"        ; ≥v1.2
+   :last-review                   "Annual review decision date"   ; ≥v1.2: "EHC plan review decisions date" ; <v1.2
+   })
 
 
 ;;; ## Module 5b: Placements - Placement details (`placement-detail`)
@@ -464,6 +474,8 @@
    "placementdetailorderseqcolumn" :placement-detail-order-seq-column
    "sourceid"                      :source-id
    "activeplanstableid"            :active-plans-table-id
+   "res"                           :res                ; ≥v1.2
+   "wbp"                           :wbp                ; ≥v1.2
    "urn"                           :urn
    "ukprn"                         :ukprn
    "sensetting"                    :sen-setting
@@ -471,7 +483,7 @@
    "placementrank"                 :placement-rank
    "entrydate"                     :entry-date
    "leavingdate"                   :leaving-date
-   "attendancepattern"             :attendance-pattern
+   "attendancepattern"             :attendance-pattern ; <v1.2
    "senunitindicator"              :sen-unit-indicator
    "resourcedprovisionindicator"   :resourced-provision-indicator})
 
@@ -482,6 +494,8 @@
    :placement-detail-order-seq-column :int32
    :source-id                         :string
    :active-plans-table-id             :string
+   :res                               :string ; ≥v1.2
+   :wbp                               :string ; ≥v1.2
    :urn                               :string
    :ukprn                             :string
    :sen-setting-other                 :string
@@ -491,7 +505,8 @@
    :sen-unit-indicator                :boolean
    :resourced-provision-indicator     :boolean
    :sen-setting                       :string
-   :attendance-pattern                :string})
+   :attendance-pattern                :string ; <v1.2
+   })
 
 (def placement-detail-read-cfg
   "Configuration map for reading SEN2 module 5b \"Placement details\" into a dataset."
@@ -506,6 +521,8 @@
    :placement-detail-order-seq-column "Placement detail order seq column"
    :source-id                         "Source ID"
    :active-plans-table-id             "Active plans table ID"
+   :res                               "Residential settings"         ; ≥v1.2
+   :wbp                               "Work-based learning activity" ; ≥v1.2
    :urn                               "URN – Unique Reference Number"
    :ukprn                             "UKPRN – UK Provider Reference Number"
    :sen-setting                       "SEN Setting - Establishment type"
@@ -513,7 +530,7 @@
    :placement-rank                    "Placement rank"
    :entry-date                        "Placement start date"
    :leaving-date                      "Placement leaving date"
-   :attendance-pattern                "Attendance pattern"
+   :attendance-pattern                "Attendance pattern" ; <v1.2
    :sen-unit-indicator                "SEN Unit indicator"
    :resourced-provision-indicator     "Resourced provision indicator"})
 
