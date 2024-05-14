@@ -2,7 +2,7 @@
  :deps    {org.clojure/clojure {:mvn/version "1.11.1"}}
  :aliases {:dev  {:extra-paths ["templates" "dev"]
                   :extra-deps  {techascent/tech.ml.dataset               {:mvn/version "7.029"}
-                                scicloj/tablecloth                       {:mvn/version "7.029.2"
+                                scicloj/tablecloth                       {:mvn/version "7.021"
                                                                           :exclusions  [techascent/tech.ml.dataset
                                                                                         org.apache.poi/poi-ooxml-schemas
                                                                                         org.apache.poi/poi
@@ -14,7 +14,7 @@
                                 io.github.nextjournal/clerk              {:mvn/version "0.15.957"}}}
            :test {:extra-paths ["test"]
                   :extra-deps  {techascent/tech.ml.dataset {:mvn/version "7.029"}
-                                scicloj/tablecloth         {:mvn/version "7.029.2"
+                                scicloj/tablecloth         {:mvn/version "7.021"
                                                             :exclusions  [techascent/tech.ml.dataset
                                                                           org.apache.poi/poi-ooxml-schemas
                                                                           org.apache.poi/poi
