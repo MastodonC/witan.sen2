@@ -58,6 +58,7 @@
 
 (def default-module-cols-to-report-distinct-vals
   "Default map of columns to report distinct values for for each module."
+  ;; Columns considered but excluded are retained in the code but ignored using #_.
   {:person           [#_:person-table-id
                       :native-id
                       #_:person-order-seq-column
