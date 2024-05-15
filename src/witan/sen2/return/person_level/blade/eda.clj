@@ -44,8 +44,8 @@
   [ds cols]
   (reduce 
    (fn [m k] 
-     (merge m 
-            {k (frequencies (ds k))}))
+     (merge m
+            (when (ds k) {k (frequencies (ds k))})))
    {}
    cols))
 
@@ -58,6 +58,7 @@
 
 (def default-module-cols-to-report-distinct-vals
   "Default map of columns to report distinct values for for each module."
+  ;; Columns considered but excluded are retained in the code but ignored using #_.
   {:person           [#_:person-table-id
                       :native-id
                       #_:person-order-seq-column
@@ -66,7 +67,8 @@
                       :surname
                       :forename
                       #_:person-birth-date
-                      :gender-current
+                      :gender-current   ; <v1.2
+                      :sex              ; ≥v1.2
                       #_:ethnicity
                       #_:postcode
                       #_:upn
@@ -127,14 +129,18 @@
                       :source-id
                       #_:requests-table-id
                       :transfer-la
-                      :res
-                      :wbp
+                      :res              ; <v1.2
+                      :wbp              ; <v1.2
+                      #_:review-meeting ; ≥v1.2
+                      :review-outcome   ; ≥v1.2
                       #_:last-review]
    :placement-detail [#_:placement-detail-table-id
                       :native-id
                       #_:placement-detail-order-seq-column
                       :source-id
                       #_:active-plans-table-id
+                      :res              ; ≥v1.2
+                      :wbp              ; ≥v1.2
                       #_:urn
                       #_:ukprn
                       :sen-setting
@@ -142,7 +148,7 @@
                       :placement-rank
                       #_:entry-date
                       #_:leaving-date
-                      :attendance-pattern
+                      :attendance-pattern ; <v1.2
                       :sen-unit-indicator
                       :resourced-provision-indicator]
    :sen-need         [#_:sen-need-table-id
