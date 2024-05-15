@@ -5,7 +5,7 @@
 
   See in particular:
   - [Special educational needs survey: guide to submitting data](https://www.gov.uk/guidance/special-educational-needs-survey)
-  - [Special educational needs person level survey 2023: guide](https://www.gov.uk/government/publications/special-educational-needs-person-level-survey-2023-guide)
+  - [Special educational needs person level survey 2024: guide v1.1](https://assets.publishing.service.gov.uk/media/65786511095987001295dee0/2024_SEN2_Person_level_-_Guide_Version_1.1.pdf)
   - [Special educational needs person level survey: technical specification](https://www.gov.uk/government/publications/special-educational-needs-person-level-survey-technical-specification)")
 
 
@@ -28,36 +28,47 @@
 
 
 
-;;; # SEN setting - Establishment type <SENsetting>, per items 4.7c & 5.5c of the DfE 2023 SEN2 return.
+;;; # SEN setting - Establishment type <SENsetting>, per items 4.7c & 5.7c of the DfE 2024 SEN2 return.
 (def sen-setting
-  "SEN setting - Establishment type <SENsetting>, per items 4.7c & 5.5c of the DfE 2023 SEN2 return."
+  "SEN setting - Establishment type <SENsetting>, per items 4.7c & 5.7c of the DfE 2024 SEN2 return."
   (let [m {"OLA"  {:order       1
                    :label       "Other LA Arrangements (inc. EOTAS)"
-                   :description (str "Other – arrangements made by the local authority "
-                                     "in accordance with section 61 of the Children and Families Act 2014, "
-                                     "(\"education otherwise than at a school or post-16 institution etc\").")}
+                   :description (str "Other - arrangements made by the local authority "
+                                     "in accordance with section 61 of the 2014 Act, "
+                                     "(\"Special education provision otherwise than in schools, post-16 institution etc\", "
+                                     "commonly referred to as EOTAS) "
+                                     "- for example therapy that is special educational provision for a child "
+                                     "and where it would be inappropriate to provide this in a school.")}
            "OPA"  {:order       2
                    :label       "Other Parent/Person Arrangements (exc. EHE)"
                    :description (str "Other – alternative arrangements made by parents or young person "
-                                     "in accordance with section 42(5) of the Children and Families Act 2014, "
-                                     "excluding those who are subject to elective home education.")}
+                                     "in accordance with section 42(5) of the 2014 Act, "
+                                     "excluding those who are subject to elective home education. "
+                                     "(For example where parents have chosen to arrange and pay for an independent school placement.)")}
            "EHE"  {:order       3
                    :label       "Elective Home Education"
-                   :description (str "Elective home education – alternative arrangements made by parents or young person "
-                                     "in accordance with section 42(5) of the Children and Families Act 2014, for elective home education.")}
+                   :description (str "Elective home education - alternative arrangements "
+                                     "made by parents or young person "
+                                     "in accordance with section 42(5) of the 2014 Act "
+                                     "for elective home education.")}
            "EYP"  {:order       4
                    :label       "Early Years Provider"
                    :description (str "Early years provider with no GIAS URN "
                                      "(for example private nursery, independent early years providers and childminders).")}
-           "NEET" {:order       5
-                   :label       "Not in Education, Training or Employment"
-                   :description (str "Not in education, training or employment (aged 16-25).")}
-           "NIEC" {:order       6
-                   :label       "Ceasing"
-                   :description (str "Not in education or training – Notice to cease issued.")}
-           "NIEO" {:order       7
+           "OTH"  {:order       5
                    :label       "Other"
-                   :description (str "Not in education – Other – "
+                   :description (str "Other - Includes where a type of setting is specified in the EHC plan "
+                                     "(e.g., special school) but no specific setting is named. "
+                                     "Where this is used, the local authority will be prompted for further information in COLLECT.")}
+           "NEET" {:order       6
+                   :label       "Not in education, employment or training - Aged 16-25"
+                   :description (str "Not in education, employment, or training (aged 16-25).")}
+           "NIEC" {:order       7
+                   :label       "Not in education or training - Ceasing"
+                   :description (str "Not in education or training – Notice to cease issued.")}
+           "NIEO" {:order       8
+                   :label       "Not in education or training - Other"
+                   :description (str "Not in education or training - Other - "
                                      "Where this is used, the local authority will be prompted for further information in COLLECT, "
                                      "for example, transferred into the local authority with an EHC plan and awaiting placement.")}}]
     (into (sorted-map-by (partial compare-get-in m :order)) m)))
