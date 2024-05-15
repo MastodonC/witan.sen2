@@ -507,13 +507,13 @@
                       :summary-label "#rows"
                       :action        "Correct or consider as custom EHCP primary need."}
                      :issue-missing-upn
-                     {:idx           233
+                     {:idx           006
                       :label         "Missing UPN, preventing joining with other SEN2 returns"
                       :cols-required #{:upn}
                       :col-fn        #(->> % :upn (map nil?))
                       :summary-fn    (count-true? :issue-missing-upn)
                       :summary-label "#rows"
-                      :action        "Correct or consider removing non-new EHCPs without a UPN"}}]
+                      :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."}}]
     (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
                                               [(get-in m [k2 :idx]) k2]))) m)))
 
