@@ -117,7 +117,7 @@
 ;;; ## `placement-detail`s on census dates
 (defn placement-detail-on-census-dates
   "All `placement-detail` records on census dates.
-  
+
   Some `:person-table-id` will have a `:requests-table-id` with both
   `:placement-rank` 1 and `:placement-rank` 2 placements on a census date,
   and there may be some CYP with only a `:placement-rank` 2 placement
@@ -505,7 +505,15 @@
                       :col-fn        #(->> % :sen-type (map (complement (partial contains? (conj sen-types nil)))))
                       :summary-fn    (count-true? :issue-invalid-sen-type)
                       :summary-label "#rows"
-                      :action        "Correct or consider as custom EHCP primary need."}}]
+                      :action        "Correct or consider as custom EHCP primary need."}
+                     :issue-missing-upn
+                     {:idx           006
+                      :label         "Missing UPN, preventing joining with other SEN2 returns"
+                      :cols-required #{:upn}
+                      :col-fn        #(->> % :upn (map nil?))
+                      :summary-fn    (count-true? :issue-missing-upn)
+                      :summary-label "#rows"
+                      :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."}}]
     (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
                                               [(get-in m [k2 :idx]) k2]))) m)))
 
@@ -565,7 +573,8 @@
    :update-resourced-provision-indicator
    :update-sen-setting
    :update-sen-type
-   :update-notes])
+   :update-notes
+   :update-upn])
 
 (defn flagged-issues->ds
   "Extract issues dataset from `plans-placements-on-census-dates-issues-flagged` containing
@@ -727,7 +736,8 @@
                                                   :update-sen-unit-indicator
                                                   :update-resourced-provision-indicator
                                                   :update-sen-setting
-                                                  :update-sen-type])
+                                                  :update-sen-type
+                                                  :updtae-upn])
                       key-fn           keyword
                       parser-fn        (merge (select-keys parser-fn [:person-table-id
                                                                       :census-date
@@ -741,7 +751,8 @@
                                                                 :sen-unit-indicator
                                                                 :resourced-provision-indicator
                                                                 :sen-setting
-                                                                :sen-type])
+                                                                :sen-type
+                                                                :upn])
                                                   (update-keys (comp keyword (partial str "update-") name))))}}]
   (tc/dataset filepath
               {:column-allowlist column-allowlist
@@ -759,7 +770,8 @@
                                                   :update-ukprn
                                                   :update-sen-unit-indicator
                                                   :update-resourced-provision-indicator
-                                                  :update-sen-setting]
+                                                  :update-sen-setting
+                                                  :update-upn]
                       (fn [& args] (some some? args)))
       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
       (tc/update-columns [:update-drop?] (partial map #(if % "X" " ")))
@@ -786,7 +798,8 @@
                                             :update-sen-unit-indicator
                                             :update-resourced-provision-indicator
                                             :update-sen-setting
-                                            :update-sen-type])
+                                            :update-sen-type
+                                            :update-upn])
                         (tc/set-dataset-name "update"))
                     [:person-table-id :census-date :requests-table-id])
       (tc/drop-columns #"^:update\..*$")
@@ -822,9 +835,11 @@
       (tc/map-columns :sen-type
                       [:update-sen-type :sen-type]
                       #(if (some? %1) %1 %2))
+      (tc/map-columns :upn
+                      [:update-upn :upn]
+                      #(if (some? %1) %1 %2))
       ;; Drop update columns
       (tc/drop-columns #"^:update-.*$")
       ;; Arrange dataset
       (tc/order-by [:person-table-id :census-date :requests-table-id])
       (tc/set-dataset-name "plans-placements-on-census-dates-updated")))
-
