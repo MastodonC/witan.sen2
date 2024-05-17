@@ -737,7 +737,7 @@
                                                   :update-resourced-provision-indicator
                                                   :update-sen-setting
                                                   :update-sen-type
-                                                  :updtae-upn])
+                                                  :update-upn])
                       key-fn           keyword
                       parser-fn        (merge (select-keys parser-fn [:person-table-id
                                                                       :census-date
