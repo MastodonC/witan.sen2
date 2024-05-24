@@ -143,29 +143,29 @@
    #_#_:native-id             :string
    #_#_:sen2-order-seq-column :int32
    #_#_:source-id             :string
-   :collection            :string
-   :year                  :int32
-   :reference-date        [:local-date parse-date]
-   :source-level          :string
-   :software-code         :string
-   :release               :string
-   :serial-no             :int32
-   :datetime              [:date-time #(->> %
-                                            parse-double
-                                            (* 1e9 60 60 24)
-                                            (.plusNanos (LocalDateTime/parse "1899-12-30T00:00:00.000")))]
-   :lea                   :string
-   :dmo                   :string
-   :dco                   :string})
+   :collection                :string
+   :year                      :int32
+   :reference-date            [:local-date parse-date]
+   :source-level              :string
+   :software-code             :string
+   :release                   :string
+   :serial-no                 :int32
+   :datetime                  [:date-time #(->> %
+                                                parse-double
+                                                (* 1e9 60 60 24)
+                                                (.plusNanos (LocalDateTime/parse "1899-12-30T00:00:00.000")))]
+   :lea                       :string
+   :dmo                       :string
+   :dco                       :string})
 
 (def sen2-base-read-cfg
   "Base configuration map (without `:start-row` or `:end-row`) for reading SEN2 module 0 \"SEN2\" into a dataset."
-  {:key-fn        #(or (sen2-src-col-name->col-name %) %)
-   :parser-fn sen2-parser-fn
-   :dataset-name  "sen2"
-   ::post-fn      (fn [ds] (-> ds
-                               (tc/drop-columns (keys (filter (comp nil? last) sen2-src-col-name->col-name)))
-                               (tc/add-column :native-id (partial :lea))))})
+  {:key-fn       #(or (sen2-src-col-name->col-name %) %)
+   :parser-fn    sen2-parser-fn
+   :dataset-name "sen2"
+   ::post-fn     (fn [ds] (-> ds
+                              (tc/drop-columns (keys (filter (comp nil? last) sen2-src-col-name->col-name)))
+                              (tc/add-column :native-id (partial :lea))))})
 
 (def sen2-col-name->label
   "Map SEN2 module 0 \"SEN2\" dataset column names to display labels."
@@ -504,26 +504,26 @@
    #_                                                                              :source-id
    "Requests record ID\n\n(This must match the relevant ID in the Requests table)" :requests-table-id
    "EHC Plan transferred in from another LA during calendar year"                  :transfer-la
-   #_                                                                              :res            ; <v1.2
-   #_                                                                              :wbp            ; <v1.2
+   "Residential Settings"                                                          :res            ; <v1.2
+   "Work Based Learning Activity"                                                  :wbp            ; <v1.2
    "EHC Plan Review Decisions Date"                                                :review-meeting ; ≥v1.2
    "Annual Review Decision"                                                        :review-outcome ; ≥v1.2
    "Annual Review Meeting Date"                                                    :last-review})
 
 (def active-plans-parser-fn
   "Parser function for SEN2 module 5a \"Active plans\"."
-  {:person-table-id               [:string parse-id]
+  {:person-table-id                   [:string parse-id]
    #_#_:active-plans-table-id         :string
-   :native-id                     :string
+   :native-id                         :string
    #_#_:active-plans-order-seq-column :int32
    #_#_:source-id                     :string
-   :requests-table-id             [:string parse-id]
-   :transfer-la                   [:string parse-id]
-   :res                           :string                  ; <v1.2
-   :wbp                           :string                  ; <v1.2
-   :review-meeting                [:local-date parse-date] ; ≥v1.2
-   :review-outcome                :string                  ; ≥v1.2
-   :last-review                   [:local-date parse-date]})
+   :requests-table-id                 [:string parse-id]
+   :transfer-la                       [:string parse-id]
+   :res                               :string                  ; <v1.2
+   :wbp                               :string                  ; <v1.2
+   :review-meeting                    [:local-date parse-date] ; ≥v1.2
+   :review-outcome                    :string                  ; ≥v1.2
+   :last-review                       [:local-date parse-date]})
 
 (def active-plans-base-read-cfg
   "Base configuration map (without `:start-row` or `:end-row`) for reading SEN2 module 5a \"Active plans\" into a dataset."
@@ -570,31 +570,31 @@
    "Placement Rank (1=Primary, 2=Secondary)"                                       :placement-rank
    "Placement Start Date"                                                          :entry-date
    "Placement Leaving Date"                                                        :leaving-date
-   #_                                                                              :attendance-pattern ; <v1.2
+   "Attendance Pattern"                                                            :attendance-pattern ; <v1.2
    "SEN Unit Indicator"                                                            :sen-unit-indicator
    "Resourced Provision Indicator"                                                 :resourced-provision-indicator})
 
 (def placement-detail-parser-fn
   "Parser function for SEN2 module 5b \"Placement details\"."
-  {:person-table-id                   [:string parse-id]
-   :requests-table-id                 [:string parse-id]
+  {:person-table-id                       [:string parse-id]
+   :requests-table-id                     [:string parse-id]
    #_#_:placement-detail-table-id         :string
-   :native-id                         :string
+   :native-id                             :string
    #_#_:placement-detail-order-seq-column :int32
    #_#_:source-id                         :string
    #_#_:active-plans-table-id             :string
-   :res                               :string ; ≥v1.2
-   :wbp                               :string ; ≥v1.2
-   :urn                               [:string parse-id]
-   :ukprn                             [:string parse-id]
-   :sen-setting                       :string
-   :sen-setting-other                 :string
-   :placement-rank                    [:int8 parse-double]
-   :entry-date                        [:local-date parse-date]
-   :leaving-date                      [:local-date parse-date]
-   :attendance-pattern                :string ; <v1.2
-   :sen-unit-indicator                [:boolean parse-boolean]
-   :resourced-provision-indicator     [:boolean parse-boolean]})
+   :res                                   :string ; ≥v1.2
+   :wbp                                   :string ; ≥v1.2
+   :urn                                   [:string parse-id]
+   :ukprn                                 [:string parse-id]
+   :sen-setting                           :string
+   :sen-setting-other                     :string
+   :placement-rank                        [:int8 parse-double]
+   :entry-date                            [:local-date parse-date]
+   :leaving-date                          [:local-date parse-date]
+   :attendance-pattern                    :string ; <v1.2
+   :sen-unit-indicator                    [:boolean parse-boolean]
+   :resourced-provision-indicator         [:boolean parse-boolean]})
 
 (def placement-detail-base-read-cfg
   "Base configuration map (without `:start-row` or `:end-row`) for reading SEN2 module 5b \"Placement details\" into a dataset."
