@@ -169,7 +169,8 @@
 
 (def sen2-col-name->label
   "Map SEN2 module 0 \"SEN2\" dataset column names to display labels."
-  {#_#_:sen2-table-id         "SEN2 table ID"
+  {:record-type               "Record type"
+   #_#_:sen2-table-id         "SEN2 table ID"
    :native-id                 "Native ID"
    #_#_:sen2-order-seq-column "SEN2 order seq column"
    #_#_:source-id             "Source ID"
