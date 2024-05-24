@@ -165,7 +165,7 @@
    :parser-fn    sen2-parser-fn
    :dataset-name "sen2"
    ::post-fn     (fn [ds] (-> ds
-                              (tc/add-column :native-id (partial :lea))))})
+                              (tc/add-column :native-id #(get % :lea))))})
 
 (def sen2-col-name->label
   "Map SEN2 module 0 \"SEN2\" dataset column names to display labels."
