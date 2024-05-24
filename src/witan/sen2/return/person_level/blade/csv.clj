@@ -391,8 +391,6 @@
    :sen-setting-other             :string
    :sen-unit-indicator            :boolean
    :resourced-provision-indicator :boolean
-   :placement-rank                [:int-8 parse-long]
-   :sen-setting                   :string})
    :placement-rank                [:int8 parse-long]})
 
 (def plan-detail-read-cfg
@@ -743,6 +741,7 @@
              {}
              raw-module-col-name->label))
 
-(def parser-fn
+(defn parser-fn
   "Collated parser functions for all SEN2 modules."
-  (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg))
+  ([] (parser-fn module-read-cfg))
+  ([module-read-cfg] (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg)))
