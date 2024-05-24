@@ -120,7 +120,7 @@
 ;;; ## Module 0: SEN2 metadata (`sen2`)
 (def sen2-src-col-name->col-name
   "Map SEN2 module 0 \"SEN2\" source data file column name to column name for the dataset."
-  {"Record Type"                         nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                         :record-type       ; not in SEN2 Blade CSV Export
    #_                                    :sen2-table-id
    #_                                    :native-id
    #_                                    :sen2-order-seq-column
@@ -139,7 +139,8 @@
 
 (def sen2-parser-fn
   "Parser function for SEN2 module 0 \"SEN2\"."
-  {#_#_:sen2-table-id         :string
+  {:record-type               :string
+   #_#_:sen2-table-id         :string
    #_#_:native-id             :string
    #_#_:sen2-order-seq-column :int32
    #_#_:source-id             :string
@@ -164,7 +165,6 @@
    :parser-fn    sen2-parser-fn
    :dataset-name "sen2"
    ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) sen2-src-col-name->col-name)))
                               (tc/add-column :native-id (partial :lea))))})
 
 (def sen2-col-name->label
@@ -189,7 +189,7 @@
 ;;; ## Module 1: Person details (`person`)
 (def person-src-col-name->col-name
   "Map SEN2 module 1 \"Person\" source data file column name to column name for the dataset."
-  {"Record Type"                                                    nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                    :record-type       ; not in SEN2 Blade CSV Export
    "Person ID\n\n(This must be a unique ID for each Person record)" :person-table-id
    "LA\n(From Header Record)"                                       :native-id
    #_                                                               :person-order-seq-column
@@ -208,7 +208,8 @@
 
 (def person-parser-fn
   "Parser function for SEN2 module 1 \"Person\"."
-  {:person-table-id             [:string parse-id]
+  {:record-type                 :string
+   :person-table-id             [:string parse-id]
    :native-id                   :string
    #_#_:person-order-seq-column :int32
    #_#_:source-id               :string
@@ -229,12 +230,12 @@
   {:key-fn       #(or (person-src-col-name->col-name %) %)
    :parser-fn    person-parser-fn
    :dataset-name "person"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) person-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
 (def person-col-name->label
   "Map SEN2 module 1 \"Person\" dataset column names to display labels."
-  {:person-table-id             "Person table ID"
+  {:record-type                 "Record type"
+   :person-table-id             "Person table ID"
    :native-id                   "Native ID"
    #_#_:person-order-seq-column "Person order seq column"
    #_#_:source-id               "Source ID"
@@ -254,7 +255,7 @@
 ;;; ## Module 2: Requests (`requests`)
 (def requests-src-col-name->col-name
   "Map SEN2 module 2 \"Requests\" source data file column name to column name for the dataset."
-  {"Record Type"                                                                     nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                                     :record-type       ; not in SEN2 Blade CSV Export
    "Requests record ID\n\n(This must be a unique ID for each Requests record)"       :requests-table-id
    "LA\n(From Header Record)"                                                        :native-id
    #_                                                                                :requests-order-seq-column
@@ -270,7 +271,8 @@
 
 (def requests-parser-fn
   "Parser function for SEN2 module 2 \"Requests\"."
-  {:requests-table-id             [:string parse-id]
+  {:record-type                   :string
+   :requests-table-id             [:string parse-id]
    :native-id                     :string
    #_#_:requests-order-seq-column :int32
    #_#_:source-id                 :string
@@ -288,12 +290,12 @@
   {:key-fn       #(or (requests-src-col-name->col-name %) %)
    :parser-fn    requests-parser-fn
    :dataset-name "requests"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) requests-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
 (def requests-col-name->label
   "Map SEN2 module 2 \"Requests\" dataset column names to display labels."
-  {:requests-table-id             "Requests table ID"
+  {:record-type                   "Record type"
+   :requests-table-id             "Requests table ID"
    :native-id                     "Native ID"
    #_#_:requests-order-seq-column "Requests order seq column"
    #_#_:source-id                 "Source ID"
@@ -310,7 +312,7 @@
 ;;; ## Module 3: EHC needs assessments (`assessment`)
 (def assessment-src-col-name->col-name
   "Map SEN2 module 3 \"EHC needs assessments\" source data file column name to column name for the dataset."
-  {"Record Type"                                                                   nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                                   :record-type       ; not in SEN2 Blade CSV Export
    "Person ID\n\n(This must match the relevant ID in the Person record table)"     :person-table-id     ; not in SEN2 Blade CSV Export
    #_                                                                              :assessment-table-id
    "LA\n(From Header Record)"                                                      :native-id
@@ -327,7 +329,8 @@
 
 (def assessment-parser-fn
   "Parser function for SEN2 module 3 \"EHC needs assessments\"."
-  {:person-table-id                 [:string parse-id]
+  {:record-type                     :string
+   :person-table-id                 [:string parse-id]
    #_#_:assessment-table-id         :string
    :native-id                       :string
    #_#_:assessment-order-seq-column :int32
@@ -346,12 +349,12 @@
   {:key-fn       #(or (assessment-src-col-name->col-name %) %)
    :parser-fn    assessment-parser-fn
    :dataset-name "assessment"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) assessment-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
 (def assessment-col-name->label
   "Map SEN2 module 3 \"EHC needs assessments\" dataset column names to display labels."
-  {:person-table-id                 "Person table ID"
+  {:record-type                     "Record type"
+   :person-table-id                 "Person table ID"
    #_#_:assessment-table-id         "Assessment table ID"
    :native-id                       "Native ID"
    #_#_:assessment-order-seq-column "Assessment order seq column"
@@ -369,7 +372,7 @@
 ;;; ## Module 4a: Named plan (`named-plan`)
 (def named-plan-src-col-name->col-name
   "Map SEN2 module 4a \"Named plan\" source data file column name to column name for the dataset."
-  {"Record Type"                                                                   nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                                   :record-type       ; not in SEN2 Blade CSV Export
    "Person ID\n\n(This must match the relevant ID in the Person record table)"     :person-table-id   ; not in SEN2 Blade CSV Export
    "Requests record ID\n\n(This must match the relevant ID in the Requests table)" :requests-table-id ; not in SEN2 Blade CSV Export
    #_                                                                              :named-plan-table-id
@@ -388,7 +391,8 @@
 
 (def named-plan-parser-fn
   "Parser function for SEN2 module 4a \"Named plan\"."
-  {:person-table-id                 [:string parse-id]
+  {:record-type                     :string
+   :person-table-id                 [:string parse-id]
    :requests-table-id               [:string parse-id]
    #_#_:named-plan-table-id         :string
    :native-id                       :string
@@ -409,12 +413,12 @@
   {:key-fn       #(or (named-plan-src-col-name->col-name %) %)
    :parser-fn    named-plan-parser-fn
    :dataset-name "named-plan"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) named-plan-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
-(def ^:private named-plan-col-name->label
+(def named-plan-col-name->label
   "Map SEN2 module 4a \"Named plan\" dataset column names to display labels."
-  {:person-table-id                 "Person table ID"
+  {:record-type                     "Record type"
+   :person-table-id                 "Person table ID"
    :requests-table-id               "Requests table ID"
    #_#_:named-plan-table-id         "Named plan table ID"
    :native-id                       "Native ID"
@@ -434,7 +438,7 @@
 ;;; ## Module 4b: Plan detail records (`plan-detail`)
 (def plan-detail-src-col-name->col-name
   "Map SEN2 module 4b \"Plan detail records\" source data file column name to column name for the dataset."
-  {"Record Type"                                                                   nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                                   :record-type       ; not in SEN2 Blade CSV Export
    "Person ID\n\n(This must match the relevant ID in the Person record table)"     :person-table-id   ; not in SEN2 Blade CSV Export
    "Requests record ID\n\n(This must match the relevant ID in the Requests table)" :requests-table-id ; not in SEN2 Blade CSV Export
    #_                                                                              :plan-detail-table-id
@@ -452,7 +456,8 @@
 
 (def plan-detail-parser-fn
   "Parser function for SEN2 module 4b \"Plan detail records\"."
-  {:person-table-id                  [:string parse-id]
+  {:record-type                      :string
+   :person-table-id                  [:string parse-id]
    :requests-table-id                [:string parse-id]
    #_#_:plan-detail-table-id         :string
    :native-id                        :string
@@ -472,12 +477,12 @@
   {:key-fn       #(or (plan-detail-src-col-name->col-name %) %)
    :parser-fn    plan-detail-parser-fn
    :dataset-name "plan-detail"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) plan-detail-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
 (def plan-detail-col-name->label
   "Map SEN2 module 4b \"Plan detail records\" dataset column names to display labels."
-  {:person-table-id                  "Person table ID"
+  {:record-type                      "Record type"
+   :person-table-id                  "Person table ID"
    :requests-table-id                "Requests table ID"
    #_#_:plan-detail-table-id         "Plan detail table ID"
    :native-id                        "Native ID"
@@ -496,7 +501,7 @@
 ;;; ## Module 5a: Placements - Active plans (`active-plans`)
 (def active-plans-src-col-name->col-name
   "Map SEN2 module 5a \"Active plans\" source data file column name to column name for the dataset."
-  {"Record Type"                                                                   nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                                   :record-type       ; not in SEN2 Blade CSV Export
    "Person ID\n\n(This must match the relevant ID in the Person record table)"     :person-table-id   ; not in SEN2 Blade CSV Export
    #_                                                                              :active-plans-table-id
    "LA\n(From Header Record)"                                                      :native-id
@@ -512,7 +517,8 @@
 
 (def active-plans-parser-fn
   "Parser function for SEN2 module 5a \"Active plans\"."
-  {:person-table-id                   [:string parse-id]
+  {:record-type                       :string
+   :person-table-id                   [:string parse-id]
    #_#_:active-plans-table-id         :string
    :native-id                         :string
    #_#_:active-plans-order-seq-column :int32
@@ -530,12 +536,12 @@
   {:key-fn       #(or (active-plans-src-col-name->col-name %) %)
    :parser-fn    active-plans-parser-fn
    :dataset-name "active-plans"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) active-plans-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
 (def active-plans-col-name->label
   "Map SEN2 module 5a \"Active plans\" dataset column names to display labels."
-  {:person-table-id                   "Person table ID"
+  {:record-type                       "Record type"
+   :person-table-id                   "Person table ID"
    #_#_:active-plans-table-id         "Active plans table ID"
    :native-id                         "Native ID"
    #_#_:active-plans-order-seq-column "Active plans order seq column"
@@ -553,7 +559,7 @@
 ;;; ## Module 5b: Placements - Placement details (`placement-detail`)
 (def placement-detail-src-col-name->col-name
   "Map SEN2 module 5b \"Placement details\" source data file column name to column name for the dataset."
-  {"Record Type"                                                                   nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                                   :record-type       ; not in SEN2 Blade CSV Export
    "Person ID\n\n(This must match the relevant ID in the Person record table)"     :person-table-id   ; not in SEN2 Blade CSV Export
    "Requests record ID\n\n(This must match the relevant ID in the Requests table)" :requests-table-id ; not in SEN2 Blade CSV Export
    #_                                                                              :placement-detail-table-id
@@ -576,7 +582,8 @@
 
 (def placement-detail-parser-fn
   "Parser function for SEN2 module 5b \"Placement details\"."
-  {:person-table-id                       [:string parse-id]
+  {:record-type                           :string
+   :person-table-id                       [:string parse-id]
    :requests-table-id                     [:string parse-id]
    #_#_:placement-detail-table-id         :string
    :native-id                             :string
@@ -601,12 +608,12 @@
   {:key-fn       #(or (placement-detail-src-col-name->col-name %) %)
    :parser-fn    placement-detail-parser-fn
    :dataset-name "placement-detail"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) placement-detail-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
 (def placement-detail-col-name->label
   "Map SEN2 module 5b \"Placement details\" dataset column names to display labels."
-  {:person-table-id                       "Person table ID"
+  {:record-type                           "Record type"
+   :person-table-id                       "Person table ID"
    :requests-table-id                     "Requests table ID"
    #_#_:placement-detail-table-id         "Placement detail table ID"
    :native-id                             "Native ID"
@@ -630,7 +637,7 @@
 ;;; ## Module 5c: Placements - SEN need (`sen-need`)
 (def sen-need-src-col-name->col-name
   "Map SEN2 module 5c \"SEN need\" source data file column name to column name for the dataset."
-  {"Record Type"                                                                   nil                ; not in SEN2 Blade CSV Export
+  {"Record Type"                                                                   :record-type       ; not in SEN2 Blade CSV Export
    "Person ID\n\n(This must match the relevant ID in the Person record table)"     :person-table-id   ; not in SEN2 Blade CSV Export
    "Requests record ID\n\n(This must match the relevant ID in the Requests table)" :requests-table-id ; not in SEN2 Blade CSV Export
    #_                                                                              :sen-need-table-id
@@ -643,7 +650,8 @@
 
 (def sen-need-parser-fn
   "Parser function for SEN2 module 5 \"SEN need\"."
-  {:person-table-id               [:string parse-id]
+  {:record-type                   :string
+   :person-table-id               [:string parse-id]
    :requests-table-id             [:string parse-id]
    #_#_:sen-need-table-id         :string
    :native-id                     :string
@@ -658,12 +666,12 @@
   {:key-fn       #(or (sen-need-src-col-name->col-name %) %)
    :parser-fn    sen-need-parser-fn
    :dataset-name "sen-need"
-   ::post-fn     (fn [ds] (-> ds
-                              (tc/drop-columns (keys (filter (comp nil? last) sen-need-src-col-name->col-name)))))})
+   ::post-fn     identity})
 
 (def sen-need-col-name->label
   "Map SEN2 module 5c \"SEN need\" dataset column names to display labels."
-  {:person-table-id               "Person table ID"
+  {:record-type                   "Record type"
+   :person-table-id               "Person table ID"
    :requests-table-id             "Requests table ID"
    #_#_:sen-need-table-id         "SEN need table ID"
    :native-id                     "Native ID"
