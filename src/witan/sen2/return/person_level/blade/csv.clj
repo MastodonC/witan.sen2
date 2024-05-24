@@ -276,13 +276,13 @@
    :assessment-order-seq-column :int32
    :source-id                   :string
    :requests-table-id           :string
+   :assessment-outcome          :string
    :assessment-outcome-date     [:local-date parse-date]
    :assessment-mediation        :boolean
    :assessment-tribunal         :boolean  
    :other-mediation             :boolean
    :other-tribunal              :boolean
-   :week20                      :boolean
-   :assessment-outcome          :string})
+   :week20                      :boolean})
 
 (def assessment-read-cfg
   "Configuration map for reading SEN2 module 3 \"EHC needs assessments\" into a dataset."
@@ -303,7 +303,7 @@
    :assessment-tribunal         "Assessment tribunal"
    :other-mediation             "Other mediation"
    :other-tribunal              "Other tribunal"
-   :week20                      "20-week time limit exceptions apply "})
+   :week20                      "20-week time limit exceptions apply"})
 
 
 ;;; ## Module 4a: Named plan (`named-plan`)
@@ -387,11 +387,13 @@
    :named-plan-table-id           :string
    :urn                           :string
    :ukprn                         :string
+   :sen-setting                   :string
    :sen-setting-other             :string
    :sen-unit-indicator            :boolean
    :resourced-provision-indicator :boolean
    :placement-rank                [:int-8 parse-long]
    :sen-setting                   :string})
+   :placement-rank                [:int8 parse-long]})
 
 (def plan-detail-read-cfg
   "Configuration map for reading SEN2 module 4b \"Plan detail records\" into a dataset."
@@ -498,13 +500,13 @@
    :wbp                               :string ; ≥v1.2
    :urn                               :string
    :ukprn                             :string
+   :sen-setting                       :string
    :sen-setting-other                 :string
    :placement-rank                    [:int8 parse-long]
    :entry-date                        [:local-date parse-date]
    :leaving-date                      [:local-date parse-date]
    :sen-unit-indicator                :boolean
    :resourced-provision-indicator     :boolean
-   :sen-setting                       :string
    :attendance-pattern                :string ; <v1.2
    })
 
