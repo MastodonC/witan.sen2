@@ -1,5 +1,5 @@
-(ns sen2-blade-eda
-  "EDA of SEN2 Blade."
+(ns sen2-blade-csv-eda
+  "EDA of SEN2 Blade read from COLLECT Blade CSV export."
   {:nextjournal.clerk/toc                  true
    :nextjournal.clerk/visibility           {:code   :hide
                                             :result :show}
@@ -9,7 +9,7 @@
   (:require [clojure.string :as string]
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
-            [sen2-blade :as sen2-blade] ; <- replace with workpackage specific version
+            [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
             [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
 
 ^{;; Notebook header
