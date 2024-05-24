@@ -1,5 +1,5 @@
 (ns witan.sen2.return.person-level.blade.csv
-  "Read SEN2 Blade CSV export."
+  "Read SEN2 Blade from COLLECT Blade CSV export."
   (:require [tablecloth.api :as tc])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter]))
@@ -92,7 +92,7 @@
    "dco"                :dco})
 
 (def sen2-parser-fn
-  "Parser function for reading SEN2 module 0 \"SEN2\"."
+  "Parser function for SEN2 module 0 \"SEN2\"."
   {:sen2-table-id         :string
    :native-id             :string
    :sen2-order-seq-column :int32
@@ -158,7 +158,7 @@
    "upnunknown"           :upn-unknown})
 
 (def person-parser-fn
-  "Parser function for reading SEN2 module 1 \"Person\"."
+  "Parser function for SEN2 module 1 \"Person\"."
   {:person-table-id         :string
    :native-id               :string
    :person-order-seq-column :int32
@@ -217,7 +217,7 @@
    "exported"               :exported})
 
 (def requests-parser-fn
-  "Parser function for reading SEN2 module 2 \"Requests\"."
+  "Parser function for SEN2 module 2 \"Requests\"."
   {:requests-table-id         :string
    :native-id                 :string
    :requests-order-seq-column :int32
@@ -270,7 +270,7 @@
    "week20"                   :week20})
 
 (def assessment-parser-fn
-  "Parser function for reading SEN2 module 3 \"EHC needs assessments\"."
+  "Parser function for SEN2 module 3 \"EHC needs assessments\"."
   {:assessment-table-id         :string
    :native-id                   :string
    :assessment-order-seq-column :int32
@@ -324,7 +324,7 @@
    "ceasereason"             :cease-reason})
 
 (def named-plan-parser-fn
-  "Parser function for reading SEN2 module 4a \"Named plan\"."
+  "Parser function for SEN2 module 4a \"Named plan\"."
   {:named-plan-table-id         :string
    :native-id                   :string
    :named-plan-order-seq-column :int32
@@ -379,7 +379,7 @@
    "resourcedprovisionindicator" :resourced-provision-indicator})
 
 (def plan-detail-parser-fn
-  "Parser function for reading SEN2 module 4b \"Plan detail records\"."
+  "Parser function for SEN2 module 4b \"Plan detail records\"."
   {:plan-detail-table-id          :string
    :native-id                     :string
    :plan-detail-order-seq-column  :int32
@@ -431,7 +431,7 @@
    "lastreview"                :last-review})
 
 (def active-plans-parser-fn
-  "Parser function for reading SEN2 module 5a \"Active plans\"."
+  "Parser function for SEN2 module 5a \"Active plans\"."
   {:active-plans-table-id         :string
    :native-id                     :string
    :active-plans-order-seq-column :int32
@@ -488,7 +488,7 @@
    "resourcedprovisionindicator"   :resourced-provision-indicator})
 
 (def placement-detail-parser-fn
-  "Parser function for reading SEN2 module 5b \"Placement details\"."
+  "Parser function for SEN2 module 5b \"Placement details\"."
   {:placement-detail-table-id         :string
    :native-id                         :string
    :placement-detail-order-seq-column :int32
@@ -547,7 +547,7 @@
    "sentyperank"           :sen-type-rank})
 
 (def sen-need-parser-fn
-  "Parser function for reading SEN2 module 5 \"SEN need\"."
+  "Parser function for SEN2 module 5 \"SEN need\"."
   {:sen-need-table-id         :string
    :native-id                 :string
    :sen-need-order-seq-column :int32
