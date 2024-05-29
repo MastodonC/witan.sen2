@@ -771,16 +771,16 @@
                                                   :update-ukprn
                                                   :update-sen-unit-indicator
                                                   :update-resourced-provision-indicator
-                                                  :update-sen-setting
-                                                  :update-upn]
+                                                  :update-sen-setting]
                       (fn [& args] (some some? args)))
       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
       (tc/update-columns [:update-drop?] (partial map #(if % "X" " ")))
       (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "*" " ")))
-      (tc/group-by [:census-date :update-drop? :update-ncy-nominal :update-sen2-establishment :update-sen-type])
+      (tc/group-by [:census-date :update-drop? :update-upn :update-ncy-nominal :update-sen2-establishment :update-sen-type])
       (tc/aggregate {:row-count tc/row-count})
       (tc/pivot->wider :census-date :row-count {:drop-missing? false})
       (tc/rename-columns {:update-drop?              "drop?"
+                          :update-upn                "UPN"
                           :update-ncy-nominal        "Nominal NCY"
                           :update-sen2-establishment "SEN2 Establishment"
                           :update-sen-type           "sen-type (need)"})))
