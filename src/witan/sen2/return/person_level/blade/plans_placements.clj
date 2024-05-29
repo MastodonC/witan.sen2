@@ -374,6 +374,14 @@
                                           tc/row-count)
                       :summary-label "#keys"
                       :action        "Should be unique."}
+                     :issue-missing-upn
+                     {:idx           006
+                      :label         "Missing UPN, preventing joining with other SEN2 returns"
+                      :cols-required #{:upn}
+                      :col-fn        #(->> % :upn (map nil?))
+                      :summary-fn    (count-true? :issue-missing-upn)
+                      :summary-label "#rows"
+                      :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."}
                      :issue-multiple-requests
                      {:idx           101
                       :label         "CYP has plans|placements from multiple requests"
@@ -505,15 +513,7 @@
                       :col-fn        #(->> % :sen-type (map (complement (partial contains? (conj sen-types nil)))))
                       :summary-fn    (count-true? :issue-invalid-sen-type)
                       :summary-label "#rows"
-                      :action        "Correct or consider as custom EHCP primary need."}
-                     :issue-missing-upn
-                     {:idx           006
-                      :label         "Missing UPN, preventing joining with other SEN2 returns"
-                      :cols-required #{:upn}
-                      :col-fn        #(->> % :upn (map nil?))
-                      :summary-fn    (count-true? :issue-missing-upn)
-                      :summary-label "#rows"
-                      :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."}}]
+                      :action        "Correct or consider as custom EHCP primary need."}}]
     (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
                                               [(get-in m [k2 :idx]) k2]))) m)))
 
@@ -566,6 +566,7 @@
 (def names-of-update-cols
   "Names of columns to add to issues dataset for updates."
   [:update-drop?
+   :update-upn
    :update-ncy-nominal
    :update-urn
    :update-ukprn
@@ -573,8 +574,7 @@
    :update-resourced-provision-indicator
    :update-sen-setting
    :update-sen-type
-   :update-notes
-   :update-upn])
+   :update-notes])
 
 (defn flagged-issues->ds
   "Extract issues dataset from `plans-placements-on-census-dates-issues-flagged` containing
@@ -730,6 +730,7 @@
                                                   :census-date
                                                   :requests-table-id
                                                   :update-drop?
+                                                  :update-upn
                                                   :update-ncy-nominal
                                                   :update-urn
                                                   :update-ukprn
@@ -737,7 +738,7 @@
                                                   :update-resourced-provision-indicator
                                                   :update-sen-setting
                                                   :update-sen-type
-                                                  :update-upn])
+                                                  ])
                       key-fn           keyword
                       parser-fn        (merge (select-keys parser-fn [:person-table-id
                                                                       :census-date
@@ -792,19 +793,23 @@
       (tc/left-join (-> plans-placements-on-census-dates-updates'
                         (tc/select-columns [:person-table-id :census-date :requests-table-id
                                             :update-drop?
+                                            :update-upn
                                             :update-ncy-nominal
                                             :update-urn
                                             :update-ukprn
                                             :update-sen-unit-indicator
                                             :update-resourced-provision-indicator
                                             :update-sen-setting
-                                            :update-sen-type
-                                            :update-upn])
+                                            :update-sen-type])
                         (tc/set-dataset-name "update"))
                     [:person-table-id :census-date :requests-table-id])
       (tc/drop-columns #"^:update\..*$")
       ;; Drop records with `:update-drop?`
       (tc/drop-rows :update-drop?)
+      ;; Update `:upn`if non-nil in update dataset
+      (tc/map-columns :upn
+                      [:update-upn :upn]
+                      #(if (some? %1) %1 %2))
       ;; Update `:ncy-nominal` if non-nil in update dataset
       (tc/map-columns :ncy-nominal
                       [:update-ncy-nominal :ncy-nominal]
@@ -834,9 +839,6 @@
       ;; Update `:sen-type` if non-nil in update dataset
       (tc/map-columns :sen-type
                       [:update-sen-type :sen-type]
-                      #(if (some? %1) %1 %2))
-      (tc/map-columns :upn
-                      [:update-upn :upn]
                       #(if (some? %1) %1 %2))
       ;; Drop update columns
       (tc/drop-columns #"^:update-.*$")
