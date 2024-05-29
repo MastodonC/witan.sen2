@@ -792,10 +792,12 @@
       (tc/drop-columns #"^:update\..*$")
       ;; Drop records with `:update-drop?`
       (tc/drop-rows :update-drop?)
-      ;; Update `:upn`if non-nil in update dataset
-      (tc/map-columns :upn
-                      [:update-upn :upn]
-                      #(if (some? %1) %1 %2))
+      ;; Update `:upn`if present and `:update-upn` is non-nil in update dataset
+      ((fn [ds] (if (not-any? #{:upn} (tc/column-names ds))
+                  ds
+                  (tc/map-columns ds :upn
+                                  [:update-upn :upn]
+                                  #(if (some? %1) %1 %2)))))
       ;; Update `:ncy-nominal` if non-nil in update dataset
       (tc/map-columns :ncy-nominal
                       [:update-ncy-nominal :ncy-nominal]
