@@ -721,7 +721,7 @@
                :key-fn           key-fn
                :parser-fn        parser-fn}))
 
-(def updates-ds-col-names
+(def updates-ds-required-cols
   "Required columns for updates dataset."
   (concat [:person-table-id
            :census-date
@@ -733,7 +733,7 @@
    from CSV file of `plans-placements-on-census-dates-issues`
    with update columns filled in into a dataset."
   [filepath & {:keys [column-allowlist key-fn parser-fn]
-               :or   {column-allowlist (map name updates-ds-col-names)
+               :or   {column-allowlist (map name updates-ds-required-cols)
                       key-fn           keyword
                       parser-fn        (merge (select-keys parser-fn [:person-table-id
                                                                       :census-date
@@ -786,7 +786,7 @@
   (-> plans-placements-on-census-dates'
       (tc/select-columns cols-for-census)
       (tc/left-join (-> plans-placements-on-census-dates-updates'
-                        (tc/select-columns updates-ds-col-names)
+                        (tc/select-columns updates-ds-required-cols)
                         (tc/set-dataset-name "update"))
                     [:person-table-id :census-date :requests-table-id])
       (tc/drop-columns #"^:update\..*$")
