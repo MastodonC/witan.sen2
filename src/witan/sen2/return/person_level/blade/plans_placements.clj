@@ -721,24 +721,19 @@
                :key-fn           key-fn
                :parser-fn        parser-fn}))
 
+(def updates-ds-col-names
+  "Required columns for updates dataset."
+  (concat [:person-table-id
+           :census-date
+           :requests-table-id]
+          (filter (complement #{:update-notes}) names-of-update-cols)))
+
 (defn updates-csv-file->ds
   "Read columns required to update columns for census
    from CSV file of `plans-placements-on-census-dates-issues`
    with update columns filled in into a dataset."
   [filepath & {:keys [column-allowlist key-fn parser-fn]
-               :or   {column-allowlist (map name [:person-table-id
-                                                  :census-date
-                                                  :requests-table-id
-                                                  :update-drop?
-                                                  :update-upn
-                                                  :update-ncy-nominal
-                                                  :update-urn
-                                                  :update-ukprn
-                                                  :update-sen-unit-indicator
-                                                  :update-resourced-provision-indicator
-                                                  :update-sen-setting
-                                                  :update-sen-type
-                                                  ])
+               :or   {column-allowlist (map name updates-ds-col-names)
                       key-fn           keyword
                       parser-fn        (merge (select-keys parser-fn [:person-table-id
                                                                       :census-date
