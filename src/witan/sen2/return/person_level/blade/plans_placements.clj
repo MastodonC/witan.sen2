@@ -786,16 +786,7 @@
   (-> plans-placements-on-census-dates'
       (tc/select-columns cols-for-census)
       (tc/left-join (-> plans-placements-on-census-dates-updates'
-                        (tc/select-columns [:person-table-id :census-date :requests-table-id
-                                            :update-drop?
-                                            :update-upn
-                                            :update-ncy-nominal
-                                            :update-urn
-                                            :update-ukprn
-                                            :update-sen-unit-indicator
-                                            :update-resourced-provision-indicator
-                                            :update-sen-setting
-                                            :update-sen-type])
+                        (tc/select-columns updates-ds-col-names)
                         (tc/set-dataset-name "update"))
                     [:person-table-id :census-date :requests-table-id])
       (tc/drop-columns #"^:update\..*$")
