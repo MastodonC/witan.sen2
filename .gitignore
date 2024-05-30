@@ -5,5 +5,5 @@
 gc.log*
 .clerk/
 data/education-health-and-care-plans/education-health-and-care-plans_*/data/
-data/example-sen2-blade-csv-export
+data/example-*
 tmp/

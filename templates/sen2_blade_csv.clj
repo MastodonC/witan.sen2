@@ -1,4 +1,4 @@
-(ns sen2-blade
+(ns sen2-blade-csv
   "SEN2 Blade read from COLLECT Blade CSV export."
   (:require [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]))
 

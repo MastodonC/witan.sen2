@@ -1,5 +1,5 @@
 (ns witan.sen2.return.person-level.blade.csv
-  "Read SEN2 Blade CSV export."
+  "Read SEN2 Blade from COLLECT Blade CSV export."
   (:require [tablecloth.api :as tc])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter]))
@@ -92,7 +92,7 @@
    "dco"                :dco})
 
 (def sen2-parser-fn
-  "Parser function for reading SEN2 module 0 \"SEN2\"."
+  "Parser function for SEN2 module 0 \"SEN2\"."
   {:sen2-table-id         :string
    :native-id             :string
    :sen2-order-seq-column :int32
@@ -158,7 +158,7 @@
    "upnunknown"           :upn-unknown})
 
 (def person-parser-fn
-  "Parser function for reading SEN2 module 1 \"Person\"."
+  "Parser function for SEN2 module 1 \"Person\"."
   {:person-table-id         :string
    :native-id               :string
    :person-order-seq-column :int32
@@ -217,7 +217,7 @@
    "exported"               :exported})
 
 (def requests-parser-fn
-  "Parser function for reading SEN2 module 2 \"Requests\"."
+  "Parser function for SEN2 module 2 \"Requests\"."
   {:requests-table-id         :string
    :native-id                 :string
    :requests-order-seq-column :int32
@@ -270,19 +270,19 @@
    "week20"                   :week20})
 
 (def assessment-parser-fn
-  "Parser function for reading SEN2 module 3 \"EHC needs assessments\"."
+  "Parser function for SEN2 module 3 \"EHC needs assessments\"."
   {:assessment-table-id         :string
    :native-id                   :string
    :assessment-order-seq-column :int32
    :source-id                   :string
    :requests-table-id           :string
+   :assessment-outcome          :string
    :assessment-outcome-date     [:local-date parse-date]
    :assessment-mediation        :boolean
    :assessment-tribunal         :boolean  
    :other-mediation             :boolean
    :other-tribunal              :boolean
-   :week20                      :boolean
-   :assessment-outcome          :string})
+   :week20                      :boolean})
 
 (def assessment-read-cfg
   "Configuration map for reading SEN2 module 3 \"EHC needs assessments\" into a dataset."
@@ -303,7 +303,7 @@
    :assessment-tribunal         "Assessment tribunal"
    :other-mediation             "Other mediation"
    :other-tribunal              "Other tribunal"
-   :week20                      "20-week time limit exceptions apply "})
+   :week20                      "20-week time limit exceptions apply"})
 
 
 ;;; ## Module 4a: Named plan (`named-plan`)
@@ -324,7 +324,7 @@
    "ceasereason"             :cease-reason})
 
 (def named-plan-parser-fn
-  "Parser function for reading SEN2 module 4a \"Named plan\"."
+  "Parser function for SEN2 module 4a \"Named plan\"."
   {:named-plan-table-id         :string
    :native-id                   :string
    :named-plan-order-seq-column :int32
@@ -379,7 +379,7 @@
    "resourcedprovisionindicator" :resourced-provision-indicator})
 
 (def plan-detail-parser-fn
-  "Parser function for reading SEN2 module 4b \"Plan detail records\"."
+  "Parser function for SEN2 module 4b \"Plan detail records\"."
   {:plan-detail-table-id          :string
    :native-id                     :string
    :plan-detail-order-seq-column  :int32
@@ -387,11 +387,11 @@
    :named-plan-table-id           :string
    :urn                           :string
    :ukprn                         :string
+   :sen-setting                   :string
    :sen-setting-other             :string
    :sen-unit-indicator            :boolean
    :resourced-provision-indicator :boolean
-   :placement-rank                [:int-8 parse-long]
-   :sen-setting                   :string})
+   :placement-rank                [:int8 parse-long]})
 
 (def plan-detail-read-cfg
   "Configuration map for reading SEN2 module 4b \"Plan detail records\" into a dataset."
@@ -431,7 +431,7 @@
    "lastreview"                :last-review})
 
 (def active-plans-parser-fn
-  "Parser function for reading SEN2 module 5a \"Active plans\"."
+  "Parser function for SEN2 module 5a \"Active plans\"."
   {:active-plans-table-id         :string
    :native-id                     :string
    :active-plans-order-seq-column :int32
@@ -488,7 +488,7 @@
    "resourcedprovisionindicator"   :resourced-provision-indicator})
 
 (def placement-detail-parser-fn
-  "Parser function for reading SEN2 module 5b \"Placement details\"."
+  "Parser function for SEN2 module 5b \"Placement details\"."
   {:placement-detail-table-id         :string
    :native-id                         :string
    :placement-detail-order-seq-column :int32
@@ -498,13 +498,13 @@
    :wbp                               :string ; ≥v1.2
    :urn                               :string
    :ukprn                             :string
+   :sen-setting                       :string
    :sen-setting-other                 :string
    :placement-rank                    [:int8 parse-long]
    :entry-date                        [:local-date parse-date]
    :leaving-date                      [:local-date parse-date]
    :sen-unit-indicator                :boolean
    :resourced-provision-indicator     :boolean
-   :sen-setting                       :string
    :attendance-pattern                :string ; <v1.2
    })
 
@@ -547,7 +547,7 @@
    "sentyperank"           :sen-type-rank})
 
 (def sen-need-parser-fn
-  "Parser function for reading SEN2 module 5 \"SEN need\"."
+  "Parser function for SEN2 module 5 \"SEN need\"."
   {:sen-need-table-id         :string
    :native-id                 :string
    :sen-need-order-seq-column :int32
@@ -741,6 +741,7 @@
              {}
              raw-module-col-name->label))
 
-(def parser-fn
+(defn parser-fn
   "Collated parser functions for all SEN2 modules."
-  (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg))
+  ([] (parser-fn module-read-cfg))
+  ([module-read-cfg] (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg)))

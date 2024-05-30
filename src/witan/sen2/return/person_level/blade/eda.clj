@@ -59,7 +59,8 @@
 (def default-module-cols-to-report-distinct-vals
   "Default map of columns to report distinct values for for each module."
   ;; Columns considered but excluded are retained in the code but ignored using #_.
-  {:person           [#_:person-table-id
+  {:person           [:record-type      ; template only
+                      #_:person-table-id
                       :native-id
                       #_:person-order-seq-column
                       :source-id
@@ -74,7 +75,8 @@
                       #_:upn
                       #_:unique-learner-number
                       :upn-unknown]
-   :requests         [#_:requests-table-id
+   :requests         [:record-type      ; template only
+                      #_:requests-table-id
                       :native-id
                       #_:requests-order-seq-column
                       :source-id
@@ -86,7 +88,8 @@
                       :request-mediation
                       :request-tribunal
                       :exported]
-   :assessment       [#_:assessment-table-id
+   :assessment       [:record-type      ; template only
+                      #_:assessment-table-id
                       :native-id
                       #_:assessment-order-seq-column
                       :source-id
@@ -98,7 +101,8 @@
                       :other-mediation
                       :other-tribunal
                       :week20]
-   :named-plan       [#_:named-plan-table-id
+   :named-plan       [:record-type      ; template only
+                      #_:named-plan-table-id
                       :native-id
                       #_:named-plan-order-seq-column
                       :source-id
@@ -111,7 +115,8 @@
                       :dp
                       #_:cease-date
                       :cease-reason]
-   :plan-detail      [#_:plan-detail-table-id
+   :plan-detail      [:record-type      ; template only
+                      #_:plan-detail-table-id
                       :native-id
                       #_:plan-detail-order-seq-column
                       :source-id
@@ -123,7 +128,8 @@
                       :placement-rank
                       :sen-unit-indicator
                       :resourced-provision-indicator]
-   :active-plans     [#_:active-plans-table-id
+   :active-plans     [:record-type      ; template only
+                      #_:active-plans-table-id
                       :native-id
                       #_:active-plans-order-seq-column
                       :source-id
@@ -134,7 +140,8 @@
                       #_:review-meeting ; ≥v1.2
                       :review-outcome   ; ≥v1.2
                       #_:last-review]
-   :placement-detail [#_:placement-detail-table-id
+   :placement-detail [:record-type      ; template only
+                      #_:placement-detail-table-id
                       :native-id
                       #_:placement-detail-order-seq-column
                       :source-id
@@ -151,7 +158,8 @@
                       :attendance-pattern ; <v1.2
                       :sen-unit-indicator
                       :resourced-provision-indicator]
-   :sen-need         [#_:sen-need-table-id
+   :sen-need         [:record-type      ; template only
+                      #_:sen-need-table-id
                       :native-id
                       #_:sen-need-order-seq-column
                       :source-id
