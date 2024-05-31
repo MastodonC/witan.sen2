@@ -29,14 +29,31 @@
    :active-plans     [:transfer-la]
    :sen-need         [:sen-type]})
 
-(def cols-for-census
-  "Columns from collated plans & placements required to construct census."
-  (distinct (concat [:person-table-id :person-order-seq-column :upn :unique-learner-number]
-                    [:requests-table-id]
-                    [:census-year :census-date]
-                    [:ncy-nominal]
+(def id-cols-to-keep
+  "ID columns to keep when reading/updating plans-placements-on-census-dates datasets."
+  [:person-table-id :person-order-seq-column :upn :unique-learner-number])
+
+(def val-cols-to-keep
+  "Value columns to keep when reading/updating plans-placements-on-census-dates datasets."
+  (distinct (concat [:ncy-nominal]
                     sen2-estab-keys
                     [:sen-type])))
+
+(def cols-to-keep
+  "Columns from collated plans & placements to keep when reading/updating."
+  (distinct (concat id-cols-to-keep
+                    [:requests-table-id]
+                    [:census-year :census-date]
+                    val-cols-to-keep)))
+
+(def key-cols-for-census
+  "Key (as in unique composite database key) plans-placements-on-census-dates columns for census.
+   Note that only `:person-table-id` & `:census-year` are actually required.
+   Note that `:requests-table-id` is _not_ included,
+        as by census stage multiple plans|placements on census dates
+        from different requests should have been resolved."
+  (concat id-cols-to-keep
+          [:census-year :census-date]))
 
 
 
@@ -713,7 +730,7 @@
   "Read columns required to construct census
    from CSV file of `plans-placements-on-census-dates` into a dataset."
   [filepath & {:keys [column-allowlist key-fn parser-fn]
-               :or   {column-allowlist (map name cols-for-census)
+               :or   {column-allowlist (map name cols-to-keep)
                       key-fn           keyword
                       parser-fn        parser-fn}}]
   (tc/dataset filepath
@@ -784,7 +801,7 @@
   "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`."
   [plans-placements-on-census-dates' plans-placements-on-census-dates-updates']
   (-> plans-placements-on-census-dates'
-      (tc/select-columns cols-for-census)
+      (tc/select-columns cols-to-keep)
       (tc/left-join (-> plans-placements-on-census-dates-updates'
                         (tc/select-columns updates-ds-required-cols)
                         (tc/set-dataset-name "update"))
@@ -833,3 +850,86 @@
       ;; Arrange dataset
       (tc/order-by [:person-table-id :census-date :requests-table-id])
       (tc/set-dataset-name "plans-placements-on-census-dates-updated")))
+
+
+
+;;; # Combining
+(defn plans-placements->side-by-side
+  "Pack a plans-placements-on-census-dates dataset `ds` from a single SEN2 return
+   into a side-by-side format suitable for combining with similar datasets from other returns.
+   Given a `plans-placements-on-census-dates` dataset with unique key `key-cols` (which must contain `:census-year`), 
+   returns a \"packed side-by-side\" dataset with `val-cols` joined into a map and placed in one of two columns:
+   - `:val-cols-from-return-for-census-year`   for records with `:census-year`   matching the `:return-year`
+   - `:val-cols-from-return-for-census-year+1` for records with `:census-year`+1 matching the `:return-year`.
+   Use optional first argument to override default `return-year`, `key-cols` or `val-cols`."
+  ([ds] (plans-placements->side-by-side {} ds))
+  ([{:keys [return-year key-cols val-cols]
+     :or   {return-year (->> ds :census-year (reduce max))
+            key-cols    key-cols-for-census
+            val-cols    val-cols-to-keep}}
+    ds]
+   (-> ds
+       (tc/join-columns :val-cols val-cols {:result-type :map})
+       (tc/map-rows (fn [{:keys [census-year val-cols]}]
+                      (cond
+                        (= census-year       return-year) {:val-cols-from-return-for-census-year   val-cols}
+                        (= (inc census-year) return-year) {:val-cols-from-return-for-census-year+1 val-cols})))
+       (tc/select-columns (concat key-cols
+                                  [:val-cols-from-return-for-census-year
+                                   :val-cols-from-return-for-census-year+1])))))
+
+(defn combine-side-by-side-plans-placements
+  "Combine two side-by-side plans-placements datasets `ds1` & `ds2` with `key-cols`.
+   Note:
+   - `key-cols` must include `:census-year`
+   - The pair of datasets `ds1` & `ds2`:
+     - Must have columns `(conj key-cols :val-cols-from-return-for-census-year+1 :val-cols-from-return-for-census-year)`
+       (any other columns are dropped).
+     - Should have a single `:census-year` in common.
+     - Must be in order of SEN2 returns contained (i.e. the `:census-year`s in `ds1` must be <= those in `ds2`),
+       such that for the `:census-year` in common:
+       - `ds1` contains the plans-placements from the SEN2 for that year
+               (in `:val-cols-from-return-for-census-year`), and
+       - `ds2` contains the plans-placements from the SEN2 return for the following year
+               (in `:val-cols-from-return-for-census-year+1`).
+  The returned dataset:
+  - Has columns `(conj key-cols :val-cols-from-return-for-census-year+1 :val-cols-from-return-for-census-year)`.
+  - Contains the concatenation of these columns from `ds1` & `ds2` for `:census-year`s not in common.
+  - For the `:census-year` in common, contains a row for each `key-cols` with:
+    - `:val-cols-from-return-for-census-year`  from `ds1`
+    - `:val-cols-from-return-for-census-year+1`from `ds2`
+  - Sorted by the `key-cols`.
+  Use optional first argument to override default `key-cols`."
+  ([ds1 ds2] (combine-side-by-side-plans-placements {} ds1 ds2))
+  ([{:keys [key-cols] :or {key-cols key-cols-for-census}}
+    ds1 ds2]
+   (let [overlap-census-year (set/intersection (into #{} (:census-year ds1))
+                                               (into #{} (:census-year ds2)))]
+     (-> (tc/concat-copying (-> ds1
+                                (tc/drop-rows (comp overlap-census-year :census-year))
+                                (tc/select-columns (concat key-cols
+                                                           [:val-cols-from-return-for-census-year
+                                                            :val-cols-from-return-for-census-year+1])))
+                            (-> (tc/full-join (-> ds1
+                                                  (tc/select-rows (comp overlap-census-year :census-year))
+                                                  (tc/select-columns (concat key-cols [:val-cols-from-return-for-census-year])))
+                                              (-> ds2
+                                                  (tc/select-rows (comp overlap-census-year :census-year))
+                                                  (tc/select-columns (concat key-cols [:val-cols-from-return-for-census-year+1]))
+                                                  (tc/set-dataset-name "right"))
+                                              key-cols)
+                                (; coalesce values for each key-col (present) with that from the right dataset
+                                 (fn [ds] (reduce (fn [ds key-col]
+                                                    (tc/map-columns ds
+                                                                    key-col
+                                                                    [key-col (-> key-col name ((partial str "right.")) keyword)]
+                                                                    #(or %1 %2)))
+                                                  ds
+                                                  (filterv (into #{} (tc/column-names ds)) key-cols))))
+                                (tc/drop-columns #"^:right\..+$"))
+                            (-> ds2
+                                (tc/drop-rows (comp overlap-census-year :census-year))
+                                (tc/select-columns (concat key-cols
+                                                           [:val-cols-from-return-for-census-year
+                                                            :val-cols-from-return-for-census-year+1]))))
+         (tc/order-by key-cols)))))
