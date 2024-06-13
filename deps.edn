@@ -1,21 +1,15 @@
 {:paths   ["src" "resources"]
- :deps    {org.clojure/clojure {:mvn/version "1.11.1"}}
+ :deps    {org.clojure/clojure        {:mvn/version "1.11.1"}
+           techascent/tech.ml.dataset {:mvn/version "7.029"}
+           scicloj/tablecloth         {:mvn/version "7.029.2"
+                                       :exclusions  [techascent/tech.ml.dataset
+                                                     org.apache.poi/poi-ooxml-schemas
+                                                     org.apache.poi/poi
+                                                     org.apache.poi/poi-ooxml]}}
  :aliases {:dev  {:extra-paths ["templates" "dev"]
-                  :extra-deps  {techascent/tech.ml.dataset               {:mvn/version "7.029"}
-                                scicloj/tablecloth                       {:mvn/version "7.029.2"
-                                                                          :exclusions  [techascent/tech.ml.dataset
-                                                                                        org.apache.poi/poi-ooxml-schemas
-                                                                                        org.apache.poi/poi
-                                                                                        org.apache.poi/poi-ooxml]}
-                                ;; adroddiad & clerk only required to run the template namespaces and notebooks. Not required by src namespaces.
+                  :extra-deps  {;; adroddiad & clerk only required to run the template namespaces and notebooks. Not required by src namespaces.
                                 com.github.MastodonC/witan.send.adroddiad {:git/sha    "5301bb7f3b5abdcd207f40d9d99752b4972a1638"
                                                                            :exclusions [mastodonc/witan.send
                                                                                         techascent/tech.ml.dataset]}
-                                io.github.nextjournal/clerk              {:mvn/version "0.15.957"}}}
-           :test {:extra-paths ["test"]
-                  :extra-deps  {techascent/tech.ml.dataset {:mvn/version "7.029"}
-                                scicloj/tablecloth         {:mvn/version "7.029.2"
-                                                            :exclusions  [techascent/tech.ml.dataset
-                                                                          org.apache.poi/poi-ooxml-schemas
-                                                                          org.apache.poi/poi
-                                                                          org.apache.poi/poi-ooxml]}}}}}
+                                io.github.nextjournal/clerk               {:mvn/version "0.15.957"}}}
+           :test {:extra-paths ["test"]}}}
