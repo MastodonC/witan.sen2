@@ -8,7 +8,7 @@
                          io/resource
                          io/file
                          (tc/dataset {:key-fn    (comp keyword #(string/replace % #"_" "-"))
-                                      :parser-fn {:num-caseload [:int32 #(if (= "z" %)
+                                      :parser-fn {:num-caseload [:int32 #(if (#{"z" "x"} %)
                                                                            :tech.v3.dataset/missing
                                                                            (parse-long %))]}})
                          (tc/select-rows #(and (= (:establishment-group %) "Total")
