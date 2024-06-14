@@ -1,0 +1,325 @@
+Education, health and care plans
+2024 Reporting year
+
+Description
+
+This document describes the data included in the Education, health and care (EHC) plans National Statistics release’s underlying data files. This data is released under the terms of the Open Government License and is intended to meet at least 3 stars for Open Data. The methodology document should be referenced alongside this data. It provides information on the data sources, their coverage and quality as well as explaining methodology used in producing the data.
+
+Coverage
+
+This release provides information on the EHC plan process including:
+
+- number of active EHC plans at January of the calendar year
+- number of new EHC plans in the previous calendar year
+- the administration of requests for assessments for an EHC plan
+
+The information is based on local authority level data collected via the SEN2 data collection. The underlying data files include national, regional and local authority level data.
+
+File formats and conventions
+
+The dataset and outputs have not had suppression or rounding applied
+
+The following convention is used throughout the underlying data.
+
+z - Not applicable
+
+x - unavailable
+
+Data files
+
+All data files associated with this releases are listed below with guidance on their content. To download any of these files, please visit our data catalogue (https://explore-education-statistics.service.gov.uk/data-catalogue/education-health-and-care-plans/2022).
+
+Data files
+
+New plans - Age groups
+
+Filename: sen2_age_new_plans.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2009 to 2023
+Content summary: The number of children and young people with a new EHC plan which started during the calendar year, broken down by age band.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name      |  Variable description
+-----------------  |  -------------------------------
+age                |  Age group - Filter by age group
+ehcp_or_statement  |  EHCP or statement
+num_new_plans      |  Number of plans
+pc_new_plans       |  Percentage of plans
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+New plans - characteristics
+
+Filename: sen2_characteristics_new_plans.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2022 to 2023
+Content summary: The number of children and young people with a new EHC plan which started during the calendar year, broken down by characteristic - includes sex and ethnicity.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name  |  Variable description
+-------------  |  -------------------
+breakdown      |  Breakdown
+num_new_plans  |  Number of plans
+pc_new_plans   |  Percentage of plans
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. Data on ethnicity and gender has been collected from 2023 only.
+3. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+New plans - Establishment type
+
+Filename: sen2_estab_new_plans.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2009 to 2023
+Content summary: The number of children and young people with a new EHC plan which started during the calendar year, broken down by type of establishment attended.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name       |  Variable description
+------------------  |  ----------------------------------------------------
+ehcp_or_statement   |  EHCP or statement
+establishment_type  |  Establishment type - Filter by type of establishment
+num_new_plans       |  Number of plans
+pc_new_plans        |  Percentage of plans
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. The method for collecting data on establishments has changed from previous years. Previously, local authorities provided data on the number of EHC plans where the child or young person was attending through a set list of establishment types. From 2023, information on the specific establishment has been recorded, with the Unique Reference Number (URN), UK Provider Reference Number or where neither are applicable, a specific category recorded. As a result of this change, caution should be taken when comparing across years by establishment types.
+3. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+Caseload - Age groups
+
+Filename: sen2_age_caseload.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2010 to 2024
+Content summary: The number of children and young people with an EHC plan as at January each year, broken down by age band.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name      |  Variable description
+-----------------  |  -------------------------------
+age                |  Age group - Filter by age group
+ehcp_or_statement  |  EHCP or statement
+num_caseload       |  Number of cases
+pc_caseload        |  Percentage of cases
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. For 2024, the total figures include 3,473 EHC plans for Hackney, however details such as age, establishment type and characteristics are not available for the majority of these plans. These breakdowns will therefore not sum to the total number of plans for 2024. Percentages shown use the number of plans where the establishment, age or characteristic is known as the denominator.
+3. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+Caseload - characteristics
+
+Filename: sen2_characteristics_caseload.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2023 to 2024
+Content summary: The number of children and young people with an EHC plan as at January, broken down by characteristic - includes sex and ethnicity.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name  |  Variable description
+------------  |  -------------------
+breakdown     |  Breakdown
+num_caseload  |  Number of cases
+pc_caseload   |  Percentage of cases
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. For 2024, the total figures include 3,473 EHC plans for Hackney, however details such as age, establishment type and characteristics are not available for the majority of these plans. These breakdowns will therefore not sum to the total number of plans for 2024. Percentages shown use the number of plans where the establishment, age or characteristic is known as the denominator.
+3. Data on ethnicity and gender has been collected from 2023 only.
+4. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+Caseload - Establishment type
+
+Filename: sen2_estab_caseload.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2010 to 2024
+Content summary: The number of children and young people with an EHC plan as at January, broken down by type of establishment attended.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name       |  Variable description
+------------------  |  ----------------------------------------------------
+ehcp_or_statement   |  EHCP or statement
+establishment_type  |  Establishment type - Filter by type of establishment
+num_caseload        |  Number of cases
+pc_caseload         |  Percentage of cases
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. For 2024, the total figures include 3,473 EHC plans for Hackney, however details such as age, establishment type and characteristics are not available for the majority of these plans. These breakdowns will therefore not sum to the total number of plans for 2024. Percentages shown use the number of plans where the establishment, age or characteristic is known as the denominator.
+3. The method for collecting data on establishments has changed from previous years. Previously, local authorities provided data on the number of EHC plans where the child or young person was attending through a set list of establishment types. From 2023, information on the specific establishment has been recorded, with the Unique Reference Number (URN), UK Provider Reference Number or where neither are applicable, a specific category recorded. As a result of this change, caution should be taken when comparing across years by establishment types.
+4. Following further data checks, it is believed that the data for SEN units and resourced provision is likely to be under reported for 2023, due to issues including data collection and availability.
+5. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+Designated medical and clinical officers
+
+Filename: sen2_dmo_dco.csv
+Geographic levels: Local authority
+Time period: 2017 to 2024
+Content summary: Data on whether a local authority area has a Designated Medical Officer (DMO) or Designated Clinical Officer (DCO) in place on census day.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name   |  Variable description
+--------------  |  ------------------------------------------------------------------------------------------
+dco             |  Designated clinical officer in place (Yes/No/Recruiting)
+dmo             |  Designated medical officer in place (Yes/No/Recruiting)
+dmodcofunction  |  Person performing role of designated medical/clinical officer in place (Yes/No/Recruiting)
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. Data collected until 2022. No further data from 2023
+
+
+Residential settings -  EHCPs and statements
+
+Filename: sen2_residential_statements.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2017 to 2024
+Content summary: The number of children and young people in residential settings, by the duration of setting and age group.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name      |  Variable description
+-----------------  |  -----------------------------------
+age                |  Age group - Filter by age group
+ehcp_or_statement  |  EHCP or statement
+num_children_yp    |  Number of children and young people
+weeks              |  Number of weeks
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+Initial requests, assessments, discontinued plans, 20 week timeliness, mainstream to special transfers, mediation and tribunals
+
+Filename: sen2_mi.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2014 to 2023
+Content summary: Data on initial requests for assessment, assessments for an EHC plan, discontinued plans, 20 week timeliness and mediation and tribunals.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name                      |  Variable description
+---------------------------------  |  -------------------------------------------------------------------------------------------------------------------------------------------------------------
+ass_nodecision                     |  Number of children and young people assessed who are still being assessed or where assessment has been completed but no decision taken for a statement of SEN
+ass_nodecision_ehc                 |  Number of children and young people assessed who are still being assessed or where assessment has been completed but no decision taken for an EHC plan
+ass_none                           |  Number of children and young people assessed for whom it was decided not to issue a statement of SEN
+ass_none_ehc                       |  Number of children and young people assessed for whom it was decided not to issue an EHC plan
+ass_none_ehc_pc                    |  Percentage of children and young people assessed during the calendar year for whom it was decided not to issue an EHC plan
+ass_refused                        |  Number of initial requests for assessment for a statement of SEN that were refused
+ass_refused_ehc                    |  Number of initial requests for assessment for an EHC plan that were refused
+ass_refused_ehc_pc                 |  Percentage of initial requests for assessment for an EHC plan that were refused during the calendar year
+assessment_mediation               |  Decision to issue a plan was referred for mediation
+assessment_tribunal                |  Decision on whether to issue a plan was the subject of an appeal to tribunal
+assessment_w                       |  Assessments withdrawn
+assessments                        |  Total number of assessments undertaken
+direct_pay_education               |  Number of personal budgets in place that have direct payment for education
+direct_pay_health                  |  Number of personal budgets in place that have direct payment for health
+direct_pay_integrated              |  Number of personal budgets in place that have direct payment for an integrated payment
+direct_pay_socialcare              |  Number of personal budgets in place that have direct payment for social care
+discontinued_abroad                |  EHC plans discontinued - has moved outside of England
+discontinued_age                   |  EHC plans discontinued - reached maximum age
+discontinued_deceased              |  EHC plans discontinued - deceased
+discontinued_employment            |  EHC plans discontinued - moved on to paid employment excluding apprenticeships
+discontinued_engage                |  EHC plans discontinued - young person no longer wishes to engage in education or training
+discontinued_he                    |  EHC plans discontinued - moved on to higher education
+discontinued_lea                   |  Number of children and young people with a statement of SEN discontinued as transferred to another LA
+discontinued_lea_ehc               |  EHC plans discontinued - transferred to another LA (compulsory school age)
+discontinued_lea_noncomp           |  EHC plans discontinued - transferred to another LA (non-compulsory school age)
+discontinued_left                  |  Number of children and young people with a statement of SEN discontinued because pupils have left school at the end of compulsory schooling or after
+discontinued_left_ehc              |  EHC plans discontinued - pupils have left school at the end of compulsory schooling or after (pre-2022 only)
+discontinued_met                   |  Number of children and young people with a statement of SEN discontinued as special needs being met without an EHC plan
+discontinued_met_ehc               |  EHC plans discontinued - special needs being met without an EHC plan (compulsory school age)
+discontinued_met_noncomp           |  EHC plans discontinued - special needs being met without an EHC plan (non-compulsory school age)
+discontinued_other                 |  Number of children and young people with a statement of SEN discontinued for other reasons
+discontinued_other_ehc             |  EHC plans discontinued - other reasons (compulsory school age)
+discontinued_other_noncomp         |  EHC plans discontinued - other reasons (non-compulsory school age)
+discontinued_total                 |  EHC plans discontinued - Total
+discontinued_unknown               |  EHC plans discontinued - no reason given
+inc_exc_20week_ehc                 |  Timeliness - Number of EHC plans including exceptions issued within 20 weeks
+inc_exc_20week_rate                |  Timeliness - Rate of EHC plans including exceptions issued within 20 weeks
+inc_exc_26week                     |  Timeliness - Number of new statements including exceptions issued within 26 weeks
+inreq_ehc                          |  Number of initial requests for an EHC plan
+inreq_ehc_a                        |  Initial requests for assessment - ongoing
+inreq_ehc_w                        |  Initial requests for assessment - withdrawn
+inreq_ehc_y                        |  Initial requests for assessment - decision to assess
+inreq_rya_ehc                      |  Number of initial requests for an EHC plan when detained in youth accomodation
+mainstream_to_home                 |  Number of children and young people with a statement of SEN who were taken out of school by their parents to be home educated from mainstream settings
+mainstream_to_home_ehc             |  Number of children and young people with an EHC plan who were taken out of school by their parents to be home educated from mainstream settings
+mainstream_to_special              |  Number of children and young people with a statement of SEN who transferred from mainstream to special settings
+mainstream_to_special_ehc          |  Number of children and young people with an EHC plan who transferred from mainstream to special settings
+new_all_ehc                        |  Number of children and young people assessed for whom an EHC plan was issued
+new_all_ehc_ass_none_ehc_sum       |  Number of children and young people assessed for whom a plan was issued and those for whom one not issued
+new_all_ehc_pc                     |  Percentage of children and young people assessed for whom EHC plans were made for the first time during the calendar year
+no_exc_20week_ehc                  |  Timeliness - Number of EHC plans excluding exceptions issued within 20 weeks
+no_exc_20week_rate                 |  Timeliness - Rate of EHC plans excluding exceptions issued within 20 weeks
+no_exc_26week                      |  Timeliness - Number of new statements excluding exceptions issued within 26 weeks
+org_arrangements                   |  Number of personal budgets in place that have organised arrangements
+other_mediation                    |  Mediation for any reason other than the decision not to assess or the decision not to issue a plan
+other_tribunal                     |  Tribunal for any reason other than the decision not to assess or the decision not to issue a plan
+personal_budgets                   |  Number of personal budgets in place for all EHC plans
+request_mediation                  |  decision to assess was referred for mediation
+request_tribunal                   |  decision to assess was the subject of an appeal to tribunal
+special_to_home                    |  Number of children and young people with a statement of SEN who were taken out of school by their parents to be home educated from special settings
+special_to_home_ehc                |  Number of children and young people with an EHC plan who were taken out of school by their parents to be home educated from special settings
+special_to_mainstream              |  Number of children and young people with a statement of SEN who transferred from special to mainstream settings
+special_to_mainstream_ehc          |  Number of children and young people with an EHC plan who transferred from special to mainstream settings
+statements_no_ehc                  |  Number of children and young people with statements who were assessed for an EHC plan and a decision not to issue an EHC plan made
+statements_to_ehc                  |  Number of children and young people with statements who were issued with an EHC plan
+tot_inc_exc                        |  Timeliness - Number of new statements including exceptions
+tot_inc_exc_ehc                    |  Timeliness - Number of EHC plans including exceptions
+tot_no_exc                         |  Timeliness - Number of new statements excluding exceptions
+tot_no_exc_ehc                     |  Timeliness - Number of EHC plans excluding exceptions
+total_mediation                    |  Number of mediation cases that have been held
+total_tribunal                     |  Total tribunals
+total_tribunal_followed_mediation  |  Number of mediation cases that have been held which were followed by appeals to the Tribunal
+total_tribunal_pc                  |  Percentage of mediation cases held which were followed by appeals to tribunal
+
+Footnotes:
+
+1. From 2023, the data collection changed from aggregated figures at local authority level, to a person level collection. This has been a major change in approach and as such care should be taken with comparisons across this period. Further detail on the change is provided in the publication and supporting methodology.
+2. Data on ceased plans changed from 2023 to include a more comprehensive set of reasons for plans ending. Data was collected for all plans that ended. Prior to 2023, data on ceased plans only covered children of compulsory school age and care should be taken when comparing across this period.
+3. Data on movements between different setting types is not yet available for the 2022 calendar year. This is expected to be added to the latest publication in a future update.
+4. Timeliness figures are based on assessments completed within the calendar year where no mediation or tribunal has taken place.
+5. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.
+
+
+Work based placements
+
+Filename: sen2_wbp.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2017 to 2024
+Content summary: Data on the number of children and young people in work based placements at census date, including apprenticeships, supported internships and traineeships.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name   |  Variable description
+--------------  |  -------------------------------
+enrolment_type  |  Type of enrolment
+enrolments      |  Number of young people enrolled
+
+Footnotes:
+
+1. This data item has been marginally impacted by reporting issues in some local authorities – please see the methodology for further information.

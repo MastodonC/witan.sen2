@@ -703,8 +703,8 @@
   (merge-with merge module-base-read-cfg module-row-numbers))
 
 (defn template-ds->ds-map
-  "Read module datasets from `template-ds` using a `module-read-cfg'` specified via `opts` map,
-   returning map of datasets with same keys as the `module-read-cfg'`.
+  "Read module datasets from `template-ds` using a `module-read-cfg` specified via `opts` map,
+   returning map of datasets with same keys as the `module-read-cfg`.
   The `module-read-cfg'` used for reading the `template-ds` is derived from the `opts` map as follows:
   - if `opts` contains a `:module-read-cfg` key then the val of that is used,
   - otherwise the `module-read-cfg'` is derived by merging:
@@ -713,8 +713,8 @@
   [template-ds & {:keys [module-read-cfg
                          module-base-read-cfg
                          module-row-numbers]
-                  :or {module-base-read-cfg module-base-read-cfg}
-                  :as opts}]
+                  :or   {module-base-read-cfg module-base-read-cfg}
+                  :as   opts}]
   (let [module-read-cfg' (or module-read-cfg
                              (merge-with merge
                                          module-base-read-cfg
@@ -723,8 +723,8 @@
     (update-vals module-read-cfg' #(template-ds->module-ds template-ds %))))
 
 (defn template-file->ds-map
-  "Read module datasets from `template-filepath` using a `module-read-cfg'` specified via `opts` map,
-   returning map of datasets with same keys as the `module-read-cfg'`."
+  "Read module datasets from `template-filepath` using a `module-read-cfg` specified via `opts` map,
+   returning map of datasets with same keys as the `module-read-cfg`."
   [template-filepath & {:as opts}]
   (template-ds->ds-map (template-file->template-ds template-filepath) opts))
 
