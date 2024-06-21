@@ -59,7 +59,7 @@
 
 ;;; # Extract SEN2 information on census dates
 ;;; ## Utilities
-(defn- episode-on-census-date?
+(defn episode-on-census-date?
   "Identify if `census-date` is between episode `start-date` and `end-date`.
    Assumes open ended episodes if either `start-date` or `end-date` is missing."
   [census-date start-date end-date]
