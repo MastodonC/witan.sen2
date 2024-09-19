@@ -658,27 +658,35 @@
 (defn summarise-issues
   "Summarise issues flagged in `ds` as a result of running `checks`."
   [ds checks]
-  (-> ds
-      (tc/group-by [:census-date])
-      ((fn [ds] (tc/aggregate ds (update-vals (select-keys checks (concat (tc/column-names ds)
-                                                                          (keys checks-totals)))
-                                              :summary-fn))))
-      (tc/order-by [:census-date])
-      (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
-      (tc/pivot->longer (complement #{:census-date}))
-      (tc/pivot->wider :census-date :$value)
-      (tc/rename-columns {:$column :issue-key})
-      (tc/map-columns :idx           [:issue-key] (update-vals checks :idx))
-      (tc/map-columns :label         [:issue-key] (update-vals checks :label))
-      (tc/map-columns :summary-label [:issue-key] (update-vals checks :summary-label))
-      (tc/order-by [:idx])
-      (tc/reorder-columns [:issue-key :idx :label :summary-label])
-      (tc/drop-columns [:issue-key])
-      (tc/rename-columns {:issue-key     "key"
-                          :idx           "Index"
-                          :label         "Issue | TOTAL"
-                          :summary-label "Summary"})
-      (tc/set-dataset-name "issue-summary")))
+  (cond
+    (= 0 (tc/row-count ds))
+    (tc/dataset nil {:column-names ["key"
+                                    "Index"
+                                    "Issue | TOTAL"
+                                    "Summary"]
+                     :dataset-name "issue-summary"})
+    :else
+    (-> ds
+        (tc/group-by [:census-date])
+        ((fn [ds] (tc/aggregate ds (update-vals (select-keys checks (concat (tc/column-names ds)
+                                                                            (keys checks-totals)))
+                                                :summary-fn))))
+        (tc/order-by [:census-date])
+        (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
+        (tc/pivot->longer (complement #{:census-date}))
+        (tc/pivot->wider :census-date :$value)
+        (tc/rename-columns {:$column :issue-key})
+        (tc/map-columns :idx           [:issue-key] (update-vals checks :idx))
+        (tc/map-columns :label         [:issue-key] (update-vals checks :label))
+        (tc/map-columns :summary-label [:issue-key] (update-vals checks :summary-label))
+        (tc/order-by [:idx])
+        (tc/reorder-columns [:issue-key :idx :label :summary-label])
+        (tc/drop-columns [:issue-key])
+        (tc/rename-columns {:issue-key     "key"
+                            :idx           "Index"
+                            :label         "Issue | TOTAL"
+                            :summary-label "Summary"})
+        (tc/set-dataset-name "issue-summary"))))
 
 
 
