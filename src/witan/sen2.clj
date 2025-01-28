@@ -19,6 +19,7 @@
    2023 "2023-01-19" ; from [SEN2 2023 Guide v1.0](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1099346/2023_SEN2_Person_level_-_Guide_Version_1.0.pdf) (retrieved 2023-04-12)
    2024 "2024-01-18" ; from [SEN2 2024 Guide v1.0](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1174521/2024_SEN2_Person_level_-_Guide_Version_1.0.pdf) (retrieved 2023-07-28)
    2025 "2025-01-16" ; from [SEN2 2025 Guide v1.0](https://assets.publishing.service.gov.uk/media/656892015936bb000d3167c0/2025_SEN2_person_level_guide_v1.pdf) (retrieved 2023-12-01)
+   2026 "2026-01-15" ; from [gov.uk SENB2 page](https://www.gov.uk/guidance/special-educational-needs-survey) (retrieved 2025-01-28)
    ))
 
 (def census-year->date
