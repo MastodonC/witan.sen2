@@ -1,42 +1,44 @@
 (ns sen2-blade-template-eda
   "EDA of SEN2 Blade read from Excel submission template."
-  {:nextjournal.clerk/toc                  true
-   :nextjournal.clerk/visibility           {:code   :hide
-                                            :result :show}
-   :nextjournal.clerk/page-size            nil
-   :nextjournal.clerk/auto-expand-results? true
-   :nextjournal.clerk/budget               nil}
+  #:nextjournal.clerk{:toc                  true
+                      :visibility           {:code :hide, :result :hide}
+                      :page-size            nil
+                      :auto-expand-results? true
+                      :budget               nil}
   (:require [clojure.string :as string]
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [sen2-blade-template :as sen2-blade] ; <- replace with workpackage specific version
             [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
 
-^{;; Notebook header
-  ::clerk/no-cache true}
-(clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
-               "# witan.sen2"
-               (format "  \n`%s`  \n" *ns*)
-               ((comp :doc meta) *ns*)
-               "  \nTimeStamp: " (.format (java.time.LocalDateTime/now)
-                                          (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
+(def client-name      "Mastodon C")
+(def workpackage-name "witan.sen2")
+(def out-dir "Output directory" "./tmp/")
+
+^#::clerk{:visibility {:result :show},:viewer clerk/md, :no-cache true} ; Notebook header
+(str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
+     (format "# %s SEND %s  \n" client-name workpackage-name)
+     (format "`%s`\n\n" *ns*)
+     (format "%s\n\n" ((comp :doc meta) *ns*))
+     (format "Produced: `%s`\n\n"  (.format (java.time.LocalDateTime/now)
+                                            (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu HH:mm:ss"
+                                                                                          (java.util.Locale. "en_GB")))))
+
+(defn doc-var [v] (format "%s:  \n`%s`." (-> v meta :doc) (var-get v)))
+{::clerk/visibility {:result :show}}
+
 
 
 
 ;;; # SEN2 Blade EDA
 ;;; ## Parameters
 ;;; ### Output directory
-^{::clerk/visibility {:result :hide}}
-(def out-dir
-  "Output directory"
-  "./tmp/")
-
-^{::clerk/viewer clerk/md}
-(format "%s: `%s`." ((comp :doc meta) #'out-dir) out-dir)
+^#::clerk{:viewer clerk/md}
+(doc-var #'out-dir)
 
 
 ;;; ### SEN2 Blade
-^{::clerk/viewer clerk/md}
+^#::clerk{:viewer clerk/md}
 (format "%s:  \n`%s`."
         ((comp :doc meta) #'sen2-blade/template-filepath)
         sen2-blade/template-filepath)
@@ -83,11 +85,13 @@
 
 ^{::clerk/visibility {:result :hide}}
 (comment ;; clerk build
-  (let [in-path            (str "templates/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
-        out-path           (str out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
-    (clerk/build! {:paths    [in-path]
-                   :ssr      true
-                   :bundle   true
-                   :out-path "."})
+  (let [in-path  (str "templates/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
+        out-path (str out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
+    (clerk/build! {:paths      [in-path]
+                   :ssr        true
+                   #_#_:bundle true         ; clerk v0.15.957
+                   :package    :single-file ; clerk v0.16.1016
+                   :out-path   "."})
     (.renameTo (io/file "./index.html") (io/file out-path)))
+
   )

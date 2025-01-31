@@ -8,11 +8,13 @@
 ;;; ## SEN2 Blade
 (def data-dir
   "Directory containing SEN2 Blade export files"
-  "./data/example-sen2-blade-csv-export/")
+  #_"./data/example-sen2-blade-csv-export-2023/"
+  "./data/example-sen2-blade-csv-export-2024/")
 
 (def export-date-string
   "Date (string) of COLLECT `Blade-Export`"
-  "31-03-2023")
+  #_"31-03-2023"
+  "18-04-2024")
 
 
 
