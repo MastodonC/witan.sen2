@@ -8,8 +8,8 @@
                                                      org.apache.poi/poi-ooxml]}}
  :aliases {:dev  {:extra-paths ["templates" "dev"]
                   :extra-deps  {;; adroddiad & clerk only required to run the template namespaces and notebooks. Not required by src namespaces.
-                                com.github.MastodonC/witan.send.adroddiad {:git/sha    "5301bb7f3b5abdcd207f40d9d99752b4972a1638"
+                                com.github.MastodonC/witan.send.adroddiad {:git/sha    "a24132375b066ec17af257a6646a4c187ac76afa"
                                                                            :exclusions [mastodonc/witan.send
                                                                                         techascent/tech.ml.dataset]}
-                                io.github.nextjournal/clerk               {:mvn/version "0.15.957"}}}
+                                io.github.nextjournal/clerk               {:mvn/version "0.17.1102"}}}
            :test {:extra-paths ["test"]}}}
