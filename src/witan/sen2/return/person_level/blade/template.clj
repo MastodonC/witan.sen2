@@ -129,13 +129,15 @@
    "Year"                                :year
    "Reference Date"                      :reference-date
    "Source Level"                        :source-level
+   "LA Number"                           :lea
    "Software Code"                       :software-code
    "Release"                             :release
    "Serial Number"                       :serial-no
    "Date & Time \n(ccyy-mm-ddThh:mm:ss)" :datetime
-   "LA Number"                           :lea
    "Designated Medical Officer"          :dmo
-   "Designated Clinical Officer"         :dco})
+   "Designated Clinical Officer"         :dco
+   "Designated Social Care Officer"      :dsco              ; ≥v1.3
+   })
 
 (def sen2-parser-fn
   "Parser function for SEN2 module 0 \"SEN2\"."
@@ -148,6 +150,7 @@
    :year                      :int32
    :reference-date            [:local-date parse-date]
    :source-level              :string
+   :lea                       :string
    :software-code             :string
    :release                   :string
    :serial-no                 :int32
@@ -155,9 +158,10 @@
                                                 parse-double
                                                 (* 1e9 60 60 24)
                                                 (.plusNanos (LocalDateTime/parse "1899-12-30T00:00:00.000")))]
-   :lea                       :string
    :dmo                       :string
-   :dco                       :string})
+   :dco                       :string
+   :dsco                  :string                           ; ≥v1.3
+   })
 
 (def sen2-base-read-cfg
   "Base configuration map (without `:start-row` or `:end-row`) for reading SEN2 module 0 \"SEN2\" into a dataset."
@@ -178,13 +182,15 @@
    :year                      "Year"
    :reference-date            "Reference date"
    :source-level              "Source level"
+   :lea                       "LEA"
    :software-code             "Software code"
    :release                   "Release"
    :serial-no                 "Serial No"
    :datetime                  "DateTime"
-   :lea                       "LEA"
-   :dmo                       "DMO"
-   :dco                       "DCO"})
+   :dmo                       "Designated Medical Officer"
+   :dco                       "Designated Clinical Officer"
+   :dsco                      "Designated Medical Officer"  ; ≥v1.3
+   })
 
 
 ;;; ## Module 1: Person details (`person`)
@@ -263,6 +269,7 @@
    #_                                                                                :source-id
    "Person ID\n\n(This must match the relevant ID in the Person record table)"       :person-table-id
    "Date request was received"                                                       :received-date
+   "Source of request for an EHC needs assessment"                                   :request-source          ; ≥v1.3
    "Initial Request Whilst In RYA"                                                   :rya
    "Request Outcome Date"                                                            :request-outcome-date
    "Request Outcome"                                                                 :request-outcome
@@ -279,6 +286,7 @@
    #_#_:source-id                 :string
    :person-table-id               [:string parse-id]
    :received-date                 [:local-date parse-date]
+   :request-source                [:int8 parse-double]      ; ≥v1.3
    :rya                           [:boolean parse-boolean]
    :request-outcome-date          [:local-date parse-date]
    :request-outcome               :string
@@ -302,6 +310,7 @@
    #_#_:source-id                 "Source ID"
    :person-table-id               "Person table ID"
    :received-date                 "Date request was received"
+   :request-source                "Source of request for an EHC needs assessment" ; ≥v1.3
    :rya                           "Initial request whilst in RYA"
    :request-outcome-date          "Request outcome date"
    :request-outcome               "Request outcome"
@@ -401,12 +410,12 @@
    #_#_:source-id                   :string
    #_#_:assessment-table-id         :string
    :start-date                      [:local-date parse-date]
-   :pb                              [:boolean parse-boolean]
-   :oa                              [:boolean parse-boolean]
-   :cease-date                      [:local-date parse-date]
    :plan-res                        :string
    :plan-wbp                        :string
+   :pb                              [:boolean parse-boolean]
+   :oa                              [:boolean parse-boolean]
    :dp                              :string
+   :cease-date                      [:local-date parse-date]
    :cease-reason                    [:int8 parse-double]})
 
 (def named-plan-base-read-cfg
@@ -514,6 +523,9 @@
    "Work Based Learning Activity"                                                  :wbp            ; <v1.2
    "EHC Plan Review Decisions Date"                                                :review-meeting ; ≥v1.2
    "Annual Review Decision"                                                        :review-outcome ; ≥v1.2
+   "Annual review – date draft amended EHC plan issued"                            :review-draft                ; ≥v1.3
+   "Phase transfer review - due date for any amended plan"                         :phase-transfer-due-date     ; ≥v1.3
+   "Phase transfer review - final plan date"                                       :phase-transfer-final-date   ; ≥v1.3
    "Annual Review Meeting Date"                                                    :last-review})
 
 (def active-plans-parser-fn
@@ -530,6 +542,9 @@
    :wbp                               :string                  ; <v1.2
    :review-meeting                    [:local-date parse-date] ; ≥v1.2
    :review-outcome                    :string                  ; ≥v1.2
+   :review-draft                      [:local-date parse-date] ; ≥v1.3
+   :phase-transfer-due-date           [:local-date parse-date] ; ≥v1.3
+   :phase-transfer-final-date         [:local-date parse-date] ; ≥v1.3
    :last-review                       [:local-date parse-date]})
 
 (def active-plans-base-read-cfg
@@ -553,6 +568,9 @@
    :wbp                               "Work-based learning activity"  ; <v1.2
    :review-meeting                    "Annual review meeting date"    ; ≥v1.2
    :review-outcome                    "Annual review decision"        ; ≥v1.2
+   :review-draft                      "Annual review – date draft amended EHC plan issued"    ; ≥v1.3
+   :phase-transfer-due-date           "Phase transfer review - due date for any amended plan" ; ≥v1.3
+   :phase-transfer-final-date         "Phase transfer review - final plan date"               ; ≥v1.3
    :last-review                       "Annual review decision date"   ; ≥v1.2: "EHC plan review decisions date" ; <v1.2
    })
 
@@ -568,8 +586,6 @@
    #_                                                                              :placement-detail-order-seq-column
    #_                                                                              :source-id
    #_                                                                              :active-plans-table-id
-   "Residential Settings"                                                          :res                ; ≥v1.2
-   "Work Based Learning Activity"                                                  :wbp                ; ≥v1.2
    "URN - Unique Reference Number"                                                 :urn
    "UKPRN - UK Provider Reference Number"                                          :ukprn
    "SEN Setting – Establishment type"                                              :sen-setting
@@ -579,7 +595,10 @@
    "Placement Leaving Date"                                                        :leaving-date
    "Attendance Pattern"                                                            :attendance-pattern ; <v1.2
    "SEN Unit Indicator"                                                            :sen-unit-indicator
-   "Resourced Provision Indicator"                                                 :resourced-provision-indicator})
+   "Resourced Provision Indicator"                                                 :resourced-provision-indicator
+   "Residential Settings"                                                          :res                ; ≥v1.2
+   "Work Based Learning Activity"                                                  :wbp                ; ≥v1.2
+   })
 
 (def placement-detail-parser-fn
   "Parser function for SEN2 module 5b \"Placement details\"."
@@ -591,8 +610,6 @@
    #_#_:placement-detail-order-seq-column :int32
    #_#_:source-id                         :string
    #_#_:active-plans-table-id             :string
-   :res                                   :string ; ≥v1.2
-   :wbp                                   :string ; ≥v1.2
    :urn                                   [:string parse-id]
    :ukprn                                 [:string parse-id]
    :sen-setting                           :string
@@ -602,7 +619,10 @@
    :leaving-date                          [:local-date parse-date]
    :attendance-pattern                    :string ; <v1.2
    :sen-unit-indicator                    [:boolean parse-boolean]
-   :resourced-provision-indicator         [:boolean parse-boolean]})
+   :resourced-provision-indicator         [:boolean parse-boolean]
+   :res                                   :string ; ≥v1.2
+   :wbp                                   :string ; ≥v1.2
+   })
 
 (def placement-detail-base-read-cfg
   "Base configuration map (without `:start-row` or `:end-row`) for reading SEN2 module 5b \"Placement details\" into a dataset."
@@ -621,8 +641,6 @@
    #_#_:placement-detail-order-seq-column "Placement detail order seq column"
    #_#_:source-id                         "Source ID"
    #_#_:active-plans-table-id             "Active plans table ID"
-   :res                                   "Residential settings"         ; ≥v1.2
-   :wbp                                   "Work-based learning activity" ; ≥v1.2
    :urn                                   "URN – Unique Reference Number"
    :ukprn                                 "UKPRN – UK Provider Reference Number"
    :sen-setting                           "SEN Setting - Establishment type"
@@ -632,7 +650,10 @@
    :leaving-date                          "Placement leaving date"
    :attendance-pattern                    "Attendance pattern" ; <v1.2
    :sen-unit-indicator                    "SEN Unit indicator"
-   :resourced-provision-indicator         "Resourced provision indicator"})
+   :resourced-provision-indicator         "Resourced provision indicator"
+   :res                                   "Residential settings"         ; ≥v1.2
+   :wbp                                   "Work-based learning activity" ; ≥v1.2
+   })
 
 
 ;;; ## Module 5c: Placements - SEN need (`sen-need`)

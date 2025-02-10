@@ -59,7 +59,7 @@
 (def default-module-cols-to-report-distinct-vals
   "Default map of columns to report distinct values for for each module."
   ;; Columns considered but excluded are retained in the code but ignored using #_.
-  {:person           [:record-type      ; template only
+  {:person           [:record-type                          ; template only
                       #_:person-table-id
                       :native-id
                       #_:person-order-seq-column
@@ -68,27 +68,28 @@
                       :surname
                       :forename
                       #_:person-birth-date
-                      :gender-current   ; <v1.2
-                      :sex              ; ≥v1.2
+                      :gender-current                       ; <v1.2
+                      :sex                                  ; ≥v1.2
                       #_:ethnicity
                       #_:postcode
                       #_:upn
                       #_:unique-learner-number
                       :upn-unknown]
-   :requests         [:record-type      ; template only
+   :requests         [:record-type                          ; template only
                       #_:requests-table-id
                       :native-id
                       #_:requests-order-seq-column
                       :source-id
                       #_:person-table-id
                       #_:received-date
+                      :request-source                       ; ≥v1.3
                       :rya
                       #_:request-outcome-date
                       :request-outcome
                       :request-mediation
                       :request-tribunal
                       :exported]
-   :assessment       [:record-type      ; template only
+   :assessment       [:record-type                          ; template only
                       #_:assessment-table-id
                       :native-id
                       #_:assessment-order-seq-column
@@ -101,7 +102,7 @@
                       :other-mediation
                       :other-tribunal
                       :week20]
-   :named-plan       [:record-type      ; template only
+   :named-plan       [:record-type                          ; template only
                       #_:named-plan-table-id
                       :native-id
                       #_:named-plan-order-seq-column
@@ -115,7 +116,7 @@
                       :dp
                       #_:cease-date
                       :cease-reason]
-   :plan-detail      [:record-type      ; template only
+   :plan-detail      [:record-type                          ; template only
                       #_:plan-detail-table-id
                       :native-id
                       #_:plan-detail-order-seq-column
@@ -128,26 +129,27 @@
                       :placement-rank
                       :sen-unit-indicator
                       :resourced-provision-indicator]
-   :active-plans     [:record-type      ; template only
+   :active-plans     [:record-type                          ; template only
                       #_:active-plans-table-id
                       :native-id
                       #_:active-plans-order-seq-column
                       :source-id
                       #_:requests-table-id
                       :transfer-la
-                      :res              ; <v1.2
-                      :wbp              ; <v1.2
-                      #_:review-meeting ; ≥v1.2
-                      :review-outcome   ; ≥v1.2
+                      :res                                  ; <v1.2
+                      :wbp                                  ; <v1.2
+                      #_:review-meeting                     ; ≥v1.2
+                      :review-outcome                       ; ≥v1.2
+                      #_:review-draft                       ; ≥v1.3
+                      #_:phase-transfer-due-date            ; ≥v1.3
+                      #_:phase-transfer-final-date          ; ≥v1.3
                       #_:last-review]
-   :placement-detail [:record-type      ; template only
+   :placement-detail [:record-type                          ; template only
                       #_:placement-detail-table-id
                       :native-id
                       #_:placement-detail-order-seq-column
                       :source-id
                       #_:active-plans-table-id
-                      :res              ; ≥v1.2
-                      :wbp              ; ≥v1.2
                       #_:urn
                       #_:ukprn
                       :sen-setting
@@ -155,10 +157,13 @@
                       :placement-rank
                       #_:entry-date
                       #_:leaving-date
-                      :attendance-pattern ; <v1.2
+                      :attendance-pattern                   ; <v1.2
                       :sen-unit-indicator
-                      :resourced-provision-indicator]
-   :sen-need         [:record-type      ; template only
+                      :resourced-provision-indicator
+                      :res                                  ; ≥v1.2
+                      :wbp                                  ; ≥v1.2
+                      ]
+   :sen-need         [:record-type                          ; template only
                       #_:sen-need-table-id
                       :native-id
                       #_:sen-need-order-seq-column
