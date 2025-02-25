@@ -49,8 +49,6 @@
 
 
 ;;; # Check for issues
-
-
 ;;; ## Checks
 (def checks
   "Definitions for checks for issues in dataset of plans & placements on census dates."
@@ -79,7 +77,7 @@
         file-name-stem  (tc/dataset-name ds)
         col-name->label @plans-placements-on-census-dates-issues-col-name->label]
     (tc/write! (tc/dataset {:column-number (iterate inc 1)
-                            :column-name   (map name   (tc/column-names ds))
+                            :column-name   (map name (tc/column-names ds))
                             :column-label  (map col-name->label (tc/column-names ds))})
                (str out-dir file-name-stem "-col-labels.csv"))
     (tc/write! ds

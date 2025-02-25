@@ -1,11 +1,11 @@
 (ns plans-placements-eda
   "Report on plans & placements on census dates extracted from SEN2 Blade."
-  {:nextjournal.clerk/toc                  true
-   :nextjournal.clerk/visibility           {:code   :hide
-                                            :result :show}
-   :nextjournal.clerk/page-size            nil
-   :nextjournal.clerk/auto-expand-results? true
-   :nextjournal.clerk/budget               nil}
+  #:nextjournal.clerk{:toc                  true
+                      :visibility           {:code   :hide
+                                             :result :show}
+                      :page-size            nil
+                      :auto-expand-results? true
+                      :budget               nil}
   (:require [clojure.string :as string]
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
@@ -107,48 +107,51 @@ plans-placements/census-dates-ds
 ;;; ### #CYP with plan and/or placement record on census-date
 ;; …and discrepancy in # with both a plan & a placement record open on the census-date
 ;; with the EHCP caseload published by the DfE on [explore-education-statistics.service.gov.uk](https://explore-education-statistics.service.gov.uk/find-statistics/education-health-and-care-plans):
+^{::clerk/visibility {:result :hide}}
+(defn plan-placement-stats
+  [plans-placements-on-census-dates la-name]
+  (let [census-dates-ds                  (-> plans-placements-on-census-dates
+                                             (tc/select-columns [:census-year :census-date])
+                                             tc/unique-by
+                                             (tc/order-by [:census-year]))
+        stats                            (-> plans-placements-on-census-dates
+                                             (tc/map-rows (fn [{:keys [named-plan? placement-detail?]}]
+                                                            {:num-plans              (if named-plan? 1 0)
+                                                             :num-placements         (if placement-detail? 1 0)
+                                                             :num-plan-or-placement  (if (or named-plan?
+                                                                                             placement-detail?) 1 0)
+                                                             :num-plan-and-placement (if (and named-plan?
+                                                                                              placement-detail?) 1 0)}))
+                                             (tc/group-by [:census-year])
+                                             (tc/aggregate {:num-plans              #(reduce + (% :num-plans))
+                                                            :num-placements         #(reduce + (% :num-placements))
+                                                            :num-plan-or-placement  #(reduce + (% :num-plan-or-placement))
+                                                            :num-plan-and-placement #(reduce + (% :num-plan-and-placement))}))
+        caseload                         (-> @ehcp-stats/caseload
+                                             (tc/select-rows (comp #{la-name} :la-name))
+                                             (tc/select-rows (comp (apply hash-set (:census-year census-dates-ds)) :time-period))
+                                             (tc/select-columns [:time-period :num-caseload])
+                                             (tc/rename-columns {:time-period :census-year})
+                                             (tc/set-dataset-name "caseload"))]
+    (->  census-dates-ds
+         (tc/map-columns :census-date-str [:census-date]
+                         #(.format % (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu"
+                                                                                   (java.util.Locale. "en_GB"))))
+         (tc/left-join stats [:census-year])
+         (tc/left-join caseload [:census-year])
+         (tc/drop-columns #"^:.*\.census-year")
+         (tc/drop-columns [:census-date])
+         (tc/rename-columns {:census-year            "Census Year"
+                             :census-date-str        "Census Date"
+                             :num-plans              "#plans"
+                             :num-placements         "#placements"
+                             :num-plan-or-placement  "#plan|placement"
+                             :num-plan-and-placement "#plan&placement"
+                             :num-caseload           "EHCP Caseload"}))))
+
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(-> plans-placements/census-dates-ds
-    (tc/map-columns "Census Date" [:census-date]
-                    #(.format % (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu"
-                                                                              (java.util.Locale. "en_GB"))))
-    (tc/drop-columns [:census-date])
-    (tc/left-join (-> @plans-placements/plans-placements-on-census-dates
-                      (tc/select-rows :named-plan?)
-                      (tc/group-by [:census-year])
-                      (tc/aggregate {"#plans" tc/row-count}))
-                  [:census-year])
-    (tc/drop-columns #"^:right\..+$")
-    (tc/left-join (-> @plans-placements/plans-placements-on-census-dates
-                      (tc/select-rows :placement-detail?)
-                      (tc/group-by [:census-year])
-                      (tc/aggregate {"#placements" tc/row-count}))
-                  [:census-year])
-    (tc/drop-columns #"^:right\..+$")
-    (tc/left-join (-> @plans-placements/plans-placements-on-census-dates
-                      (tc/group-by [:census-year])
-                      (tc/aggregate {"#plan|placement" tc/row-count}))
-                  [:census-year])
-    (tc/drop-columns #"^:right\..+$")
-    (tc/left-join (-> @plans-placements/plans-placements-on-census-dates
-                      (tc/select-rows :named-plan?)
-                      (tc/select-rows :placement-detail?)
-                      (tc/group-by [:census-year])
-                      (tc/aggregate {"#plan&placement" tc/row-count}))
-                  [:census-year])
-    (tc/drop-columns #"^:right\..+$")
-    (tc/left-join (-> @ehcp-stats/caseload
-                      (tc/select-rows (comp #{la-name} :la-name))
-                      (tc/select-rows (comp (apply hash-set (:census-year plans-placements/census-dates-ds)) :time-period))
-                      (tc/select-columns [:time-period :num-caseload])
-                      (tc/rename-columns {:time-period  :census-year
-                                          :num-caseload "EHCP Caseload"})
-                      (tc/set-dataset-name "right"))
-                  [:census-year])
-    (tc/drop-columns #"^:right\..+$")
-    (tc/map-columns "Discrepancy" ["#plan&placement" "EHCP Caseload"] -)
-    (tc/order-by [:census-year])
-    (tc/rename-columns {:census-year "Census year"}))
+(plan-placement-stats @plans-placements/plans-placements-on-census-dates la-name)
+
 
 
 
@@ -156,9 +159,10 @@ plans-placements/census-dates-ds
 (comment ;; clerk build
   (let [in-path            (str "templates/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
         out-path           (str out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
-    (clerk/build! {:paths    [in-path]
-                   :ssr      true
-                   :bundle   true
-                   :out-path "."})
+    (clerk/build! {:paths       [in-path]
+                   :ssr         true
+                   :bundle      true         ; clerk v0.15.957
+                   #_#_:package :single-file ; clerk v0.16.1016
+                   :out-path    "."})
     (.renameTo (io/file "./index.html") (io/file out-path)))
   )
