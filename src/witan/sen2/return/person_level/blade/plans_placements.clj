@@ -24,8 +24,8 @@
   "Map of SEN2 Blade columns to select for inclusion from each module (in addition to `:*-table-id` cols)."
   {:person           [:person-order-seq-column :upn :unique-learner-number :person-birth-date]
    :named-plan       [:start-date :cease-date :cease-reason]
-   :placement-detail (concat [:placement-rank :entry-date :leaving-date]
-                             sen2-estab-keys [:sen-setting-other])
+   :placement-detail (vec (concat [:placement-rank :entry-date :leaving-date]
+                                  sen2-estab-keys [:sen-setting-other]))
    :active-plans     [:transfer-la]
    :sen-need         [:sen-type]})
 
