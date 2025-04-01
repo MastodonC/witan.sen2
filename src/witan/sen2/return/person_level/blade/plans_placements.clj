@@ -818,42 +818,47 @@
       (tc/drop-columns #"^:update\..*$")
       ;; Drop records with `:update-drop?`
       (tc/drop-rows :update-drop?)
-      ;; Update `:upn`if present and `:update-upn` is non-nil in update dataset
+      ;; Update `:upn` if present and `:update-upn` is non-nil in update dataset
       ((fn [ds] (if (not-any? #{:upn} (tc/column-names ds))
                   ds
                   (tc/map-columns ds :upn
                                   [:update-upn :upn]
                                   #(if (some? %1) %1 %2)))))
       ;; Update `:ncy-nominal` if non-nil in update dataset
-      (tc/map-columns :ncy-nominal
-                      [:update-ncy-nominal :ncy-nominal]
-                      #(if (some? %1) %1 %2))
-      ;; Update all sen2-establishment columns if any are non nil in update dataset
-      (tc/map-columns :update-sen2-establishment-cols? [:update-urn
-                                                        :update-ukprn
-                                                        :update-sen-unit-indicator
-                                                        :update-resourced-provision-indicator
-                                                        :update-sen-setting]
-                      (fn [& args] (some some? args)))
-      (tc/map-columns :urn
-                      [:update-sen2-establishment-cols? :update-urn :urn]
-                      #(if %1 %2 %3))
-      (tc/map-columns :ukprn
-                      [:update-sen2-establishment-cols? :update-ukprn :ukprn]
-                      #(if %1 %2 %3))
-      (tc/map-columns :sen-unit-indicator
-                      [:update-sen2-establishment-cols? :update-sen-unit-indicator :sen-unit-indicator]
-                      #(if %1 (if (some? %2) %2 false) %3))
-      (tc/map-columns :resourced-provision-indicator
-                      [:update-sen2-establishment-cols? :update-resourced-provision-indicator :resourced-provision-indicator]
-                      #(if %1 (if (some? %2) %2 false) %3))
-      (tc/map-columns :sen-setting
-                      [:update-sen2-establishment-cols? :update-sen-setting :sen-setting]
-                      #(if %1 %2 %3))
+      (tc/map-rows (fn [{:keys [ncy-nominal update-ncy-nominal]}]
+                     (if (some? update-ncy-nominal)
+                       {:ncy-nominal update-ncy-nominal}
+                       {:ncy-nominal        ncy-nominal})))
+      ;; Update all SEN2 Establishment columns if any are non nil in update dataset
+      (tc/map-rows (fn [{:keys [urn                           update-urn
+                                ukprn                         update-ukprn
+                                sen-unit-indicator            update-sen-unit-indicator
+                                resourced-provision-indicator update-resourced-provision-indicator
+                                sen-setting                   update-sen-setting]}]
+                     (if (some some? [update-urn
+                                      update-ukprn
+                                      update-sen-unit-indicator
+                                      update-resourced-provision-indicator
+                                      update-sen-setting])
+                       {:urn                           update-urn
+                        :ukprn                         update-ukprn
+                        :sen-unit-indicator            (if (some? update-sen-unit-indicator)
+                                                         update-sen-unit-indicator
+                                                         false)
+                        :resourced-provision-indicator (if (some? update-resourced-provision-indicator)
+                                                         update-resourced-provision-indicator
+                                                         false)
+                        :sen-setting                   update-sen-setting}
+                       {:urn                           urn
+                        :ukprn                         ukprn
+                        :sen-unit-indicator            sen-unit-indicator
+                        :resourced-provision-indicator resourced-provision-indicator
+                        :sen-setting                   sen-setting})))
       ;; Update `:sen-type` if non-nil in update dataset
-      (tc/map-columns :sen-type
-                      [:update-sen-type :sen-type]
-                      #(if (some? %1) %1 %2))
+      (tc/map-rows (fn [{:keys [sen-type update-sen-type]}]
+                     (if (some? update-sen-type)
+                       {:sen-type update-sen-type}
+                       {:sen-type        sen-type})))
       ;; Drop update columns
       (tc/drop-columns #"^:update-.*$")
       ;; Arrange dataset
