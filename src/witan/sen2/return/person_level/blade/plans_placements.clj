@@ -787,23 +787,24 @@
   "Summarise updates in `plans-placements-on-census-dates-updates` dataset."
   [plans-placements-on-census-dates-updates]
   (-> plans-placements-on-census-dates-updates
-      (tc/map-columns :update-sen2-establishment [:update-urn
-                                                  :update-ukprn
-                                                  :update-sen-unit-indicator
-                                                  :update-resourced-provision-indicator
-                                                  :update-sen-setting]
+      (tc/map-columns :update-sen2-estab [:update-urn
+                                          :update-ukprn
+                                          :update-sen-unit-indicator
+                                          :update-resourced-provision-indicator
+                                          :update-sen-setting]
                       (fn [& args] (some some? args)))
       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
       (tc/update-columns [:update-drop?] (partial map #(if % "X" " ")))
       (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "*" " ")))
-      (tc/group-by [:census-date :update-drop? :update-upn :update-ncy-nominal :update-sen2-establishment :update-sen-type])
+      (tc/group-by [:census-date :update-drop? :update-upn :update-ncy-nominal :update-sen2-estab :update-sen-type])
       (tc/aggregate {:row-count tc/row-count})
       (tc/pivot->wider :census-date :row-count {:drop-missing? false})
-      (tc/rename-columns {:update-drop?              "drop?"
-                          :update-upn                "UPN"
-                          :update-ncy-nominal        "Nominal NCY"
-                          :update-sen2-establishment "SEN2 Establishment"
-                          :update-sen-type           "sen-type (need)"})))
+      (as-> $ (tc/order-by $ (tc/column-names $ #"^:update-.+$") :desc))
+      (tc/rename-columns {:update-drop?       "drop?"
+                          :update-upn         "UPN"
+                          :update-ncy-nominal "Nominal NCY"
+                          :update-sen2-estab  "SEN2 Establishment"
+                          :update-sen-type    "sen-type (need)"})))
 
 (defn update-plans-placements-on-census-dates
   "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`."
