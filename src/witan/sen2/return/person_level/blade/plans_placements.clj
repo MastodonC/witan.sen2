@@ -886,6 +886,22 @@
 
 
 ;;; # Combining
+(defn concat-plans-placements-on-census-dates
+  "Given sequence `xs` of datasets of plans-placements-on-census-dates,
+   each containing a `:census-year` column, adds column `:return-year`
+   (as the maximum `:census-year`) and concatenates them."
+  [xs & {:keys [person-id-col-name]
+         :or   {person-id-col-name :person-table-id}}]
+  (as-> xs $
+    (map (fn [ds]
+           (-> ds
+               (tc/add-column :return-year #(->> % :census-year (reduce max)))
+               (tc/reorder-columns [:return-year])))
+         $)
+    (reduce tc/concat-copying $)
+    (tc/reorder-columns $ [person-id-col-name :census-year :census-date :return-year])
+    (tc/order-by $ (tc/column-names $))))
+
 (defn plans-placements->side-by-side
   "Pack a plans-placements-on-census-dates dataset `ds` from a single SEN2 return
    into a side-by-side format suitable for combining with similar datasets from other returns.
