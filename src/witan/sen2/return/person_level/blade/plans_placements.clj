@@ -29,21 +29,21 @@
    :active-plans     [:transfer-la]
    :sen-need         [:sen-type]})
 
-(def id-cols-to-keep
-  "ID columns to keep when reading/updating plans-placements-on-census-dates datasets."
+(def person-id-cols-to-keep
+  "Person ID columns to keep when reading/updating plans-placements-on-census-dates datasets."
   [:person-table-id :person-order-seq-column :upn :unique-learner-number])
 
 (def val-cols-to-keep
-  "Value columns to keep when reading/updating plans-placements-on-census-dates datasets."
+  "Default value columns to keep when reading/updating plans-placements-on-census-dates datasets."
   (distinct (concat [:ncy-nominal]
                     sen2-estab-keys
                     [:sen-type])))
 
 (def cols-to-keep
-  "Columns from collated plans & placements to keep when reading/updating."
-  (distinct (concat id-cols-to-keep
-                    [:requests-table-id]
+  "Default columns from collated plans & placements to keep when reading/updating."
+  (distinct (concat person-id-cols-to-keep
                     [:census-year :census-date]
+                    [:requests-table-id]
                     val-cols-to-keep)))
 
 (def key-cols-for-census
@@ -52,7 +52,7 @@
    Note that `:requests-table-id` is _not_ included,
         as by census stage multiple plans|placements on census dates
         from different requests should have been resolved."
-  (concat id-cols-to-keep
+  (concat person-id-cols-to-keep
           [:census-year :census-date]))
 
 
