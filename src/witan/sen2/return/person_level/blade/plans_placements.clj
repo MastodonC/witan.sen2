@@ -807,63 +807,81 @@
                           :update-sen-type    "sen-type (need)"})))
 
 (defn update-plans-placements-on-census-dates
-  "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`."
-  [plans-placements-on-census-dates' plans-placements-on-census-dates-updates']
-  (-> plans-placements-on-census-dates'
-      (tc/select-columns cols-to-keep)
-      (tc/left-join (-> plans-placements-on-census-dates-updates'
-                        (tc/select-columns updates-ds-required-cols)
-                        (tc/set-dataset-name "update"))
-                    [:person-table-id :census-date :requests-table-id])
-      (tc/drop-columns #"^:update\..*$")
-      ;; Drop records with `:update-drop?`
-      (tc/drop-rows :update-drop?)
-      ;; Update `:upn` if present and `:update-upn` is non-nil in update dataset
-      ((fn [ds] (if (not-any? #{:upn} (tc/column-names ds))
-                  ds
-                  (tc/map-columns ds :upn
-                                  [:update-upn :upn]
-                                  #(if (some? %1) %1 %2)))))
-      ;; Update `:ncy-nominal` if non-nil in update dataset
-      (tc/map-rows (fn [{:keys [ncy-nominal update-ncy-nominal]}]
-                     (if (some? update-ncy-nominal)
-                       {:ncy-nominal update-ncy-nominal}
-                       {:ncy-nominal        ncy-nominal})))
-      ;; Update all SEN2 Establishment columns if any are non nil in update dataset
-      (tc/map-rows (fn [{:keys [urn                           update-urn
-                                ukprn                         update-ukprn
-                                sen-unit-indicator            update-sen-unit-indicator
-                                resourced-provision-indicator update-resourced-provision-indicator
-                                sen-setting                   update-sen-setting]}]
-                     (if (some some? [update-urn
-                                      update-ukprn
-                                      update-sen-unit-indicator
-                                      update-resourced-provision-indicator
-                                      update-sen-setting])
-                       {:urn                           update-urn
-                        :ukprn                         update-ukprn
-                        :sen-unit-indicator            (if (some? update-sen-unit-indicator)
-                                                         update-sen-unit-indicator
-                                                         false)
-                        :resourced-provision-indicator (if (some? update-resourced-provision-indicator)
-                                                         update-resourced-provision-indicator
-                                                         false)
-                        :sen-setting                   update-sen-setting}
-                       {:urn                           urn
-                        :ukprn                         ukprn
-                        :sen-unit-indicator            sen-unit-indicator
-                        :resourced-provision-indicator resourced-provision-indicator
-                        :sen-setting                   sen-setting})))
-      ;; Update `:sen-type` if non-nil in update dataset
-      (tc/map-rows (fn [{:keys [sen-type update-sen-type]}]
-                     (if (some? update-sen-type)
-                       {:sen-type update-sen-type}
-                       {:sen-type        sen-type})))
-      ;; Drop update columns
-      (tc/drop-columns #"^:update-.*$")
-      ;; Arrange dataset
-      (tc/order-by [:person-table-id :census-date :requests-table-id])
-      (tc/set-dataset-name "plans-placements-on-census-dates-updated")))
+  "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`.
+   Trailing map/key-value arguments allow specification of columns to keep:
+   - `:cols-to-keep` - seq of column names to keep (default `cols-to-keep`)
+   - `:additional-placement-detail-cols-to-keep` - seq of additional columns to keep from placement-detail module:
+      - Contents are `nil`led if other `placement-detail` columns are updated.
+      - These columns are added to the `:cols-to-keep` parameter value (if not already present)."
+  [plans-placements-on-census-dates'
+   plans-placements-on-census-dates-updates'
+   & {:keys [cols-to-keep
+             additional-placement-detail-cols-to-keep]
+      :or   {cols-to-keep cols-to-keep}}]
+  (let [;; Filter `tc/column-names` to ensure cols-to-keep are present and in order
+        cols-to-keep'                             (filter (into #{} cat [cols-to-keep
+                                                                         additional-placement-detail-cols-to-keep])
+                                                          (tc/column-names plans-placements-on-census-dates'))
+        additional-placement-detail-cols-to-keep' (filter (set additional-placement-detail-cols-to-keep)
+                                                          (tc/column-names plans-placements-on-census-dates'))]
+    (-> plans-placements-on-census-dates'
+        (tc/select-columns cols-to-keep')
+        (tc/left-join (-> plans-placements-on-census-dates-updates'
+                          (tc/select-columns updates-ds-required-cols)
+                          (tc/set-dataset-name "update"))
+                      [:person-table-id :census-date :requests-table-id])
+        (tc/drop-columns #"^:update\..*$")
+        ;; Drop records with `:update-drop?`
+        (tc/drop-rows :update-drop?)
+        ;; Update `:upn` if present and `:update-upn` is non-nil in update dataset
+        ((fn [ds] (if (not-any? #{:upn} (tc/column-names ds))
+                    ds
+                    (tc/map-columns ds :upn
+                                    [:update-upn :upn]
+                                    #(if (some? %1) %1 %2)))))
+        ;; Update `:ncy-nominal` if non-nil in update dataset
+        (tc/map-rows (fn [{:keys [ncy-nominal update-ncy-nominal]}]
+                       (if (some? update-ncy-nominal)
+                         {:ncy-nominal update-ncy-nominal}
+                         {:ncy-nominal ncy-nominal})))
+        ;; Update all placement-detail module SEN2 Establishment columns if any are non nil in update dataset
+        (tc/map-rows (fn [{:keys [urn                           update-urn
+                                  ukprn                         update-ukprn
+                                  sen-unit-indicator            update-sen-unit-indicator
+                                  resourced-provision-indicator update-resourced-provision-indicator
+                                  sen-setting                   update-sen-setting]
+                           :as   r}]
+                       (if (some some? [update-urn
+                                        update-ukprn
+                                        update-sen-unit-indicator
+                                        update-resourced-provision-indicator
+                                        update-sen-setting])
+                         (merge (zipmap additional-placement-detail-cols-to-keep' (repeat nil))
+                                {:urn                           update-urn
+                                 :ukprn                         update-ukprn
+                                 :sen-unit-indicator            (if (some? update-sen-unit-indicator)
+                                                                  update-sen-unit-indicator
+                                                                  false)
+                                 :resourced-provision-indicator (if (some? update-resourced-provision-indicator)
+                                                                  update-resourced-provision-indicator
+                                                                  false)
+                                 :sen-setting                   update-sen-setting})
+                         (merge (select-keys r additional-placement-detail-cols-to-keep')
+                                {:urn                           urn
+                                 :ukprn                         ukprn
+                                 :sen-unit-indicator            sen-unit-indicator
+                                 :resourced-provision-indicator resourced-provision-indicator
+                                 :sen-setting                   sen-setting}))))
+        ;; Update `:sen-type` if non-nil in update dataset
+        (tc/map-rows (fn [{:keys [sen-type update-sen-type]}]
+                       (if (some? update-sen-type)
+                         {:sen-type update-sen-type}
+                         {:sen-type sen-type})))
+        ;; Drop update columns
+        (tc/drop-columns #"^:update-.*$")
+        ;; Arrange dataset
+        (tc/order-by [:person-table-id :census-date :requests-table-id])
+        (tc/set-dataset-name "plans-placements-on-census-dates-updated"))))
 
 
 
