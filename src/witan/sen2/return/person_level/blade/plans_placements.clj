@@ -35,9 +35,9 @@
 
 (def val-cols-to-keep
   "Default value columns to keep when reading/updating plans-placements-on-census-dates datasets."
-  (distinct (concat [:ncy-nominal]
-                    sen2-estab-keys
-                    [:sen-type])))
+  (distinct (concat [:sen-type]
+                    [:ncy-nominal]
+                    sen2-estab-keys)))
 
 (def cols-to-keep
   "Default columns from collated plans & placements to keep when reading/updating."
@@ -902,7 +902,35 @@
     (tc/reorder-columns $ [person-id-col-name :census-year :census-date :return-year])
     (tc/order-by $ (tc/column-names $))))
 
+(defn concatenated-plans-placements->side-by-side
+  "Given dataset `ds` of concatenated plans-placements-on-census-dates
+  (with column `:return-year` indicating the SEN2 return year each record was extracted from)
+  returns a dataset keyed by [`person-id-col-name` `:census-year` `:census-date`]
+  with the value columns joined into a map and placed in one of two columns:
+   - `:census-year-return` for records with `:census-year`   matching the `:return-year`
+   - `:next-year-return`   for records with `:census-year`+1 matching the `:return-year`.
+  The default value columns are [`:sen-type``:ncy-nominal`
+  `:urn` `:ukprn` `:sen-unit-indicator` `:resourced-provision-indicator` `:sen-setting`]
+  (with the latter packed into map under :sen2-estab) may be added to
+  using option `additional-val-cols`."
+  [ds & {:keys [person-id-col-name
+                additional-val-cols]
+         :or   {person-id-col-name :person-table-id}}]
+  (-> ds
+      (tc/map-columns :val-col-name [:census-year :return-year] #(cond (= %1    %2   ) :census-year-return
+                                                                       (= %1 (- %2 1)) :next-year-return
+                                                                       :else           :other))
+      (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
+      (tc/join-columns :val-col
+                       ((comp distinct concat) val-cols-to-keep [:sen2-estab] additional-val-cols)
+                       {:result-type :map})
+      (tc/select-columns [person-id-col-name :census-year :census-date :val-col-name :val-col])
+      (tc/pivot->wider :val-col-name :val-col {:drop-missing? false})
+      (tc/reorder-columns [person-id-col-name :census-year :census-date :census-year-return :next-year-return])
+      (tc/order-by [person-id-col-name :census-year])))
+
 (defn plans-placements->side-by-side
+  ;; TODO: Remove
   "Pack a plans-placements-on-census-dates dataset `ds` from a single SEN2 return
    into a side-by-side format suitable for combining with similar datasets from other returns.
    Given a `plans-placements-on-census-dates` dataset with unique key `key-cols` (which must contain `:census-year`), 
@@ -927,6 +955,7 @@
                                    :val-cols-from-return-for-census-year+1])))))
 
 (defn combine-side-by-side-plans-placements
+  ;; TODO: Remove
   "Combine two side-by-side plans-placements datasets `ds1` & `ds2` with `key-cols`.
    Note:
    - `key-cols` must include `:census-year`
