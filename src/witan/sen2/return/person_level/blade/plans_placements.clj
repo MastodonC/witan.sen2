@@ -29,21 +29,21 @@
    :active-plans     [:transfer-la]
    :sen-need         [:sen-type]})
 
-(def id-cols-to-keep
-  "ID columns to keep when reading/updating plans-placements-on-census-dates datasets."
+(def person-id-cols-to-keep
+  "Person ID columns to keep when reading/updating plans-placements-on-census-dates datasets."
   [:person-table-id :person-order-seq-column :upn :unique-learner-number])
 
 (def val-cols-to-keep
-  "Value columns to keep when reading/updating plans-placements-on-census-dates datasets."
-  (distinct (concat [:ncy-nominal]
-                    sen2-estab-keys
-                    [:sen-type])))
+  "Default value columns to keep when reading/updating plans-placements-on-census-dates datasets."
+  (distinct (concat [:sen-type]
+                    [:ncy-nominal]
+                    sen2-estab-keys)))
 
 (def cols-to-keep
-  "Columns from collated plans & placements to keep when reading/updating."
-  (distinct (concat id-cols-to-keep
-                    [:requests-table-id]
+  "Default columns from collated plans & placements to keep when reading/updating."
+  (distinct (concat person-id-cols-to-keep
                     [:census-year :census-date]
+                    [:requests-table-id]
                     val-cols-to-keep)))
 
 (def key-cols-for-census
@@ -52,7 +52,7 @@
    Note that `:requests-table-id` is _not_ included,
         as by census stage multiple plans|placements on census dates
         from different requests should have been resolved."
-  (concat id-cols-to-keep
+  (concat person-id-cols-to-keep
           [:census-year :census-date]))
 
 
@@ -787,157 +787,145 @@
   "Summarise updates in `plans-placements-on-census-dates-updates` dataset."
   [plans-placements-on-census-dates-updates]
   (-> plans-placements-on-census-dates-updates
-      (tc/map-columns :update-sen2-establishment [:update-urn
-                                                  :update-ukprn
-                                                  :update-sen-unit-indicator
-                                                  :update-resourced-provision-indicator
-                                                  :update-sen-setting]
+      (tc/map-columns :update-sen2-estab [:update-urn
+                                          :update-ukprn
+                                          :update-sen-unit-indicator
+                                          :update-resourced-provision-indicator
+                                          :update-sen-setting]
                       (fn [& args] (some some? args)))
       (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
       (tc/update-columns [:update-drop?] (partial map #(if % "X" " ")))
       (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "*" " ")))
-      (tc/group-by [:census-date :update-drop? :update-upn :update-ncy-nominal :update-sen2-establishment :update-sen-type])
+      (tc/group-by [:census-date :update-drop? :update-upn :update-ncy-nominal :update-sen2-estab :update-sen-type])
       (tc/aggregate {:row-count tc/row-count})
       (tc/pivot->wider :census-date :row-count {:drop-missing? false})
-      (tc/rename-columns {:update-drop?              "drop?"
-                          :update-upn                "UPN"
-                          :update-ncy-nominal        "Nominal NCY"
-                          :update-sen2-establishment "SEN2 Establishment"
-                          :update-sen-type           "sen-type (need)"})))
+      (as-> $ (tc/order-by $ (tc/column-names $ #"^:update-.+$") :desc))
+      (tc/rename-columns {:update-drop?       "drop?"
+                          :update-upn         "UPN"
+                          :update-ncy-nominal "Nominal NCY"
+                          :update-sen2-estab  "SEN2 Establishment"
+                          :update-sen-type    "sen-type (need)"})))
 
 (defn update-plans-placements-on-census-dates
-  "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`."
-  [plans-placements-on-census-dates' plans-placements-on-census-dates-updates']
-  (-> plans-placements-on-census-dates'
-      (tc/select-columns cols-to-keep)
-      (tc/left-join (-> plans-placements-on-census-dates-updates'
-                        (tc/select-columns updates-ds-required-cols)
-                        (tc/set-dataset-name "update"))
-                    [:person-table-id :census-date :requests-table-id])
-      (tc/drop-columns #"^:update\..*$")
-      ;; Drop records with `:update-drop?`
-      (tc/drop-rows :update-drop?)
-      ;; Update `:upn`if present and `:update-upn` is non-nil in update dataset
-      ((fn [ds] (if (not-any? #{:upn} (tc/column-names ds))
-                  ds
-                  (tc/map-columns ds :upn
-                                  [:update-upn :upn]
-                                  #(if (some? %1) %1 %2)))))
-      ;; Update `:ncy-nominal` if non-nil in update dataset
-      (tc/map-columns :ncy-nominal
-                      [:update-ncy-nominal :ncy-nominal]
-                      #(if (some? %1) %1 %2))
-      ;; Update all sen2-establishment columns if any are non nil in update dataset
-      (tc/map-columns :update-sen2-establishment-cols? [:update-urn
-                                                        :update-ukprn
-                                                        :update-sen-unit-indicator
-                                                        :update-resourced-provision-indicator
-                                                        :update-sen-setting]
-                      (fn [& args] (some some? args)))
-      (tc/map-columns :urn
-                      [:update-sen2-establishment-cols? :update-urn :urn]
-                      #(if %1 %2 %3))
-      (tc/map-columns :ukprn
-                      [:update-sen2-establishment-cols? :update-ukprn :ukprn]
-                      #(if %1 %2 %3))
-      (tc/map-columns :sen-unit-indicator
-                      [:update-sen2-establishment-cols? :update-sen-unit-indicator :sen-unit-indicator]
-                      #(if %1 (if (some? %2) %2 false) %3))
-      (tc/map-columns :resourced-provision-indicator
-                      [:update-sen2-establishment-cols? :update-resourced-provision-indicator :resourced-provision-indicator]
-                      #(if %1 (if (some? %2) %2 false) %3))
-      (tc/map-columns :sen-setting
-                      [:update-sen2-establishment-cols? :update-sen-setting :sen-setting]
-                      #(if %1 %2 %3))
-      ;; Update `:sen-type` if non-nil in update dataset
-      (tc/map-columns :sen-type
-                      [:update-sen-type :sen-type]
-                      #(if (some? %1) %1 %2))
-      ;; Drop update columns
-      (tc/drop-columns #"^:update-.*$")
-      ;; Arrange dataset
-      (tc/order-by [:person-table-id :census-date :requests-table-id])
-      (tc/set-dataset-name "plans-placements-on-census-dates-updated")))
+  "Apply updates from `plans-placements-on-census-dates-updates'` to `plans-placements-on-census-dates'`.
+   Trailing map/key-value arguments allow specification of columns to keep:
+   - `:cols-to-keep` - seq of column names to keep (default `cols-to-keep`)
+   - `:additional-placement-detail-cols-to-keep` - seq of additional columns to keep from placement-detail module:
+      - Contents are `nil`led if other `placement-detail` columns are updated.
+      - These columns are added to the `:cols-to-keep` parameter value (if not already present)."
+  [plans-placements-on-census-dates'
+   plans-placements-on-census-dates-updates'
+   & {:keys [cols-to-keep
+             additional-placement-detail-cols-to-keep]
+      :or   {cols-to-keep cols-to-keep}}]
+  (let [;; Filter `tc/column-names` to ensure cols-to-keep are present and in order
+        cols-to-keep'                             (filter (into #{} cat [cols-to-keep
+                                                                         additional-placement-detail-cols-to-keep])
+                                                          (tc/column-names plans-placements-on-census-dates'))
+        additional-placement-detail-cols-to-keep' (filter (set additional-placement-detail-cols-to-keep)
+                                                          (tc/column-names plans-placements-on-census-dates'))]
+    (-> plans-placements-on-census-dates'
+        (tc/select-columns cols-to-keep')
+        (tc/left-join (-> plans-placements-on-census-dates-updates'
+                          (tc/select-columns updates-ds-required-cols)
+                          (tc/set-dataset-name "update"))
+                      [:person-table-id :census-date :requests-table-id])
+        (tc/drop-columns #"^:update\..*$")
+        ;; Drop records with `:update-drop?`
+        (tc/drop-rows :update-drop?)
+        ;; Update `:upn` if present and `:update-upn` is non-nil in update dataset
+        ((fn [ds] (if (not-any? #{:upn} (tc/column-names ds))
+                    ds
+                    (tc/map-columns ds :upn
+                                    [:update-upn :upn]
+                                    #(if (some? %1) %1 %2)))))
+        ;; Update `:ncy-nominal` if non-nil in update dataset
+        (tc/map-rows (fn [{:keys [ncy-nominal update-ncy-nominal]}]
+                       (if (some? update-ncy-nominal)
+                         {:ncy-nominal update-ncy-nominal}
+                         {:ncy-nominal ncy-nominal})))
+        ;; Update all placement-detail module SEN2 Establishment columns if any are non nil in update dataset
+        (tc/map-rows (fn [{:keys [urn                           update-urn
+                                  ukprn                         update-ukprn
+                                  sen-unit-indicator            update-sen-unit-indicator
+                                  resourced-provision-indicator update-resourced-provision-indicator
+                                  sen-setting                   update-sen-setting]
+                           :as   r}]
+                       (if (some some? [update-urn
+                                        update-ukprn
+                                        update-sen-unit-indicator
+                                        update-resourced-provision-indicator
+                                        update-sen-setting])
+                         (merge (zipmap additional-placement-detail-cols-to-keep' (repeat nil))
+                                {:urn                           update-urn
+                                 :ukprn                         update-ukprn
+                                 :sen-unit-indicator            (if (some? update-sen-unit-indicator)
+                                                                  update-sen-unit-indicator
+                                                                  false)
+                                 :resourced-provision-indicator (if (some? update-resourced-provision-indicator)
+                                                                  update-resourced-provision-indicator
+                                                                  false)
+                                 :sen-setting                   update-sen-setting})
+                         (merge (select-keys r additional-placement-detail-cols-to-keep')
+                                {:urn                           urn
+                                 :ukprn                         ukprn
+                                 :sen-unit-indicator            sen-unit-indicator
+                                 :resourced-provision-indicator resourced-provision-indicator
+                                 :sen-setting                   sen-setting}))))
+        ;; Update `:sen-type` if non-nil in update dataset
+        (tc/map-rows (fn [{:keys [sen-type update-sen-type]}]
+                       (if (some? update-sen-type)
+                         {:sen-type update-sen-type}
+                         {:sen-type sen-type})))
+        ;; Drop update columns
+        (tc/drop-columns #"^:update-.*$")
+        ;; Arrange dataset
+        (tc/order-by [:person-table-id :census-date :requests-table-id])
+        (tc/set-dataset-name "plans-placements-on-census-dates-updated"))))
 
 
 
 ;;; # Combining
-(defn plans-placements->side-by-side
-  "Pack a plans-placements-on-census-dates dataset `ds` from a single SEN2 return
-   into a side-by-side format suitable for combining with similar datasets from other returns.
-   Given a `plans-placements-on-census-dates` dataset with unique key `key-cols` (which must contain `:census-year`), 
-   returns a \"packed side-by-side\" dataset with `val-cols` joined into a map and placed in one of two columns:
-   - `:val-cols-from-return-for-census-year`   for records with `:census-year`   matching the `:return-year`
-   - `:val-cols-from-return-for-census-year+1` for records with `:census-year`+1 matching the `:return-year`.
-   Use optional first argument to override default `return-year`, `key-cols` or `val-cols`."
-  ([ds] (plans-placements->side-by-side {} ds))
-  ([{:keys [return-year key-cols val-cols]
-     :or   {return-year (->> ds :census-year (reduce max))
-            key-cols    key-cols-for-census
-            val-cols    val-cols-to-keep}}
-    ds]
-   (-> ds
-       (tc/join-columns :val-cols val-cols {:result-type :map})
-       (tc/map-rows (fn [{:keys [census-year val-cols]}]
-                      (cond
-                        (= census-year       return-year) {:val-cols-from-return-for-census-year   val-cols}
-                        (= (inc census-year) return-year) {:val-cols-from-return-for-census-year+1 val-cols})))
-       (tc/select-columns (concat key-cols
-                                  [:val-cols-from-return-for-census-year
-                                   :val-cols-from-return-for-census-year+1])))))
+(defn concat-plans-placements-on-census-dates
+  "Given sequence `xs` of datasets of plans-placements-on-census-dates,
+   each containing a `:census-year` column, adds column `:return-year`
+   (as the maximum `:census-year`) and concatenates them."
+  [xs & {:keys [person-id-col-name]
+         :or   {person-id-col-name :person-table-id}}]
+  (as-> xs $
+    (map (fn [ds]
+           (-> ds
+               (tc/add-column :return-year #(->> % :census-year (reduce max)))
+               (tc/reorder-columns [:return-year])))
+         $)
+    (reduce tc/concat-copying $)
+    (tc/reorder-columns $ [person-id-col-name :census-year :census-date :return-year])
+    (tc/order-by $ (tc/column-names $))))
 
-(defn combine-side-by-side-plans-placements
-  "Combine two side-by-side plans-placements datasets `ds1` & `ds2` with `key-cols`.
-   Note:
-   - `key-cols` must include `:census-year`
-   - The pair of datasets `ds1` & `ds2`:
-     - Must have columns `(conj key-cols :val-cols-from-return-for-census-year+1 :val-cols-from-return-for-census-year)`
-       (any other columns are dropped).
-     - Should have a single `:census-year` in common.
-     - Must be in order of SEN2 returns contained (i.e. the `:census-year`s in `ds1` must be <= those in `ds2`),
-       such that for the `:census-year` in common:
-       - `ds1` contains the plans-placements from the SEN2 for that year
-               (in `:val-cols-from-return-for-census-year`), and
-       - `ds2` contains the plans-placements from the SEN2 return for the following year
-               (in `:val-cols-from-return-for-census-year+1`).
-  The returned dataset:
-  - Has columns `(conj key-cols :val-cols-from-return-for-census-year+1 :val-cols-from-return-for-census-year)`.
-  - Contains the concatenation of these columns from `ds1` & `ds2` for `:census-year`s not in common.
-  - For the `:census-year` in common, contains a row for each `key-cols` with:
-    - `:val-cols-from-return-for-census-year`  from `ds1`
-    - `:val-cols-from-return-for-census-year+1`from `ds2`
-  - Sorted by the `key-cols`.
-  Use optional first argument to override default `key-cols`."
-  ([ds1 ds2] (combine-side-by-side-plans-placements {} ds1 ds2))
-  ([{:keys [key-cols] :or {key-cols key-cols-for-census}}
-    ds1 ds2]
-   (let [overlap-census-year (set/intersection (into #{} (:census-year ds1))
-                                               (into #{} (:census-year ds2)))]
-     (-> (tc/concat-copying (-> ds1
-                                (tc/drop-rows (comp overlap-census-year :census-year))
-                                (tc/select-columns (concat key-cols
-                                                           [:val-cols-from-return-for-census-year
-                                                            :val-cols-from-return-for-census-year+1])))
-                            (-> (tc/full-join (-> ds1
-                                                  (tc/select-rows (comp overlap-census-year :census-year))
-                                                  (tc/select-columns (concat key-cols [:val-cols-from-return-for-census-year])))
-                                              (-> ds2
-                                                  (tc/select-rows (comp overlap-census-year :census-year))
-                                                  (tc/select-columns (concat key-cols [:val-cols-from-return-for-census-year+1]))
-                                                  (tc/set-dataset-name "right"))
-                                              key-cols)
-                                (; coalesce values for each key-col (present) with that from the right dataset
-                                 (fn [ds] (reduce (fn [ds key-col]
-                                                    (tc/map-columns ds
-                                                                    key-col
-                                                                    [key-col (-> key-col name ((partial str "right.")) keyword)]
-                                                                    #(or %1 %2)))
-                                                  ds
-                                                  (filterv (into #{} (tc/column-names ds)) key-cols))))
-                                (tc/drop-columns #"^:right\..+$"))
-                            (-> ds2
-                                (tc/drop-rows (comp overlap-census-year :census-year))
-                                (tc/select-columns (concat key-cols
-                                                           [:val-cols-from-return-for-census-year
-                                                            :val-cols-from-return-for-census-year+1]))))
-         (tc/order-by key-cols)))))
+(defn concatenated-plans-placements->side-by-side
+  "Given dataset `ds` of concatenated plans-placements-on-census-dates
+  (with column `:return-year` indicating the SEN2 return year each record was extracted from)
+  returns a dataset keyed by [`person-id-col-name` `:census-year` `:census-date`]
+  with the value columns joined into a map and placed in one of two columns:
+   - `:census-year-return` for records with `:census-year`   matching the `:return-year`
+   - `:next-year-return`   for records with `:census-year`+1 matching the `:return-year`.
+  The default value columns are [`:sen-type``:ncy-nominal`
+  `:urn` `:ukprn` `:sen-unit-indicator` `:resourced-provision-indicator` `:sen-setting`]
+  (with the latter packed into map under :sen2-estab) may be added to
+  using option `additional-val-cols`."
+  [ds & {:keys [person-id-col-name
+                additional-val-cols]
+         :or   {person-id-col-name :person-table-id}}]
+  (-> ds
+      (tc/map-columns :val-col-name [:census-year :return-year] #(cond (= %1    %2   ) :census-year-return
+                                                                       (= %1 (- %2 1)) :next-year-return
+                                                                       :else           :other))
+      (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
+      (tc/join-columns :val-col
+                       ((comp distinct concat) val-cols-to-keep [:sen2-estab] additional-val-cols)
+                       {:result-type :map})
+      (tc/select-columns [person-id-col-name :census-year :census-date :val-col-name :val-col])
+      (tc/pivot->wider :val-col-name :val-col {:drop-missing? false})
+      (tc/reorder-columns [person-id-col-name :census-year :census-date :census-year-return :next-year-return])
+      (tc/order-by [person-id-col-name :census-year])))
+
