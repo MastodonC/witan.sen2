@@ -70,7 +70,7 @@
                       #_:person-birth-date
                       :gender-current                       ; <v1.2
                       :sex                                  ; ≥v1.2
-                      #_:ethnicity
+                      :ethnicity
                       #_:postcode
                       #_:upn
                       #_:unique-learner-number
