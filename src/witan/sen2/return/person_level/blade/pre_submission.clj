@@ -17,8 +17,8 @@
   [x]
   (cond
     (float?  x) (format "%.0f" x)
-    (int?    x) (str x)
-    (string? x) (str/trim x)))
+    (string? x) (str/trim x)
+    :else       (throw (ex-info "Unhandled item type." {:data x, :class (class x)}))))
 
 (defn- parse-binary->boolean
   "Parse 0 & 1 `x` (read from Excel worksheet as string or floats) to boolean."
@@ -26,7 +26,8 @@
   (cond
     (float?   x) (case (int x)  0 false 1 true nil)
     (string?  x) (case      x  "0" false "1" true nil)
-    (boolean? x) x))
+    (boolean? x) x
+    :else        (throw (ex-info "Unhandled item type." {:data x, :class (class x)}))))
 
 (defn replace-missing-sen2-estab-indicators
   "Given dataset `ds` with `sen2-estab` columns [`:urn` `:ukprn` `:sen-unit-indicator` `:resourced-provision-indicator` `:sen-setting`],
