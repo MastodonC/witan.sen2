@@ -48,17 +48,15 @@
 (defn update-read-cfg
   "Update configuration map `read-cfg` for reading SEN2 module into a dataset with `worksheet->ds`."
   [read-cfg & {:keys [src-col-name->col-name parser-fn dataset-name post-fn additional-post-fn]}]
-  (-> read-cfg
-      (merge (when src-col-name->col-name {:key-fn #(or (src-col-name->col-name %) %)}))
-      (merge (when parser-fn              {:parser-fn parser-fn}))
-      (merge (when dataset-name           {:dataset-name dataset-name}))
-      (merge (when post-fn                {::post-fn post-fn}))
-      (#(merge %
-               (when additional-post-fn
-                 (let [current-post-fn (::post-fn %)]
-                   (if current-post-fn
-                     {::post-fn (comp additional-post-fn current-post-fn)}
-                     {::post-fn additional-post-fn})))))))
+  (cond-> read-cfg
+    src-col-name->col-name (assoc :key-fn #(or (src-col-name->col-name %) %))
+    parser-fn              (assoc :parser-fn parser-fn)
+    dataset-name           (assoc :dataset-name dataset-name)
+    post-fn                (assoc ::post-fn post-fn)
+    additional-post-fn     (#(let [current-post-fn (::post-fn %)]
+                               (if current-post-fn
+                                 (assoc % ::post-fn (comp additional-post-fn current-post-fn))
+                                 (assoc % ::post-fn additional-post-fn))))))
 
 
 
