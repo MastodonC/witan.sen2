@@ -486,8 +486,17 @@
                       :summary-fn    (count-true? :issue-no-placement-detail-not-transferred-in)
                       :summary-label "#rows"
                       :action        "Get `placement-detail` to determine setting."}
-                     :issue-missing-sen2-estab
+                     :issue-placement-detail-missing-sen2-estab
                      {:idx           224
+                      :label         "Placement detail but missing SEN2 Estab"
+                      :cols-required #{:placement-detail? :urn :ukprn :sen-setting}
+                      :col-fn        (fn [{:keys [placement-detail? urn ukprn sen-setting]}]
+                                       (map #(and %1 (every? nil? [%2 %3 %4])) placement-detail? urn ukprn sen-setting))
+                      :summary-fn    (count-true? :issue-placement-detail-missing-sen2-estab)
+                      :summary-label "#rows"
+                      :action        "Specify urn|ukprn (with indicators) or sen-setting."}
+                     :issue-missing-sen2-estab
+                     {:idx           231
                       :label         "Missing placement SEN2 Estab"
                       :cols-required #{:urn :ukprn :sen-setting}
                       :col-fn        (fn [{:keys [urn ukprn sen-setting]}]
@@ -496,7 +505,7 @@
                       :summary-label "#rows"
                       :action        "Specify urn|ukprn (with indicators) or sen-setting."}
                      :issue-sen2-estab-indicator-not-set
-                     {:idx           225
+                     {:idx           232
                       :label         "URN|UKPRN|SENsetting specified but SENU & RP indicators not set"
                       :cols-required #{:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting}
                       :col-fn        (fn [ds] (-> ds
@@ -508,7 +517,7 @@
                       :summary-label "#rows"
                       :action        "Specify sen-unit-indicator & resourced-provision-indicator."}
                      :issue-invalid-sen-setting
-                     {:idx           229
+                     {:idx           233
                       :label         "Invalid (non-nil) sen-setting"
                       :cols-required #{:sen-setting}
                       :col-fn        #(->> % :sen-setting (map (complement (partial contains? (conj sen-settings nil)))))
@@ -516,7 +525,7 @@
                       :summary-label "#rows"
                       :action        "Assign a recognised sen-setting."}
                      :issue-missing-sen-type
-                     {:idx           231
+                     {:idx           251
                       :label         "Missing sen-type (EHCP need)"
                       :cols-required #{:sen-type}
                       :col-fn        #(->> % :sen-type (map nil?))
@@ -524,7 +533,7 @@
                       :summary-label "#rows"
                       :action        "Get sen-type (or will be considered unknown)."}
                      :issue-invalid-sen-type
-                     {:idx           232
+                     {:idx           252
                       :label         "Invalid (non-nil) sen-type (EHCP need)"
                       :cols-required #{:sen-type}
                       :col-fn        #(->> % :sen-type (map (complement (partial contains? (conj sen-types nil)))))
