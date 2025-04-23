@@ -655,6 +655,16 @@
       (flag-issues        checks)
       (flagged-issues->ds checks opts)))
 
+(defn drop-falsey-issue-columns
+  "Given issues dataset `ds` and (optional) column-selector for issue columns,
+   returns dataset without issue columns for which all records have falsey values."
+  ([ds]
+   (drop-falsey-issue-columns ds #"^:issue-.+$"))
+  ([ds issue-column-selector]
+   (tc/drop-columns ds (->> (tc/select-columns ds issue-column-selector)
+                            (filter (comp (partial every? (comp false? boolean)) last))
+                            keys))))
+
 (defn summarise-issues
   "Summarise issues flagged in `ds` as a result of running `checks`."
   [ds checks]
