@@ -344,7 +344,7 @@
         ;; - `:col-fn`s: check function supplied to tc/add-column so receives dataset as single argument and
         ;;               must return either a column, sequence or single value with truthy values indicating an issue.
         m           {:issue-missing-person-table-id
-                     {:idx           001
+                     {:idx           111
                       :label         "Missing :person-table-id"
                       :cols-required #{:person-table-id}
                       :col-fn        #(->> % :person-table-id (map nil?))
@@ -352,7 +352,7 @@
                       :summary-label "#rows"
                       :action        "Required: fill in the blanks."}
                      :issue-missing-census-year
-                     {:idx           002
+                     {:idx           121
                       :label         "Missing :census-year"
                       :cols-required #{:census-year}
                       :col-fn        #(->> % :census-year (map nil?))
@@ -360,7 +360,7 @@
                       :summary-label "#rows"
                       :action        "Required: fill in the blanks."}
                      :issue-missing-census-date
-                     {:idx           003
+                     {:idx           122
                       :label         "Missing :census-date"
                       :cols-required #{:census-date}
                       :col-fn        #(->> % :census-date (map nil?))
@@ -368,7 +368,7 @@
                       :summary-label "#rows"
                       :action        "Required: fill in the blanks."}
                      :issue-missing-requests-table-id
-                     {:idx           004
+                     {:idx           131
                       :label         "Missing :requests-table-id"
                       :cols-required #{:requests-table-id}
                       :col-fn        #(->> % :requests-table-id (map nil?))
@@ -376,7 +376,7 @@
                       :summary-label "#rows"
                       :action        "Required: fill in the blanks."}
                      :issue-non-unique-key
-                     {:idx           005
+                     {:idx           131
                       :label         "[:person-table-id :census-date :requests-table-id] not unique key"
                       :cols-required #{:person-table-id :census-date :requests-table-id}
                       :col-fn        (fn [ds] (-> ds
@@ -392,7 +392,7 @@
                       :summary-label "#keys"
                       :action        "Should be unique."}
                      :issue-missing-upn
-                     {:idx           006
+                     {:idx           141
                       :label         "Missing UPN, preventing joining with other SEN2 returns"
                       :cols-required #{:upn}
                       :col-fn        #(->> % :upn (map nil?))
@@ -400,7 +400,7 @@
                       :summary-label "#rows"
                       :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."}
                      :issue-multiple-requests
-                     {:idx           101
+                     {:idx           211
                       :label         "CYP has plans|placements from multiple requests"
                       :cols-required #{:person-table-id :census-date}
                       :col-fn        (fn [ds] (-> ds
@@ -414,7 +414,7 @@
                       :summary-label "#CYP"
                       :action        "Drop all but one."}
                      :issue-unknown-age-at-start-of-school-year
-                     {:idx           102
+                     {:idx           222
                       :label         "Could not calculate age at the start of the school year"
                       :cols-required #{:age-at-start-of-school-year}
                       :col-fn        #(->> % :age-at-start-of-school-year (map nil?))
@@ -423,7 +423,7 @@
                       :summary-label "#CYP"
                       :action        "Get DoB and/or otherwise assign NCY."}
                      :issue-not-send-age
-                     {:idx           103
+                     {:idx           231
                       :label         "CYP outside SEND age at start of the school year"
                       :cols-required #{:age-at-start-of-school-year}
                       :col-fn        #(->> % :age-at-start-of-school-year
@@ -432,7 +432,7 @@
                       :summary-label "#rows"
                       :action        "Consider dropping."}
                      :issue-missing-ncy-nominal
-                     {:idx           104
+                     {:idx           232
                       :label         "Missing NCY (nominal)"
                       :cols-required #{:ncy-nominal}
                       :col-fn        #(->> % :ncy-nominal (map nil?))
@@ -441,7 +441,7 @@
                       :summary-label "#CYP"
                       :action        "Required: Assign, impute or drop."}
                      :issue-invalid-ncy-nominal
-                     {:idx           105
+                     {:idx           233
                       :label         "Invalid (non nil) NCY"
                       :cols-required #{:ncy-nominal}
                       :col-fn        #(->> % :ncy-nominal
@@ -450,7 +450,7 @@
                       :summary-label "#rows"
                       :action        "Consider dropping."}
                      :issue-no-named-plan
-                     {:idx           211
+                     {:idx           311
                       :label         "No named-plan on census date"
                       :cols-required #{:named-plan?}
                       :col-fn        #(->> % :named-plan? (map not))
@@ -459,7 +459,7 @@
                       :action        (str "Not an issue for modelling as don't need any details from named-plan: "
                                           "Flag to client as incomplete/incoherent data and consider dropping.")}
                      :issue-no-placement-detail
-                     {:idx           221
+                     {:idx           411
                       :label         "No placement-detail on census date"
                       :cols-required #{:placement-detail?}
                       :col-fn        #(->> % :placement-detail? (map not))
@@ -468,7 +468,7 @@
                       :action        (str "Drop if transferred in after `:census-date`, "
                                           "otherwise get `placement-detail` to determine setting.")}
                      :issue-no-placement-detail-transferred-in
-                     {:idx           222
+                     {:idx           412
                       :label         "No placement-detail - transferred in"
                       :cols-required #{:placement-detail? :transfer-la}
                       :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
@@ -478,7 +478,7 @@
                       :action        (str "Drop if transferred in after `:census-date`, "
                                           "otherwise get `placement-detail` to determine setting.")}
                      :issue-no-placement-detail-not-transferred-in
-                     {:idx           223
+                     {:idx           413
                       :label         "No placement-detail - not transferred in"
                       :cols-required #{:placement-detail? :transfer-la}
                       :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
@@ -487,7 +487,7 @@
                       :summary-label "#rows"
                       :action        "Get `placement-detail` to determine setting."}
                      :issue-placement-detail-missing-sen2-estab
-                     {:idx           224
+                     {:idx           421
                       :label         "Placement detail but missing SEN2 Estab"
                       :cols-required #{:placement-detail? :urn :ukprn :sen-setting}
                       :col-fn        (fn [{:keys [placement-detail? urn ukprn sen-setting]}]
@@ -496,7 +496,7 @@
                       :summary-label "#rows"
                       :action        "Specify urn|ukprn (with indicators) or sen-setting."}
                      :issue-missing-sen2-estab
-                     {:idx           231
+                     {:idx           422
                       :label         "Missing placement SEN2 Estab"
                       :cols-required #{:urn :ukprn :sen-setting}
                       :col-fn        (fn [{:keys [urn ukprn sen-setting]}]
@@ -505,7 +505,7 @@
                       :summary-label "#rows"
                       :action        "Specify urn|ukprn (with indicators) or sen-setting."}
                      :issue-sen2-estab-indicator-not-set
-                     {:idx           232
+                     {:idx           431
                       :label         "URN|UKPRN|SENsetting specified but SENU & RP indicators not set"
                       :cols-required #{:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting}
                       :col-fn        (fn [ds] (-> ds
@@ -517,7 +517,7 @@
                       :summary-label "#rows"
                       :action        "Specify sen-unit-indicator & resourced-provision-indicator."}
                      :issue-invalid-sen-setting
-                     {:idx           233
+                     {:idx           491
                       :label         "Invalid (non-nil) sen-setting"
                       :cols-required #{:sen-setting}
                       :col-fn        #(->> % :sen-setting (map (complement (partial contains? (conj sen-settings nil)))))
@@ -525,7 +525,7 @@
                       :summary-label "#rows"
                       :action        "Assign a recognised sen-setting."}
                      :issue-missing-sen-type
-                     {:idx           251
+                     {:idx           611
                       :label         "Missing sen-type (EHCP need)"
                       :cols-required #{:sen-type}
                       :col-fn        #(->> % :sen-type (map nil?))
@@ -533,7 +533,7 @@
                       :summary-label "#rows"
                       :action        "Get sen-type (or will be considered unknown)."}
                      :issue-invalid-sen-type
-                     {:idx           252
+                     {:idx           612
                       :label         "Invalid (non-nil) sen-type (EHCP need)"
                       :cols-required #{:sen-type}
                       :col-fn        #(->> % :sen-type (map (complement (partial contains? (conj sen-types nil)))))
