@@ -340,16 +340,23 @@
    Optional trailing key-value parameters are as follows:
    - `sen-settings`: custom set of valid `sen-setting` abbreviations to check against:
      - Defaults if not specified to standard `sen2-dictionary/sen-settings`.
-  - `sen-types`: custom set of valid `sen-type` abbreviations to check against:
+   - `sen-types`: custom set of valid `sen-type` abbreviations to check against:
      - Defaults if not specified to standard `sen2-dictionary/sen-types`.
-   - `edubaseall-send-map`: provide specific map for GIAS based checks:
+   - `edubaseall-send-map`: specific map for GIAS based checks:
      - This should map (string) URNs to maps containing at least:
        - `:type-of-establishment-name`
        - `:sen-unit?`
        - `:resourced-provision?`
      - Specify as `nil` to suppress GIAS based checks.
-     - Defaults if not specified to standard map from `gias` lib."
-  [& {:keys [sen-settings sen-types edubaseall-send-map]
+     - Defaults if not specified to standard map from `gias` lib.
+   - `sen2-estab-min-expected-placed`: map specifying expected minimum numbers of CYP placed:
+     - If specified, then the `sen2-estab`s included have the number of CYP placed on
+       each `:census-date` calculated and those that have less than the minimum
+       number specified are flagged as issues with the number placed.
+     - The map should be keyed by `sen2-estab` maps
+       (with keys {`:urn` `:ukprn` `:sen-unit-indicator` `:resourced-provision-indicator` `:sen-setting`})
+       with values the minimum expected number placed."
+  [& {:keys [sen-settings sen-types edubaseall-send-map sen2-estab-min-expected-placed]
       :or   {sen-settings        sen2-dictionary/sen-settings
              sen-types           sen2-dictionary/sen-types
              edubaseall-send-map (gias/edubaseall-send->map)}}]
@@ -626,6 +633,33 @@
               :summary-label "#Estabs"
               :action        "Review resourced provision flagging for these establishment(s) and correct if necessary."}
              )
+      sen2-estab-min-expected-placed ; 54#: Add checks have at least minimum numbers placed.
+      (assoc :issue-less-placements-than-expected
+             {:idx           542
+              :label         "SEN2 estab. has fewer placed than expected"
+              :cols-required #{:census-year :urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting}
+              :col-fn        (fn [ds]
+                               (let [cy-sen2-estab-with-less-than-expected-placed
+                                     (-> ds
+                                         (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
+                                         (tc/select-rows (comp (-> sen2-estab-min-expected-placed keys set) :sen2-estab))
+                                         (tc/group-by [:census-year :sen2-estab])
+                                         (tc/aggregate {:num-placed tc/row-count})
+                                         (tc/select-rows #(< (% :num-placed)
+                                                             (get sen2-estab-min-expected-placed (% :sen2-estab))))
+                                         ((fn [ds] (zipmap (-> ds (tc/drop-columns [:num-placed]) (tc/rows :as-maps))
+                                                           (-> ds :num-placed)))))]
+                                 (-> ds
+                                     (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
+                                     (tc/join-columns :cy-sen2-estab [:census-year :sen2-estab] {:result-type :map})
+                                     (tc/map-columns :num-placed [:cy-sen2-estab] cy-sen2-estab-with-less-than-expected-placed)
+                                     :num-placed)))
+              :summary-fn    (fn [ds] (-> ds
+                                          (tc/select-rows :issue-less-placements-than-expected)
+                                          (tc/unique-by sen2-estab-keys)
+                                          tc/row-count))
+              :summary-label "#SEN2-Estabs"
+              :action        "Check not missing any placements or SENU|RP flagging."})
       true ; 5##: Define checks for sen-need
       (assoc :issue-missing-sen-type
              {:idx           612
