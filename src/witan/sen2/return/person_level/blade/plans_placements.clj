@@ -336,15 +336,34 @@
 
 ;;; # Checks
 (defn checks
-  "Definitions of checks for issues in dataset of plans & placements on census dates."
+  "Definitions of checks for issues in dataset of plans & placements on census dates.
+   Optional trailing key-value parameters are as follows:
+   - `sen-settings`: custom set of valid `sen-setting` abbreviations to check against:
+     - Defaults if not specified to standard `sen2-dictionary/sen-settings`.
+  - `sen-types`: custom set of valid `sen-type` abbreviations to check against:
+     - Defaults if not specified to standard `sen2-dictionary/sen-types`.
+   - `edubaseall-send-map`: provide specific map for GIAS based checks:
+     - This should map (string) URNs to maps containing at least:
+       - `:type-of-establishment-name`
+       - `:sen-unit?`
+       - `:resourced-provision?`
+     - Specify as `nil` to suppress GIAS based checks.
+     - Defaults if not specified to standard map from `gias` lib."
   [& {:keys [sen-settings sen-types edubaseall-send-map]
       :or   {sen-settings        sen2-dictionary/sen-settings
              sen-types           sen2-dictionary/sen-types
              edubaseall-send-map (gias/edubaseall-send->map)}}]
   (let [count-true? #(comp count (partial filter true?) %)]
     ;; Check definitions:
-    ;; - `:col-fn`s: check function supplied to tc/add-column so receives dataset as single argument and
-    ;;               must return either a column, sequence or single value with truthy values indicating an issue.
+    ;; - `:idx`:           index to order checks for reporting.
+    ;; - `:label`:         description of issue used in reporting.
+    ;; - `:cols-required`: set of columns required to proceed with the check
+    ;; - `:col-fn`:        check function supplied to tc/add-column so receives dataset as single argument and
+    ;;                     must return either a column, sequence or single value with truthy values indicating an issue.
+    ;; - `:summary-fn`:    function used by `summarise-issues` as an aggregation function to summarise the issue
+    ;;                     within (i.e. grouped by) `:census-year`, so must return a single value.
+    ;; - `:summary-label`: label used by `summarise-issues` to indicate what has been counted by the `summary-fn`
+    ;; - `:action`:        string describing action to take to investigate flagged issues.
     (cond-> {}
       true ; 1##: Define checks for ID and unique-key columns
       (assoc :issue-missing-person-table-id
@@ -588,7 +607,7 @@
               :action        "Review SEN unit flagging for these establishment(s) and correct if necessary."}
              :issue-resourced-provision-flagged-at-estab-without-one
              {:idx           534
-              :label         "Resourced provision flagged at estab. other than URNs GIAS says has them."
+              :label         "RP flagged at estab. other than URNs GIAS says has them."
               :cols-required #{:urn :resourced-provision-indicator}
               :col-fn        (fn [{:keys [urn resourced-provision-indicator]}]
                                (map #(and (->> %1
