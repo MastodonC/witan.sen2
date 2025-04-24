@@ -355,8 +355,19 @@
        number specified are flagged as issues with the number placed.
      - The map should be keyed by `sen2-estab` maps
        (with keys {`:urn` `:ukprn` `:sen-unit-indicator` `:resourced-provision-indicator` `:sen-setting`})
-       with values the minimum expected number placed."
-  [& {:keys [sen-settings sen-types edubaseall-send-map sen2-estab-min-expected-placed]
+       with values the minimum expected number placed.
+   - `additional-checks`: map of additional checks to include.
+   - `checks-to-omit`: seq of (keywords for) checks to omit:
+     - There is some duplication in the checks when running on plans-placements, due to the
+       inclusion of checks that work on the more limited set of columns remaining after applying updates.
+     - There are also some checks that should be guaranteed by appropriate construction of the census-dates.
+     - This option allows for checks to be `dissoc`ed prior to ordering the map."
+  [& {:keys [sen-settings
+             sen-types
+             edubaseall-send-map
+             sen2-estab-min-expected-placed
+             additional-checks
+             checks-to-omit]
       :or   {sen-settings        sen2-dictionary/sen-settings
              sen-types           sen2-dictionary/sen-types
              edubaseall-send-map (gias/edubaseall-send->map)}}]
@@ -558,7 +569,7 @@
               :summary-fn    (count-true? :issue-invalid-sen-setting)
               :summary-label "#rows"
               :action        "Assign a recognised sen-setting."})
-      edubaseall-send-map ; 52#: Add GIAS based checks for establishment type
+      (seq edubaseall-send-map) ; 52#: Add GIAS based checks for establishment type
       (assoc :issue-urn-for-unexpected-gfe-gias-establishment-type
              {:idx           522
               :label         "URN has GFE GIAS estab. type unexpected for SEND"
@@ -591,7 +602,7 @@
                                    #(tc/select-rows % :issue-urn-for-unexpected-othe-gias-establishment-type))
               :summary-label "#URNs"
               :action        "Confirm the placement-detail is correct or update."})
-      edubaseall-send-map ; 53#: Add GIAS based checks for SENU & RP indicators
+      (seq edubaseall-send-map) ; 53#: Add GIAS based checks for SENU & RP indicators
       (assoc :issue-senu-flagged-at-estab-without-one
              {:idx           532
               :label         "SEN unit flagged at estab. other than URNs GIAS says has them."
@@ -633,7 +644,7 @@
               :summary-label "#Estabs"
               :action        "Review resourced provision flagging for these establishment(s) and correct if necessary."}
              )
-      sen2-estab-min-expected-placed ; 54#: Add checks have at least minimum numbers placed.
+      (seq sen2-estab-min-expected-placed) ; 54#: Add checks have at least minimum numbers placed.
       (assoc :issue-less-placements-than-expected
              {:idx           542
               :label         "SEN2 estab. has fewer placed than expected"
@@ -660,7 +671,7 @@
                                           tc/row-count))
               :summary-label "#SEN2-Estabs"
               :action        "Check not missing any placements or SENU|RP flagging."})
-      true ; 5##: Define checks for sen-need
+      true ; 6##: Define checks for sen-need
       (assoc :issue-missing-sen-type
              {:idx           612
               :label         "Missing sen-type (EHCP need)"
@@ -677,6 +688,10 @@
               :summary-fn    (count-true? :issue-invalid-sen-type)
               :summary-label "#rows"
               :action        "Correct or consider as custom EHCP primary need."})
+      (seq additional-checks) ; Add `additional-checks`
+      (merge additional-checks)
+      (seq checks-to-omit)
+      (#(apply dissoc % checks-to-omit))
       true ; Put into sorted map in `:idx` order
       ((fn [m] (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
                                                          [(get-in m [k2 :idx]) k2]))) m))))))
