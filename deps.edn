@@ -1,11 +1,12 @@
 {:paths   ["src" "resources"]
- :deps    {org.clojure/clojure        {:mvn/version "1.11.4"}
-           techascent/tech.ml.dataset {:mvn/version "7.053"}
-           scicloj/tablecloth         {:mvn/version "7.042"
-                                       :exclusions  [techascent/tech.ml.dataset
-                                                     org.apache.poi/poi-ooxml-schemas
-                                                     org.apache.poi/poi
-                                                     org.apache.poi/poi-ooxml]}}
+ :deps    {org.clojure/clojure             {:mvn/version "1.11.4"}
+           techascent/tech.ml.dataset      {:mvn/version "7.053"}
+           scicloj/tablecloth              {:mvn/version "7.042"
+                                            :exclusions  [techascent/tech.ml.dataset
+                                                          org.apache.poi/poi-ooxml-schemas
+                                                          org.apache.poi/poi
+                                                          org.apache.poi/poi-ooxml]}
+           com.github.MastodonC/witan.gias {:git/sha "763874c49256ca51c508c28952480356e644dea9"}}
  :aliases {:dev  {:extra-paths ["templates" "dev"]
                   :extra-deps  {;; adroddiad & clerk only required to run the template namespaces and notebooks. Not required by src namespaces.
                                 com.github.MastodonC/witan.send.adroddiad {:git/sha    "0355a071f674b4ef0b795965595530f15011eeb8"
