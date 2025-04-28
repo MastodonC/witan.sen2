@@ -88,7 +88,8 @@
   [sen2-blade-ds-map census-dates-ds]
   (-> (:person sen2-blade-ds-map)
       (tc/cross-join census-dates-ds)
-      (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date] #(when %1 (ncy/age-at-start-of-school-year-for-date %1 %2)))
+      (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date]
+                      #(when (and %1 %2) (ncy/age-at-start-of-school-year-for-date %1 %2)))
       (tc/map-columns :ncy-nominal [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
       (tc/convert-types {:age-at-start-of-school-year :int8
                          :ncy-nominal                 :int8})
