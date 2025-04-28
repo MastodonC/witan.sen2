@@ -383,7 +383,7 @@
     ;; - `:summary-label`: label used by `summarise-issues` to indicate what has been counted by the `summary-fn`
     ;; - `:action`:        string describing action to take to investigate flagged issues.
     (cond-> {}
-      true ; 1##: Define checks for ID and unique-key columns
+      true ; 1##: Define checks for ID and unique-key columns:
       (assoc :issue-missing-person-table-id
              {:idx           112
               :label         "Missing :person-table-id"
@@ -440,7 +440,7 @@
               :summary-fn    (count-true? :issue-missing-upn)
               :summary-label "#rows"
               :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."})
-      true ; 2##: Define checks for CYP details
+      true ; 2##: Define checks for CYP details:
       (assoc :issue-multiple-requests
              {:idx           212
               :label         "CYP has plans|placements from multiple requests"
@@ -491,7 +491,7 @@
               :summary-fn    (count-true? :issue-invalid-ncy-nominal)
               :summary-label "#rows"
               :action        "Consider dropping."})
-      true ; 3##: Define checks for named-plan
+      true ; 3##: Define checks for named-plan:
       (assoc :issue-no-named-plan
              {:idx           312
               :label         "No named-plan on census date"
@@ -501,7 +501,7 @@
               :summary-label "#rows"
               :action        (str "Not an issue for modelling as don't need any details from named-plan: "
                                   "Flag to client as incomplete/incoherent data and consider dropping.")})
-      true ; 4##: Define checks for placement-detail
+      true ; 4##: Define checks for placement-detail:
       (assoc :issue-no-placement-detail
              {:idx           412
               :label         "No placement-detail on census date"
@@ -539,7 +539,7 @@
               :summary-fn    (count-true? :issue-placement-detail-missing-sen2-estab)
               :summary-label "#rows"
               :action        "Specify urn|ukprn (with indicators) or sen-setting."})
-      true ; 5##: Define checks for sen2-estab
+      true ; 5##: Define checks for sen2-estab:
       (assoc :issue-missing-sen2-estab
              {:idx           512
               :label         "Missing placement SEN2 Estab"
@@ -569,7 +569,7 @@
               :summary-fn    (count-true? :issue-invalid-sen-setting)
               :summary-label "#rows"
               :action        "Assign a recognised sen-setting."})
-      (seq edubaseall-send-map) ; 52#: Add GIAS based checks for establishment type
+      (seq edubaseall-send-map) ; 52#: Add GIAS based checks for establishment type if have GIAS SEND map:
       (assoc :issue-urn-for-unexpected-gfe-gias-establishment-type
              {:idx           522
               :label         "URN has GFE GIAS estab. type unexpected for SEND"
@@ -602,7 +602,7 @@
                                    #(tc/select-rows % :issue-urn-for-unexpected-othe-gias-establishment-type))
               :summary-label "#URNs"
               :action        "Confirm the placement-detail is correct or update."})
-      (seq edubaseall-send-map) ; 53#: Add GIAS based checks for SENU & RP indicators
+      (seq edubaseall-send-map) ; 53#: Add GIAS based checks for SENU & RP indicators if have GIAS SEND map:
       (assoc :issue-senu-flagged-at-estab-without-one
              {:idx           532
               :label         "SEN unit flagged at estab. other than URNs GIAS says has them."
@@ -642,9 +642,8 @@
                                           (tc/unique-by [:urn :ukprn :sen-setting])
                                           tc/row-count))
               :summary-label "#Estabs"
-              :action        "Review resourced provision flagging for these establishment(s) and correct if necessary."}
-             )
-      (seq sen2-estab-min-expected-placed) ; 54#: Add checks have at least minimum numbers placed.
+              :action        "Review resourced provision flagging for these establishment(s) and correct if necessary."})
+      (seq sen2-estab-min-expected-placed) ; 54#: Add checks for minimum numbers placed if provided:
       (assoc :issue-less-placements-than-expected
              {:idx           542
               :label         "SEN2 estab. has fewer placed than expected"
@@ -671,7 +670,7 @@
                                           tc/row-count))
               :summary-label "#SEN2-Estabs"
               :action        "Check not missing any placements or SENU|RP flagging."})
-      true ; 6##: Define checks for sen-need
+      true ; 6##: Define checks for sen-need:
       (assoc :issue-missing-sen-type
              {:idx           612
               :label         "Missing sen-type (EHCP need)"
@@ -688,9 +687,9 @@
               :summary-fn    (count-true? :issue-invalid-sen-type)
               :summary-label "#rows"
               :action        "Correct or consider as custom EHCP primary need."})
-      (seq additional-checks) ; Add `additional-checks`
+      (seq additional-checks) ; Add `additional-checks` if specified:
       (merge additional-checks)
-      (seq checks-to-omit)
+      (seq checks-to-omit) ; Omit checks if requested:
       (#(apply dissoc % checks-to-omit))
       true ; Put into sorted map in `:idx` order
       ((fn [m] (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
