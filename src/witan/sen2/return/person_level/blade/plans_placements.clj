@@ -4,6 +4,7 @@
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [tablecloth.api :as tc]
+            [witan.gias :as gias]
             [witan.sen2.ncy :as ncy]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]))
 
@@ -87,7 +88,8 @@
   [sen2-blade-ds-map census-dates-ds]
   (-> (:person sen2-blade-ds-map)
       (tc/cross-join census-dates-ds)
-      (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date] #(when %1 (ncy/age-at-start-of-school-year-for-date %1 %2)))
+      (tc/map-columns :age-at-start-of-school-year [:census-date :person-birth-date]
+                      #(when (and %1 %2) (ncy/age-at-start-of-school-year-for-date %1 %2)))
       (tc/map-columns :ncy-nominal [:age-at-start-of-school-year] ncy/age-at-start-of-school-year->ncy)
       (tc/convert-types {:age-at-start-of-school-year :int8
                          :ncy-nominal                 :int8})
@@ -335,204 +337,364 @@
 
 ;;; # Checks
 (defn checks
-  "Definitions of checks for issues in dataset of plans & placements on census dates."
-  [& {:keys [sen-settings sen-types]
-      :or   {sen-settings sen2-dictionary/sen-settings
-             sen-types    sen2-dictionary/sen-types}}]
-  (let [count-true? #(comp count (partial filter true?) %)
-        ;; Check definitions:
-        ;; - `:col-fn`s: check function supplied to tc/add-column so receives dataset as single argument and
-        ;;               must return either a column, sequence or single value with truthy values indicating an issue.
-        m           {:issue-missing-person-table-id
-                     {:idx           001
-                      :label         "Missing :person-table-id"
-                      :cols-required #{:person-table-id}
-                      :col-fn        #(->> % :person-table-id (map nil?))
-                      :summary-fn    (count-true? :issue-missing-person-table-id)
-                      :summary-label "#rows"
-                      :action        "Required: fill in the blanks."}
-                     :issue-missing-census-year
-                     {:idx           002
-                      :label         "Missing :census-year"
-                      :cols-required #{:census-year}
-                      :col-fn        #(->> % :census-year (map nil?))
-                      :summary-fn    (count-true? :issue-missing-census-year)
-                      :summary-label "#rows"
-                      :action        "Required: fill in the blanks."}
-                     :issue-missing-census-date
-                     {:idx           003
-                      :label         "Missing :census-date"
-                      :cols-required #{:census-date}
-                      :col-fn        #(->> % :census-date (map nil?))
-                      :summary-fn    (count-true? :issue-missing-census-date)
-                      :summary-label "#rows"
-                      :action        "Required: fill in the blanks."}
-                     :issue-missing-requests-table-id
-                     {:idx           004
-                      :label         "Missing :requests-table-id"
-                      :cols-required #{:requests-table-id}
-                      :col-fn        #(->> % :requests-table-id (map nil?))
-                      :summary-fn    (count-true? :issue-missing-requests-table-id)
-                      :summary-label "#rows"
-                      :action        "Required: fill in the blanks."}
-                     :issue-non-unique-key
-                     {:idx           005
-                      :label         "[:person-table-id :census-date :requests-table-id] not unique key"
-                      :cols-required #{:person-table-id :census-date :requests-table-id}
-                      :col-fn        (fn [ds] (-> ds
-                                                  (tc/group-by [:person-table-id :census-date :requests-table-id])
-                                                  (tc/add-column :row-count tc/row-count)
-                                                  (tc/ungroup)
-                                                  (tc/map-columns :issue [:row-count] (partial < 1))
-                                                  :issue))
-                      :summary-fn    #(-> %
-                                          (tc/select-rows :issue-non-unique-key)
-                                          (tc/unique-by [:person-table-id :census-date :requests-table-id])
-                                          tc/row-count)
-                      :summary-label "#keys"
-                      :action        "Should be unique."}
-                     :issue-missing-upn
-                     {:idx           006
-                      :label         "Missing UPN, preventing joining with other SEN2 returns"
-                      :cols-required #{:upn}
-                      :col-fn        #(->> % :upn (map nil?))
-                      :summary-fn    (count-true? :issue-missing-upn)
-                      :summary-label "#rows"
-                      :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."}
-                     :issue-multiple-requests
-                     {:idx           101
-                      :label         "CYP has plans|placements from multiple requests"
-                      :cols-required #{:person-table-id :census-date}
-                      :col-fn        (fn [ds] (-> ds
-                                                  (tc/group-by [:person-table-id :census-date])
-                                                  (tc/add-column :row-count tc/row-count)
-                                                  (tc/ungroup)
-                                                  (tc/map-columns :issue [:row-count] (partial < 1))
-                                                  :issue))
-                      :summary-fn    (comp count distinct :person-table-id
-                                           #(tc/select-rows % :issue-multiple-requests))
-                      :summary-label "#CYP"
-                      :action        "Drop all but one."}
-                     :issue-unknown-age-at-start-of-school-year
-                     {:idx           102
-                      :label         "Could not calculate age at the start of the school year"
-                      :cols-required #{:age-at-start-of-school-year}
-                      :col-fn        #(->> % :age-at-start-of-school-year (map nil?))
-                      :summary-fn    (comp count distinct :person-table-id
-                                           #(tc/select-rows % :issue-unknown-age-at-start-of-school-year))
-                      :summary-label "#CYP"
-                      :action        "Get DoB and/or otherwise assign NCY."}
-                     :issue-not-send-age
-                     {:idx           103
-                      :label         "CYP outside SEND age at start of the school year"
-                      :cols-required #{:age-at-start-of-school-year}
-                      :col-fn        #(->> % :age-at-start-of-school-year
-                                           (map (complement (partial contains? (conj (apply sorted-set (range 0 25)) nil)))))
-                      :summary-fn    (count-true? :issue-not-send-age)
-                      :summary-label "#rows"
-                      :action        "Consider dropping."}
-                     :issue-missing-ncy-nominal
-                     {:idx           104
-                      :label         "Missing NCY (nominal)"
-                      :cols-required #{:ncy-nominal}
-                      :col-fn        #(->> % :ncy-nominal (map nil?))
-                      :summary-fn    (comp count distinct :person-table-id
-                                           #(tc/select-rows % :issue-missing-ncy-nominal))
-                      :summary-label "#CYP"
-                      :action        "Required: Assign, impute or drop."}
-                     :issue-invalid-ncy-nominal
-                     {:idx           105
-                      :label         "Invalid (non nil) NCY"
-                      :cols-required #{:ncy-nominal}
-                      :col-fn        #(->> % :ncy-nominal
-                                           (map (complement (partial contains? (conj (apply sorted-set (range -4 21)) nil)))))
-                      :summary-fn    (count-true? :issue-invalid-ncy-nominal)
-                      :summary-label "#rows"
-                      :action        "Consider dropping."}
-                     :issue-no-named-plan
-                     {:idx           211
-                      :label         "No named-plan on census date"
-                      :cols-required #{:named-plan?}
-                      :col-fn        #(->> % :named-plan? (map not))
-                      :summary-fn    (count-true? :issue-no-named-plan)
-                      :summary-label "#rows"
-                      :action        (str "Not an issue for modelling as don't need any details from named-plan: "
-                                          "Flag to client as incomplete/incoherent data and consider dropping.")}
-                     :issue-no-placement-detail
-                     {:idx           221
-                      :label         "No placement-detail on census date"
-                      :cols-required #{:placement-detail?}
-                      :col-fn        #(->> % :placement-detail? (map not))
-                      :summary-fn    (count-true? :issue-no-placement-detail)
-                      :summary-label "#rows"
-                      :action        (str "Drop if transferred in after `:census-date`, "
-                                          "otherwise get `placement-detail` to determine setting.")}
-                     :issue-no-placement-detail-transferred-in
-                     {:idx           222
-                      :label         "No placement-detail - transferred in"
-                      :cols-required #{:placement-detail? :transfer-la}
-                      :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
-                                       (map #(and (not %1) (some? %2)) placement-detail? transfer-la))
-                      :summary-fn    (count-true? :issue-no-placement-detail-transferred-in)
-                      :summary-label "#rows"
-                      :action        (str "Drop if transferred in after `:census-date`, "
-                                          "otherwise get `placement-detail` to determine setting.")}
-                     :issue-no-placement-detail-not-transferred-in
-                     {:idx           223
-                      :label         "No placement-detail - not transferred in"
-                      :cols-required #{:placement-detail? :transfer-la}
-                      :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
-                                       (map #(and (not %1) (nil? %2)) placement-detail? transfer-la))
-                      :summary-fn    (count-true? :issue-no-placement-detail-not-transferred-in)
-                      :summary-label "#rows"
-                      :action        "Get `placement-detail` to determine setting."}
-                     :issue-missing-sen2-estab
-                     {:idx           224
-                      :label         "Missing placement SEN2 Estab"
-                      :cols-required #{:urn :ukprn :sen-setting}
-                      :col-fn        (fn [{:keys [urn ukprn sen-setting]}]
-                                       (map #(every? nil? %&) urn ukprn sen-setting))
-                      :summary-fn    (count-true? :issue-missing-sen2-estab)
-                      :summary-label "#rows"
-                      :action        "Specify urn|ukprn (with indicators) or sen-setting."}
-                     :issue-sen2-estab-indicator-not-set
-                     {:idx           225
-                      :label         "URN|UKPRN|SENsetting specified but SENU & RP indicators not set"
-                      :cols-required #{:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting}
-                      :col-fn        (fn [ds] (-> ds
-                                                  (tc/map-columns :issue [:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting]
-                                                                  #(and (not-every? nil?     [%1 %2 %5])
-                                                                        (not-every? boolean? [%3 %4])))
-                                                  :issue))
-                      :summary-fn    (count-true? :issue-sen2-estab-indicator-not-set)
-                      :summary-label "#rows"
-                      :action        "Specify sen-unit-indicator & resourced-provision-indicator."}
-                     :issue-invalid-sen-setting
-                     {:idx           229
-                      :label         "Invalid (non-nil) sen-setting"
-                      :cols-required #{:sen-setting}
-                      :col-fn        #(->> % :sen-setting (map (complement (partial contains? (conj sen-settings nil)))))
-                      :summary-fn    (count-true? :issue-invalid-sen-setting)
-                      :summary-label "#rows"
-                      :action        "Assign a recognised sen-setting."}
-                     :issue-missing-sen-type
-                     {:idx           231
-                      :label         "Missing sen-type (EHCP need)"
-                      :cols-required #{:sen-type}
-                      :col-fn        #(->> % :sen-type (map nil?))
-                      :summary-fn    (count-true? :issue-missing-sen-type)
-                      :summary-label "#rows"
-                      :action        "Get sen-type (or will be considered unknown)."}
-                     :issue-invalid-sen-type
-                     {:idx           232
-                      :label         "Invalid (non-nil) sen-type (EHCP need)"
-                      :cols-required #{:sen-type}
-                      :col-fn        #(->> % :sen-type (map (complement (partial contains? (conj sen-types nil)))))
-                      :summary-fn    (count-true? :issue-invalid-sen-type)
-                      :summary-label "#rows"
-                      :action        "Correct or consider as custom EHCP primary need."}}]
-    (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
-                                              [(get-in m [k2 :idx]) k2]))) m)))
+  "Definitions of checks for issues in dataset of plans & placements on census dates.
+   Optional trailing key-value parameters are as follows:
+   - `sen-settings`: custom set of valid `sen-setting` abbreviations to check against:
+     - Defaults if not specified to standard `sen2-dictionary/sen-settings`.
+   - `sen-types`: custom set of valid `sen-type` abbreviations to check against:
+     - Defaults if not specified to standard `sen2-dictionary/sen-types`.
+   - `edubaseall-send-map`: specific map for GIAS based checks:
+     - This should map (string) URNs to maps containing at least:
+       - `:type-of-establishment-name`
+       - `:sen-unit?`
+       - `:resourced-provision?`
+     - Specify as `nil` to suppress GIAS based checks.
+     - Defaults if not specified to standard map from `gias` lib.
+   - `sen2-estab-min-expected-placed`: map specifying expected minimum numbers of CYP placed:
+     - If specified, then the `sen2-estab`s included have the number of CYP placed on
+       each `:census-date` calculated and those that have less than the minimum
+       number specified are flagged as issues with the number placed.
+     - The map should be keyed by `sen2-estab` maps
+       (with keys {`:urn` `:ukprn` `:sen-unit-indicator` `:resourced-provision-indicator` `:sen-setting`})
+       with values the minimum expected number placed.
+   - `additional-checks`: map of additional checks to include.
+   - `checks-to-omit`: seq of (keywords for) checks to omit:
+     - There is some duplication in the checks when running on plans-placements, due to the
+       inclusion of checks that work on the more limited set of columns remaining after applying updates.
+     - There are also some checks that should be guaranteed by appropriate construction of the census-dates.
+     - This option allows for checks to be `dissoc`ed prior to ordering the map."
+  [& {:keys [sen-settings
+             sen-types
+             edubaseall-send-map
+             sen2-estab-min-expected-placed
+             additional-checks
+             checks-to-omit]
+      :or   {sen-settings        sen2-dictionary/sen-settings
+             sen-types           sen2-dictionary/sen-types
+             edubaseall-send-map (gias/edubaseall-send->map)}}]
+  (let [count-true? #(comp count (partial filter true?) %)]
+    ;; Check definitions:
+    ;; - `:idx`:           index to order checks for reporting.
+    ;; - `:label`:         description of issue used in reporting.
+    ;; - `:cols-required`: set of columns required to proceed with the check
+    ;; - `:col-fn`:        check function supplied to tc/add-column so receives dataset as single argument and
+    ;;                     must return either a column, sequence or single value with truthy values indicating an issue.
+    ;; - `:summary-fn`:    function used by `summarise-issues` as an aggregation function to summarise the issue
+    ;;                     within (i.e. grouped by) `:census-year`, so must return a single value.
+    ;; - `:summary-label`: label used by `summarise-issues` to indicate what has been counted by the `summary-fn`
+    ;; - `:action`:        string describing action to take to investigate flagged issues.
+    (cond-> {}
+      true ; 1##: Define checks for ID and unique-key columns:
+      (assoc :issue-missing-person-table-id
+             {:idx           112
+              :label         "Missing :person-table-id"
+              :cols-required #{:person-table-id}
+              :col-fn        #(->> % :person-table-id (map nil?))
+              :summary-fn    (count-true? :issue-missing-person-table-id)
+              :summary-label "#rows"
+              :action        "Required: fill in the blanks."}
+             :issue-missing-census-year
+             {:idx           122
+              :label         "Missing :census-year"
+              :cols-required #{:census-year}
+              :col-fn        #(->> % :census-year (map nil?))
+              :summary-fn    (count-true? :issue-missing-census-year)
+              :summary-label "#rows"
+              :action        "Required: fill in the blanks."}
+             :issue-missing-census-date
+             {:idx           124
+              :label         "Missing :census-date"
+              :cols-required #{:census-date}
+              :col-fn        #(->> % :census-date (map nil?))
+              :summary-fn    (count-true? :issue-missing-census-date)
+              :summary-label "#rows"
+              :action        "Required: fill in the blanks."}
+             :issue-missing-requests-table-id
+             {:idx           132
+              :label         "Missing :requests-table-id"
+              :cols-required #{:requests-table-id}
+              :col-fn        #(->> % :requests-table-id (map nil?))
+              :summary-fn    (count-true? :issue-missing-requests-table-id)
+              :summary-label "#rows"
+              :action        "Required: fill in the blanks."}
+             :issue-non-unique-key
+             {:idx           134
+              :label         "[:person-table-id :census-date :requests-table-id] not unique key"
+              :cols-required #{:person-table-id :census-date :requests-table-id}
+              :col-fn        (fn [ds] (-> ds
+                                          (tc/group-by [:person-table-id :census-date :requests-table-id])
+                                          (tc/add-column :row-count tc/row-count)
+                                          (tc/ungroup)
+                                          (tc/map-columns :issue [:row-count] (partial < 1))
+                                          :issue))
+              :summary-fn    #(-> %
+                                  (tc/select-rows :issue-non-unique-key)
+                                  (tc/unique-by [:person-table-id :census-date :requests-table-id])
+                                  tc/row-count)
+              :summary-label "#keys"
+              :action        "Should be unique."}
+             :issue-missing-upn
+             {:idx           142
+              :label         "Missing UPN, preventing joining with other SEN2 returns"
+              :cols-required #{:upn}
+              :col-fn        #(->> % :upn (map nil?))
+              :summary-fn    (count-true? :issue-missing-upn)
+              :summary-label "#rows"
+              :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."})
+      true ; 2##: Define checks for CYP details:
+      (assoc :issue-multiple-requests
+             {:idx           212
+              :label         "CYP has plans|placements from multiple requests"
+              :cols-required #{:person-table-id :census-date}
+              :col-fn        (fn [ds] (-> ds
+                                          (tc/group-by [:person-table-id :census-date])
+                                          (tc/add-column :row-count tc/row-count)
+                                          (tc/ungroup)
+                                          (tc/map-columns :issue [:row-count] (partial < 1))
+                                          :issue))
+              :summary-fn    (comp count distinct :person-table-id
+                                   #(tc/select-rows % :issue-multiple-requests))
+              :summary-label "#CYP"
+              :action        "Drop all but one."}
+             :issue-unknown-age-at-start-of-school-year
+             {:idx           224
+              :label         "Could not calculate age at the start of the school year"
+              :cols-required #{:age-at-start-of-school-year}
+              :col-fn        #(->> % :age-at-start-of-school-year (map nil?))
+              :summary-fn    (comp count distinct :person-table-id
+                                   #(tc/select-rows % :issue-unknown-age-at-start-of-school-year))
+              :summary-label "#CYP"
+              :action        "Get DoB and/or otherwise assign NCY."}
+             :issue-not-send-age
+             {:idx           232
+              :label         "CYP outside SEND age at start of the school year"
+              :cols-required #{:age-at-start-of-school-year}
+              :col-fn        #(->> % :age-at-start-of-school-year
+                                   (map (complement (partial contains? (conj (apply sorted-set (range 0 25)) nil)))))
+              :summary-fn    (count-true? :issue-not-send-age)
+              :summary-label "#rows"
+              :action        "Consider dropping."}
+             :issue-missing-ncy-nominal
+             {:idx           234
+              :label         "Missing NCY (nominal)"
+              :cols-required #{:ncy-nominal}
+              :col-fn        #(->> % :ncy-nominal (map nil?))
+              :summary-fn    (comp count distinct :person-table-id
+                                   #(tc/select-rows % :issue-missing-ncy-nominal))
+              :summary-label "#CYP"
+              :action        "Required: Assign, impute or drop."}
+             :issue-invalid-ncy-nominal
+             {:idx           236
+              :label         "Invalid (non nil) NCY"
+              :cols-required #{:ncy-nominal}
+              :col-fn        #(->> % :ncy-nominal
+                                   (map (complement (partial contains? (conj (apply sorted-set (range -4 21)) nil)))))
+              :summary-fn    (count-true? :issue-invalid-ncy-nominal)
+              :summary-label "#rows"
+              :action        "Consider dropping."})
+      true ; 3##: Define checks for named-plan:
+      (assoc :issue-no-named-plan
+             {:idx           312
+              :label         "No named-plan on census date"
+              :cols-required #{:named-plan?}
+              :col-fn        #(->> % :named-plan? (map not))
+              :summary-fn    (count-true? :issue-no-named-plan)
+              :summary-label "#rows"
+              :action        (str "Not an issue for modelling as don't need any details from named-plan: "
+                                  "Flag to client as incomplete/incoherent data and consider dropping.")})
+      true ; 4##: Define checks for placement-detail:
+      (assoc :issue-no-placement-detail
+             {:idx           412
+              :label         "No placement-detail on census date"
+              :cols-required #{:placement-detail?}
+              :col-fn        #(->> % :placement-detail? (map not))
+              :summary-fn    (count-true? :issue-no-placement-detail)
+              :summary-label "#rows"
+              :action        (str "Drop if transferred in after `:census-date`, "
+                                  "otherwise get `placement-detail` to determine setting.")}
+             :issue-no-placement-detail-transferred-in
+             {:idx           414
+              :label         "No placement-detail - transferred in"
+              :cols-required #{:placement-detail? :transfer-la}
+              :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
+                               (map #(and (not %1) (some? %2)) placement-detail? transfer-la))
+              :summary-fn    (count-true? :issue-no-placement-detail-transferred-in)
+              :summary-label "#rows"
+              :action        (str "Drop if transferred in after `:census-date`, "
+                                  "otherwise get `placement-detail` to determine setting.")}
+             :issue-no-placement-detail-not-transferred-in
+             {:idx           416
+              :label         "No placement-detail - not transferred in"
+              :cols-required #{:placement-detail? :transfer-la}
+              :col-fn        (fn [{:keys [placement-detail? transfer-la]}]
+                               (map #(and (not %1) (nil? %2)) placement-detail? transfer-la))
+              :summary-fn    (count-true? :issue-no-placement-detail-not-transferred-in)
+              :summary-label "#rows"
+              :action        "Get `placement-detail` to determine setting."}
+             :issue-placement-detail-missing-sen2-estab
+             {:idx           422
+              :label         "Placement detail but missing SEN2 Estab"
+              :cols-required #{:placement-detail? :urn :ukprn :sen-setting}
+              :col-fn        (fn [{:keys [placement-detail? urn ukprn sen-setting]}]
+                               (map #(and %1 (every? nil? [%2 %3 %4])) placement-detail? urn ukprn sen-setting))
+              :summary-fn    (count-true? :issue-placement-detail-missing-sen2-estab)
+              :summary-label "#rows"
+              :action        "Specify urn|ukprn (with indicators) or sen-setting."})
+      true ; 5##: Define checks for sen2-estab:
+      (assoc :issue-missing-sen2-estab
+             {:idx           512
+              :label         "Missing placement SEN2 Estab"
+              :cols-required #{:urn :ukprn :sen-setting}
+              :col-fn        (fn [{:keys [urn ukprn sen-setting]}]
+                               (map #(every? nil? %&) urn ukprn sen-setting))
+              :summary-fn    (count-true? :issue-missing-sen2-estab)
+              :summary-label "#rows"
+              :action        "Specify urn|ukprn (with indicators) or sen-setting."}
+             :issue-sen2-estab-indicator-not-set
+             {:idx           514
+              :label         "URN|UKPRN|SENsetting specified but SENU & RP indicators not set"
+              :cols-required #{:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting}
+              :col-fn        (fn [ds] (-> ds
+                                          (tc/map-columns :issue [:urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting]
+                                                          #(and (not-every? nil?     [%1 %2 %5])
+                                                                (not-every? boolean? [%3 %4])))
+                                          :issue))
+              :summary-fn    (count-true? :issue-sen2-estab-indicator-not-set)
+              :summary-label "#rows"
+              :action        "Specify sen-unit-indicator & resourced-provision-indicator."}
+             :issue-invalid-sen-setting
+             {:idx           592
+              :label         "Invalid (non-nil) sen-setting"
+              :cols-required #{:sen-setting}
+              :col-fn        #(->> % :sen-setting (map (complement (partial contains? (conj sen-settings nil)))))
+              :summary-fn    (count-true? :issue-invalid-sen-setting)
+              :summary-label "#rows"
+              :action        "Assign a recognised sen-setting."})
+      (seq edubaseall-send-map) ; 52#: Add GIAS based checks for establishment type if have GIAS SEND map:
+      (assoc :issue-urn-for-unexpected-gfe-gias-establishment-type
+             {:idx           522
+              :label         "URN has GFE GIAS estab. type unexpected for SEND"
+              :cols-required #{:urn}
+              :col-fn        (fn [{:keys [urn]}]
+                               (map (comp #{"Higher education institutions"
+                                            "University technical college"}
+                                          :type-of-establishment-name
+                                          edubaseall-send-map)
+                                    urn))
+              :summary-fn    (comp count distinct :urn
+                                   #(tc/select-rows % :issue-urn-for-unexpected-gfe-gias-establishment-type))
+              :summary-label "#URNs"
+              :action        "Confirm the placement-detail is correct or update."}
+             :issue-urn-for-unexpected-othe-gias-establishment-type
+             {:idx           524
+              :label         "URN has OTHE GIAS estab. type unexpected for SEND"
+              :cols-required #{:urn}
+              :col-fn        (fn [{:keys [urn]}]
+                               (map (comp #{"Online provider"
+                                            "Service children's education"
+                                            "Offshore schools"
+                                            "British schools overseas"
+                                            "Institution funded by other government department"
+                                            "Miscellaneous"}
+                                          :type-of-establishment-name
+                                          edubaseall-send-map)
+                                    urn))
+              :summary-fn    (comp count distinct :urn
+                                   #(tc/select-rows % :issue-urn-for-unexpected-othe-gias-establishment-type))
+              :summary-label "#URNs"
+              :action        "Confirm the placement-detail is correct or update."})
+      (seq edubaseall-send-map) ; 53#: Add GIAS based checks for SENU & RP indicators if have GIAS SEND map:
+      (assoc :issue-senu-flagged-at-estab-without-one
+             {:idx           532
+              :label         "SEN unit flagged at estab. other than URNs GIAS says has them."
+              :cols-required #{:urn :sen-unit-indicator}
+              :col-fn        (fn [{:keys [urn sen-unit-indicator]}]
+                               (map #(and (->> %1
+                                               (get edubaseall-send-map)
+                                               :sen-unit?
+                                               boolean
+                                               false?)
+                                          (->> %2
+                                               boolean
+                                               true?))
+                                    urn sen-unit-indicator))
+              :summary-fn    (fn [ds] (-> ds
+                                          (tc/select-rows :issue-senu-flagged-at-estab-without-one)
+                                          (tc/unique-by [:urn :ukprn :sen-setting])
+                                          tc/row-count))
+              :summary-label "#Estabs"
+              :action        "Review SEN unit flagging for these establishment(s) and correct if necessary."}
+             :issue-resourced-provision-flagged-at-estab-without-one
+             {:idx           534
+              :label         "RP flagged at estab. other than URNs GIAS says has them."
+              :cols-required #{:urn :resourced-provision-indicator}
+              :col-fn        (fn [{:keys [urn resourced-provision-indicator]}]
+                               (map #(and (->> %1
+                                               (get edubaseall-send-map)
+                                               :resourced-provision?
+                                               boolean
+                                               false?)
+                                          (->> %2
+                                               boolean
+                                               true?))
+                                    urn resourced-provision-indicator))
+              :summary-fn    (fn [ds] (-> ds
+                                          (tc/select-rows :issue-resourced-provision-flagged-at-estab-without-one)
+                                          (tc/unique-by [:urn :ukprn :sen-setting])
+                                          tc/row-count))
+              :summary-label "#Estabs"
+              :action        "Review resourced provision flagging for these establishment(s) and correct if necessary."})
+      (seq sen2-estab-min-expected-placed) ; 54#: Add checks for minimum numbers placed if provided:
+      (assoc :issue-less-placements-than-expected
+             {:idx           542
+              :label         "SEN2 estab. has fewer placed than expected"
+              :cols-required #{:census-year :urn :ukprn :sen-unit-indicator :resourced-provision-indicator :sen-setting}
+              :col-fn        (fn [ds]
+                               (let [cy-sen2-estab-with-less-than-expected-placed
+                                     (-> ds
+                                         (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
+                                         (tc/select-rows (comp (-> sen2-estab-min-expected-placed keys set) :sen2-estab))
+                                         (tc/group-by [:census-year :sen2-estab])
+                                         (tc/aggregate {:num-placed tc/row-count})
+                                         (tc/select-rows #(< (% :num-placed)
+                                                             (get sen2-estab-min-expected-placed (% :sen2-estab))))
+                                         ((fn [ds] (zipmap (-> ds (tc/drop-columns [:num-placed]) (tc/rows :as-maps))
+                                                           (-> ds :num-placed)))))]
+                                 (-> ds
+                                     (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
+                                     (tc/join-columns :cy-sen2-estab [:census-year :sen2-estab] {:result-type :map})
+                                     (tc/map-columns :num-placed [:cy-sen2-estab] cy-sen2-estab-with-less-than-expected-placed)
+                                     :num-placed)))
+              :summary-fn    (fn [ds] (-> ds
+                                          (tc/select-rows :issue-less-placements-than-expected)
+                                          (tc/unique-by sen2-estab-keys)
+                                          tc/row-count))
+              :summary-label "#SEN2-Estabs"
+              :action        "Check not missing any placements or SENU|RP flagging."})
+      true ; 6##: Define checks for sen-need:
+      (assoc :issue-missing-sen-type
+             {:idx           612
+              :label         "Missing sen-type (EHCP need)"
+              :cols-required #{:sen-type}
+              :col-fn        #(->> % :sen-type (map nil?))
+              :summary-fn    (count-true? :issue-missing-sen-type)
+              :summary-label "#rows"
+              :action        "Get sen-type (or will be considered unknown)."}
+             :issue-invalid-sen-type
+             {:idx           614
+              :label         "Invalid (non-nil) sen-type (EHCP need)"
+              :cols-required #{:sen-type}
+              :col-fn        #(->> % :sen-type (map (complement (partial contains? (conj sen-types nil)))))
+              :summary-fn    (count-true? :issue-invalid-sen-type)
+              :summary-label "#rows"
+              :action        "Correct or consider as custom EHCP primary need."})
+      (seq additional-checks) ; Add `additional-checks` if specified:
+      (merge additional-checks)
+      (seq checks-to-omit) ; Omit checks if requested:
+      (#(apply dissoc % checks-to-omit))
+      true ; Put into sorted map in `:idx` order
+      ((fn [m] (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
+                                                         [(get-in m [k2 :idx]) k2]))) m))))))
 
 (def checks-totals
   "Additional summaries of #rows and #CYP that can be merged onto checks."
@@ -654,6 +816,16 @@
   (-> plans-placements-on-census-dates
       (flag-issues        checks)
       (flagged-issues->ds checks opts)))
+
+(defn drop-falsey-issue-columns
+  "Given issues dataset `ds` and (optional) column-selector for issue columns,
+   returns dataset without issue columns for which all records have falsey values."
+  ([ds]
+   (drop-falsey-issue-columns ds #"^:issue-.+$"))
+  ([ds issue-column-selector]
+   (tc/drop-columns ds (->> (tc/select-columns ds issue-column-selector)
+                            (filter (comp (partial every? (comp false? boolean)) last))
+                            keys))))
 
 (defn summarise-issues
   "Summarise issues flagged in `ds` as a result of running `checks`."
