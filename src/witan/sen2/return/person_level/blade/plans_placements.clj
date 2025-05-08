@@ -23,7 +23,7 @@
 
 (def sen2-blade-module-cols-to-select
   "Map of SEN2 Blade columns to select for inclusion from each module (in addition to `:*-table-id` cols)."
-  {:person           [:person-order-seq-column :upn :unique-learner-number :person-birth-date]
+  {:person           [:person-order-seq-column :upn :unique-learner-number :upn-unknown :person-birth-date]
    :named-plan       [:start-date :cease-date :cease-reason]
    :placement-detail (vec (concat [:placement-rank :entry-date :leaving-date]
                                   sen2-estab-keys [:sen-setting-other]))
@@ -372,7 +372,8 @@
       :or   {sen-settings        sen2-dictionary/sen-settings
              sen-types           sen2-dictionary/sen-types
              edubaseall-send-map (gias/edubaseall-send->map)}}]
-  (let [count-true? #(comp count (partial filter true?) %)]
+  (let [count-true? #(comp count (partial filter true?) %)
+        count-some? #(comp count (partial filter some?) %)]
     ;; Check definitions:
     ;; - `:idx`:           index to order checks for reporting.
     ;; - `:label`:         description of issue used in reporting.
@@ -433,14 +434,23 @@
                                   tc/row-count)
               :summary-label "#keys"
               :action        "Should be unique."}
-             :issue-missing-upn
+             :issue-missing-upn-and-uln-no-reason
              {:idx           142
-              :label         "Missing UPN, preventing joining with other SEN2 returns"
+              :label         "Missing UPN & ULN (no reason given)"
               :cols-required #{:upn}
-              :col-fn        #(->> % :upn (map nil?))
-              :summary-fn    (count-true? :issue-missing-upn)
+              :col-fn        #(:issue (tc/map-rows % (fn [r] {:issue (every? nil? (select-keys r [:upn :unique-learner-number :upn-unknown]))})))
+              :summary-fn    (count-true? :issue-missing-upn-and-uln-no-reason)
               :summary-label "#rows"
-              :action        "Complete with unique ID or consider removing non-new EHCPs without a UPN."})
+              :action        "Get UPN|ULN so can link across returns."}
+             :issue-unknown-upn-with-reason
+             {:idx           143
+              :label         "Unknown UPN & ULN (reason given)"
+              :cols-required #{:upn :upn-unknown}
+              :col-fn        #(:issue (tc/map-rows % (fn [{:keys [upn-unknown] :as r}]
+                                                       {:issue (when (every? nil? (select-keys r [:upn :unique-learner-number])) upn-unknown)})))
+              :summary-fn    (count-some? :issue-unknown-upn-with-reason)
+              :summary-label "#rows"
+              :action        "Assign a (consistent) unique ID to link across returns."})
       true ; 2##: Define checks for CYP details:
       (assoc :issue-multiple-requests
              {:idx           212
