@@ -854,7 +854,7 @@
                                                                             (keys checks-totals)))
                                                 :summary-fn))))
         (tc/order-by [:census-date])
-        (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
+        (tc/update-columns [:census-date] (partial map #(.format % java.time.format.DateTimeFormatter/ISO_LOCAL_DATE)))
         (tc/pivot->longer (complement #{:census-date}))
         (tc/pivot->wider :census-date :$value)
         (tc/rename-columns {:$column :issue-key})
@@ -975,7 +975,8 @@
                                           :update-resourced-provision-indicator
                                           :update-sen-setting]
                       (fn [& args] (some some? args)))
-      (tc/update-columns [:census-date] (partial map #(.format % (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE))))
+      (tc/order-by [:census-date])
+      (tc/update-columns [:census-date] (partial map #(.format % java.time.format.DateTimeFormatter/ISO_LOCAL_DATE)))
       (tc/update-columns [:update-drop?] (partial map #(if % "X" " ")))
       (tc/update-columns #"^:update-[^\?]*" (partial map #(if (some? %) "*" " ")))
       (tc/group-by [:census-date :update-drop? :update-upn :update-ncy-nominal :update-sen2-estab :update-sen-type])
