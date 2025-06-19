@@ -4,6 +4,7 @@
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [tablecloth.api :as tc]
+            [tablecloth.column.api :as tcc]
             [witan.gias :as gias]
             [witan.sen2.ncy :as ncy]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]))
@@ -1070,17 +1071,13 @@
 
 ;;; # Combining
 (defn concat-plans-placements-on-census-dates
-  "Given sequence `xs` of datasets of plans-placements-on-census-dates,
-   each containing a `:census-year` column, adds column `:return-year`
-   (as the maximum `:census-year`) and concatenates them."
+  "Given sequence `xs` of datasets of plans-placements-on-census-dates from
+   different years SEN2 returns, adds column `:return-year` to each (derived as 
+   the maximum `:census-year`) and concatenates them."
   [xs & {:keys [person-id-col-name]
          :or   {person-id-col-name :person-table-id}}]
   (as-> xs $
-    (map (fn [ds]
-           (-> ds
-               (tc/add-column :return-year #(->> % :census-year (reduce max)))
-               (tc/reorder-columns [:return-year])))
-         $)
+    (map #(tc/add-column % :return-year (comp tcc/reduce-max :census-year)) $)
     (reduce tc/concat-copying $)
     (tc/reorder-columns $ [person-id-col-name :census-year :census-date :return-year])
     (tc/order-by $ (tc/column-names $))))
