@@ -4,6 +4,10 @@
 .lsp/
 gc.log*
 .clerk/
+.DS_Store
+.vscode/
+*.code-workspace
+.calva/
 data/education-health-and-care-plans/education-health-and-care-plans_*/data/
 data/example-*
 tmp/
