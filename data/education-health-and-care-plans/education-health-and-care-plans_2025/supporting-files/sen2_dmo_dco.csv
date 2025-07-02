@@ -1,0 +1,1065 @@
+﻿time_period,time_identifier,geographic_level,country_code,country_name,region_code,region_name,new_la_code,old_la_code,la_name,des_med_off,des_clin_off,des_so_care_off
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000037,390,Gateshead,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000021,391,Newcastle upon Tyne,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000022,392,North Tyneside,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000023,393,South Tyneside,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000024,394,Sunderland,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000001,805,Hartlepool,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000002,806,Middlesbrough,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000003,807,Redcar and Cleveland,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000004,808,Stockton-on-Tees,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000047,840,County Durham,Yes,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000005,841,Darlington,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000057,929,Northumberland,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000011,340,Knowsley,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000012,341,Liverpool,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000013,342,St. Helens,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000014,343,Sefton,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000015,344,Wirral,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000001,350,Bolton,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000002,351,Bury,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000003,352,Manchester,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000004,353,Oldham,Recruiting,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000005,354,Rochdale,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000006,355,Salford,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000007,356,Stockport,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000008,357,Tameside,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000009,358,Trafford,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000010,359,Wigan,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000006,876,Halton,No,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000007,877,Warrington,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000017,888,Lancashire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000008,889,Blackburn with Darwen,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000009,890,Blackpool,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000049,895,Cheshire East,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000050,896,Cheshire West and Chester,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000006,909,Cumbria,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000016,370,Barnsley,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000017,371,Doncaster,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000018,372,Rotherham,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000019,373,Sheffield,No,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000032,380,Bradford,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000033,381,Calderdale,Recruiting,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000034,382,Kirklees,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000035,383,Leeds,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000036,384,Wakefield,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000010,810,"Kingston upon Hull, City of",No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000011,811,East Riding of Yorkshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000012,812,North East Lincolnshire,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000013,813,North Lincolnshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E10000023,815,North Yorkshire,Yes,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000014,816,York,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000007,830,Derbyshire,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000015,831,Derby,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000018,855,Leicestershire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000016,856,Leicester,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000017,857,Rutland,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000024,891,Nottinghamshire,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000018,892,Nottingham,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000019,925,Lincolnshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000021,928,Northamptonshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000025,330,Birmingham,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000026,331,Coventry,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000027,332,Dudley,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000028,333,Sandwell,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000029,334,Solihull,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000030,335,Walsall,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000031,336,Wolverhampton,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000028,860,Staffordshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000021,861,Stoke-on-Trent,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000019,884,"Herefordshire, County of",No,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000034,885,Worcestershire,Recruiting,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000051,893,Shropshire,No,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000020,894,Telford and Wrekin,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000031,937,Warwickshire,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000032,821,Luton,No,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000055,822,Bedford,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000056,823,Central Bedfordshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000003,873,Cambridgeshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000031,874,Peterborough,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000012,881,Essex,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000033,882,Southend-on-Sea,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000034,883,Thurrock,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000015,919,Hertfordshire,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000020,926,Norfolk,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000029,935,Suffolk,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000002,825,Buckinghamshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000042,826,Milton Keynes,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000011,845,East Sussex,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000043,846,Brighton and Hove,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000014,850,Hampshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000044,851,Portsmouth,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000045,852,Southampton,No,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000036,867,Bracknell Forest,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000040,868,Windsor and Maidenhead,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000037,869,West Berkshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000038,870,Reading,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000039,871,Slough,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000041,872,Wokingham,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000016,886,Kent,Recruiting,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000035,887,Medway,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000046,921,Isle of Wight,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000025,931,Oxfordshire,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000030,936,Surrey,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000032,938,West Sussex,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000053,420,Isles of Scilly,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000022,800,Bath and North East Somerset,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000023,801,"Bristol, City of",No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000024,802,North Somerset,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000025,803,South Gloucestershire,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000009,835,Dorset,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000029,836,Poole,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000028,837,Bournemouth,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000054,865,Wiltshire,No,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000030,866,Swindon,No,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000008,878,Devon,Yes,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000026,879,Plymouth,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000027,880,Torbay,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000052,908,Cornwall,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000013,916,Gloucestershire,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000027,933,Somerset,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000001,201,City of London,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000007,202,Camden,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000012,204,Hackney,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000013,205,Hammersmith and Fulham,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000019,206,Islington,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000020,207,Kensington and Chelsea,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000022,208,Lambeth,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000023,209,Lewisham,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000028,210,Southwark,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000030,211,Tower Hamlets,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000032,212,Wandsworth,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000033,213,Westminster,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000014,309,Haringey,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000025,316,Newham,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000011,203,Greenwich,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000002,301,Barking and Dagenham,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000003,302,Barnet,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000004,303,Bexley,Yes,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000005,304,Brent,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000006,305,Bromley,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000008,306,Croydon,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000009,307,Ealing,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000010,308,Enfield,No,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000015,310,Harrow,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000016,311,Havering,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000017,312,Hillingdon,No,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000018,313,Hounslow,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000021,314,Kingston upon Thames,Yes,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000024,315,Merton,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000026,317,Redbridge,No,Yes,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000027,318,Richmond upon Thames,Yes,Recruiting,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000029,319,Sutton,Yes,No,n/a
+2019,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000031,320,Waltham Forest,Yes,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000037,390,Gateshead,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000021,391,Newcastle upon Tyne,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000022,392,North Tyneside,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000023,393,South Tyneside,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000024,394,Sunderland,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000001,805,Hartlepool,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000002,806,Middlesbrough,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000003,807,Redcar and Cleveland,Yes,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000004,808,Stockton-on-Tees,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000047,840,County Durham,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000005,841,Darlington,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000057,929,Northumberland,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000011,340,Knowsley,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000012,341,Liverpool,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000013,342,St. Helens,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000014,343,Sefton,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000015,344,Wirral,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000001,350,Bolton,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000002,351,Bury,No,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000003,352,Manchester,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000004,353,Oldham,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000005,354,Rochdale,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000006,355,Salford,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000007,356,Stockport,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000008,357,Tameside,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000009,358,Trafford,No,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000010,359,Wigan,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000006,876,Halton,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000007,877,Warrington,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000017,888,Lancashire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000008,889,Blackburn with Darwen,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000009,890,Blackpool,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000049,895,Cheshire East,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000050,896,Cheshire West and Chester,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000006,909,Cumbria,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000016,370,Barnsley,No,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000017,371,Doncaster,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000018,372,Rotherham,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000019,373,Sheffield,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000032,380,Bradford,Yes,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000033,381,Calderdale,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000034,382,Kirklees,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000035,383,Leeds,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000036,384,Wakefield,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000010,810,"Kingston upon Hull, City of",Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000011,811,East Riding of Yorkshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000012,812,North East Lincolnshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000013,813,North Lincolnshire,No,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E10000023,815,North Yorkshire,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000014,816,York,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000007,830,Derbyshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000015,831,Derby,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000018,855,Leicestershire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000016,856,Leicester,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000017,857,Rutland,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000024,891,Nottinghamshire,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000018,892,Nottingham,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000019,925,Lincolnshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000021,928,Northamptonshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000025,330,Birmingham,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000026,331,Coventry,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000027,332,Dudley,Yes,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000028,333,Sandwell,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000029,334,Solihull,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000030,335,Walsall,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000031,336,Wolverhampton,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000028,860,Staffordshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000021,861,Stoke-on-Trent,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000019,884,"Herefordshire, County of",Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000034,885,Worcestershire,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000051,893,Shropshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000020,894,Telford and Wrekin,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000031,937,Warwickshire,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000032,821,Luton,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000055,822,Bedford,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000056,823,Central Bedfordshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000003,873,Cambridgeshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000031,874,Peterborough,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000012,881,Essex,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000033,882,Southend-on-Sea,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000034,883,Thurrock,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000015,919,Hertfordshire,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000020,926,Norfolk,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000029,935,Suffolk,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000002,825,Buckinghamshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000042,826,Milton Keynes,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000011,845,East Sussex,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000043,846,Brighton and Hove,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000014,850,Hampshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000044,851,Portsmouth,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000045,852,Southampton,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000036,867,Bracknell Forest,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000040,868,Windsor and Maidenhead,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000037,869,West Berkshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000038,870,Reading,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000039,871,Slough,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000041,872,Wokingham,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000016,886,Kent,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000035,887,Medway,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000046,921,Isle of Wight,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000025,931,Oxfordshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000030,936,Surrey,Recruiting,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000032,938,West Sussex,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000053,420,Isles of Scilly,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000022,800,Bath and North East Somerset,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000023,801,"Bristol, City of",Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000024,802,North Somerset,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000025,803,South Gloucestershire,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000059,838,Dorset,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000058,839,"Bournemouth, Christchurch and Poole",No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000054,865,Wiltshire,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000030,866,Swindon,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000008,878,Devon,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000026,879,Plymouth,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000027,880,Torbay,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000052,908,Cornwall,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000013,916,Gloucestershire,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000027,933,Somerset,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000001,201,City of London,Yes,Recruiting,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000007,202,Camden,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000012,204,Hackney,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000013,205,Hammersmith and Fulham,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000019,206,Islington,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000020,207,Kensington and Chelsea,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000022,208,Lambeth,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000023,209,Lewisham,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000028,210,Southwark,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000030,211,Tower Hamlets,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000032,212,Wandsworth,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000033,213,Westminster,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000014,309,Haringey,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000025,316,Newham,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000011,203,Greenwich,No,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000002,301,Barking and Dagenham,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000003,302,Barnet,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000004,303,Bexley,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000005,304,Brent,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000006,305,Bromley,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000008,306,Croydon,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000009,307,Ealing,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000010,308,Enfield,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000015,310,Harrow,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000016,311,Havering,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000017,312,Hillingdon,No,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000018,313,Hounslow,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000021,314,Kingston upon Thames,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000024,315,Merton,Yes,No,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000026,317,Redbridge,No,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000027,318,Richmond upon Thames,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000029,319,Sutton,Yes,Yes,n/a
+2020,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000031,320,Waltham Forest,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000037,390,Gateshead,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000021,391,Newcastle upon Tyne,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000022,392,North Tyneside,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000023,393,South Tyneside,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000024,394,Sunderland,No,Recruiting,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000001,805,Hartlepool,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000002,806,Middlesbrough,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000003,807,Redcar and Cleveland,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000004,808,Stockton-on-Tees,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000047,840,County Durham,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000005,841,Darlington,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000057,929,Northumberland,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000011,340,Knowsley,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000012,341,Liverpool,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000013,342,St. Helens,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000014,343,Sefton,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000015,344,Wirral,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000001,350,Bolton,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000002,351,Bury,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000003,352,Manchester,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000004,353,Oldham,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000005,354,Rochdale,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000006,355,Salford,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000007,356,Stockport,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000008,357,Tameside,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000009,358,Trafford,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000010,359,Wigan,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000006,876,Halton,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000007,877,Warrington,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000017,888,Lancashire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000008,889,Blackburn with Darwen,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000009,890,Blackpool,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000049,895,Cheshire East,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000050,896,Cheshire West and Chester,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000006,909,Cumbria,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000016,370,Barnsley,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000017,371,Doncaster,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000018,372,Rotherham,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000019,373,Sheffield,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000032,380,Bradford,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000033,381,Calderdale,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000034,382,Kirklees,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000035,383,Leeds,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000036,384,Wakefield,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000010,810,"Kingston upon Hull, City of",Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000011,811,East Riding of Yorkshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000012,812,North East Lincolnshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000013,813,North Lincolnshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E10000023,815,North Yorkshire,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000014,816,York,Yes,Recruiting,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000007,830,Derbyshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000015,831,Derby,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000018,855,Leicestershire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000016,856,Leicester,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000017,857,Rutland,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000024,891,Nottinghamshire,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000018,892,Nottingham,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000019,925,Lincolnshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000021,928,Northamptonshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000025,330,Birmingham,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000026,331,Coventry,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000027,332,Dudley,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000028,333,Sandwell,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000029,334,Solihull,Recruiting,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000030,335,Walsall,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000031,336,Wolverhampton,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000028,860,Staffordshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000021,861,Stoke-on-Trent,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000019,884,"Herefordshire, County of",Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000034,885,Worcestershire,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000051,893,Shropshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000020,894,Telford and Wrekin,No,Recruiting,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000031,937,Warwickshire,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000032,821,Luton,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000055,822,Bedford,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000056,823,Central Bedfordshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000003,873,Cambridgeshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000031,874,Peterborough,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000012,881,Essex,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000033,882,Southend-on-Sea,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000034,883,Thurrock,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000015,919,Hertfordshire,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000020,926,Norfolk,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000029,935,Suffolk,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000002,825,Buckinghamshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000042,826,Milton Keynes,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000011,845,East Sussex,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000043,846,Brighton and Hove,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000014,850,Hampshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000044,851,Portsmouth,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000045,852,Southampton,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000036,867,Bracknell Forest,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000040,868,Windsor and Maidenhead,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000037,869,West Berkshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000038,870,Reading,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000039,871,Slough,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000041,872,Wokingham,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000016,886,Kent,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000035,887,Medway,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000046,921,Isle of Wight,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000025,931,Oxfordshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000030,936,Surrey,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000032,938,West Sussex,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000053,420,Isles of Scilly,Yes,Recruiting,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000022,800,Bath and North East Somerset,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000023,801,"Bristol, City of",No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000024,802,North Somerset,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000025,803,South Gloucestershire,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000059,838,Dorset,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000058,839,"Bournemouth, Christchurch and Poole",No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000054,865,Wiltshire,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000030,866,Swindon,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000008,878,Devon,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000026,879,Plymouth,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000027,880,Torbay,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000052,908,Cornwall,Yes,Recruiting,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000013,916,Gloucestershire,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000027,933,Somerset,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000001,201,City of London,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000007,202,Camden,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000012,204,Hackney,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000013,205,Hammersmith and Fulham,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000019,206,Islington,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000020,207,Kensington and Chelsea,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000022,208,Lambeth,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000023,209,Lewisham,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000028,210,Southwark,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000030,211,Tower Hamlets,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000032,212,Wandsworth,Yes,Recruiting,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000033,213,Westminster,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000014,309,Haringey,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000025,316,Newham,Yes,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000011,203,Greenwich,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000002,301,Barking and Dagenham,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000003,302,Barnet,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000004,303,Bexley,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000005,304,Brent,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000006,305,Bromley,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000008,306,Croydon,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000009,307,Ealing,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000010,308,Enfield,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000015,310,Harrow,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000016,311,Havering,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000017,312,Hillingdon,Recruiting,No,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000018,313,Hounslow,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000021,314,Kingston upon Thames,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000024,315,Merton,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000026,317,Redbridge,No,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000027,318,Richmond upon Thames,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000029,319,Sutton,Yes,Yes,n/a
+2021,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000031,320,Waltham Forest,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000037,390,Gateshead,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000021,391,Newcastle upon Tyne,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000022,392,North Tyneside,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000023,393,South Tyneside,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000024,394,Sunderland,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000001,805,Hartlepool,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000002,806,Middlesbrough,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000003,807,Redcar and Cleveland,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000004,808,Stockton-on-Tees,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000047,840,County Durham,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000005,841,Darlington,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000057,929,Northumberland,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000011,340,Knowsley,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000012,341,Liverpool,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000013,342,St. Helens,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000014,343,Sefton,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000015,344,Wirral,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000001,350,Bolton,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000002,351,Bury,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000003,352,Manchester,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000004,353,Oldham,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000005,354,Rochdale,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000006,355,Salford,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000007,356,Stockport,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000008,357,Tameside,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000009,358,Trafford,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000010,359,Wigan,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000006,876,Halton,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000007,877,Warrington,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000017,888,Lancashire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000008,889,Blackburn with Darwen,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000009,890,Blackpool,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000049,895,Cheshire East,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000050,896,Cheshire West and Chester,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000006,909,Cumbria,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000016,370,Barnsley,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000017,371,Doncaster,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000018,372,Rotherham,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000019,373,Sheffield,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000032,380,Bradford,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000033,381,Calderdale,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000034,382,Kirklees,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000035,383,Leeds,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000036,384,Wakefield,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000010,810,"Kingston upon Hull, City of",Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000011,811,East Riding of Yorkshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000012,812,North East Lincolnshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000013,813,North Lincolnshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E10000023,815,North Yorkshire,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000014,816,York,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000007,830,Derbyshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000015,831,Derby,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000018,855,Leicestershire,Yes,Recruiting,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000016,856,Leicester,No,No,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000017,857,Rutland,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000024,891,Nottinghamshire,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000018,892,Nottingham,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000019,925,Lincolnshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000061,940,North Northamptonshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000062,941,West Northamptonshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000025,330,Birmingham,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000026,331,Coventry,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000027,332,Dudley,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000028,333,Sandwell,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000029,334,Solihull,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000030,335,Walsall,Yes,No,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000031,336,Wolverhampton,Yes,Recruiting,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000028,860,Staffordshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000021,861,Stoke-on-Trent,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000019,884,"Herefordshire, County of",Yes,No,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000034,885,Worcestershire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000051,893,Shropshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000020,894,Telford and Wrekin,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000031,937,Warwickshire,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000032,821,Luton,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000055,822,Bedford,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000056,823,Central Bedfordshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000003,873,Cambridgeshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000031,874,Peterborough,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000012,881,Essex,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000033,882,Southend-on-Sea,Yes,No,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000034,883,Thurrock,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000015,919,Hertfordshire,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000020,926,Norfolk,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000029,935,Suffolk,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000002,825,Buckinghamshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000042,826,Milton Keynes,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000011,845,East Sussex,Yes,No,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000043,846,Brighton and Hove,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000014,850,Hampshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000044,851,Portsmouth,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000045,852,Southampton,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000036,867,Bracknell Forest,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000040,868,Windsor and Maidenhead,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000037,869,West Berkshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000038,870,Reading,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000039,871,Slough,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000041,872,Wokingham,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000016,886,Kent,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000035,887,Medway,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000046,921,Isle of Wight,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000025,931,Oxfordshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000030,936,Surrey,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000032,938,West Sussex,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000053,420,Isles of Scilly,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000022,800,Bath and North East Somerset,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000023,801,"Bristol, City of",Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000024,802,North Somerset,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000025,803,South Gloucestershire,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000059,838,Dorset,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000058,839,"Bournemouth, Christchurch and Poole",No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000054,865,Wiltshire,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000030,866,Swindon,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000008,878,Devon,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000026,879,Plymouth,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000027,880,Torbay,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000052,908,Cornwall,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000013,916,Gloucestershire,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000027,933,Somerset,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000001,201,City of London,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000007,202,Camden,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000012,204,Hackney,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000013,205,Hammersmith and Fulham,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000019,206,Islington,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000020,207,Kensington and Chelsea,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000022,208,Lambeth,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000023,209,Lewisham,No,No,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000028,210,Southwark,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000030,211,Tower Hamlets,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000032,212,Wandsworth,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000033,213,Westminster,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000014,309,Haringey,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000025,316,Newham,Yes,No,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000011,203,Greenwich,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000002,301,Barking and Dagenham,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000003,302,Barnet,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000004,303,Bexley,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000005,304,Brent,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000006,305,Bromley,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000008,306,Croydon,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000009,307,Ealing,No,Recruiting,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000010,308,Enfield,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000015,310,Harrow,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000016,311,Havering,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000017,312,Hillingdon,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000018,313,Hounslow,Yes,Recruiting,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000021,314,Kingston upon Thames,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000024,315,Merton,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000026,317,Redbridge,No,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000027,318,Richmond upon Thames,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000029,319,Sutton,Yes,Yes,n/a
+2022,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000031,320,Waltham Forest,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000037,390,Gateshead,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000021,391,Newcastle upon Tyne,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000022,392,North Tyneside,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000023,393,South Tyneside,Recruiting,Recruiting,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000024,394,Sunderland,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000001,805,Hartlepool,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000002,806,Middlesbrough,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000003,807,Redcar and Cleveland,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000004,808,Stockton-on-Tees,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000047,840,County Durham,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000005,841,Darlington,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000057,929,Northumberland,Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000011,340,Knowsley,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000012,341,Liverpool,Yes,Recruiting,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000013,342,St. Helens,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000014,343,Sefton,Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000015,344,Wirral,No,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000001,350,Bolton,No,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000002,351,Bury,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000003,352,Manchester,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000004,353,Oldham,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000005,354,Rochdale,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000006,355,Salford,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000007,356,Stockport,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000008,357,Tameside,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000009,358,Trafford,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000010,359,Wigan,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000006,876,Halton,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000007,877,Warrington,Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000017,888,Lancashire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000008,889,Blackburn with Darwen,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000009,890,Blackpool,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000049,895,Cheshire East,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000050,896,Cheshire West and Chester,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000006,909,Cumbria,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000016,370,Barnsley,Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000017,371,Doncaster,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000018,372,Rotherham,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000019,373,Sheffield,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000032,380,Bradford,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000033,381,Calderdale,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000034,382,Kirklees,No,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000035,383,Leeds,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000036,384,Wakefield,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000010,810,"Kingston upon Hull, City of",Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000011,811,East Riding of Yorkshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000012,812,North East Lincolnshire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000013,813,North Lincolnshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E10000023,815,North Yorkshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000014,816,York,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000007,830,Derbyshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000015,831,Derby,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000018,855,Leicestershire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000016,856,Leicester,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000017,857,Rutland,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000024,891,Nottinghamshire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000018,892,Nottingham,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000019,925,Lincolnshire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000061,940,North Northamptonshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000062,941,West Northamptonshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000025,330,Birmingham,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000026,331,Coventry,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000027,332,Dudley,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000028,333,Sandwell,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000029,334,Solihull,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000030,335,Walsall,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000031,336,Wolverhampton,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000028,860,Staffordshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000021,861,Stoke-on-Trent,No,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000019,884,"Herefordshire, County of",Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000034,885,Worcestershire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000051,893,Shropshire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000020,894,Telford and Wrekin,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000031,937,Warwickshire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000032,821,Luton,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000055,822,Bedford,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000056,823,Central Bedfordshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000003,873,Cambridgeshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000031,874,Peterborough,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000012,881,Essex,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000033,882,Southend-on-Sea,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000034,883,Thurrock,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000015,919,Hertfordshire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000020,926,Norfolk,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000029,935,Suffolk,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000002,825,Buckinghamshire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000042,826,Milton Keynes,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000011,845,East Sussex,Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000043,846,Brighton and Hove,Yes,Recruiting,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000014,850,Hampshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000044,851,Portsmouth,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000045,852,Southampton,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000036,867,Bracknell Forest,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000040,868,Windsor and Maidenhead,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000037,869,West Berkshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000038,870,Reading,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000039,871,Slough,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000041,872,Wokingham,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000016,886,Kent,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000035,887,Medway,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000046,921,Isle of Wight,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000025,931,Oxfordshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000030,936,Surrey,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000032,938,West Sussex,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000053,420,Isles of Scilly,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000022,800,Bath and North East Somerset,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000023,801,"Bristol, City of",Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000024,802,North Somerset,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000025,803,South Gloucestershire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000059,838,Dorset,Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000058,839,"Bournemouth, Christchurch and Poole",No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000054,865,Wiltshire,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000030,866,Swindon,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000008,878,Devon,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000026,879,Plymouth,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000027,880,Torbay,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000052,908,Cornwall,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000013,916,Gloucestershire,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000027,933,Somerset,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000001,201,City of London,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000007,202,Camden,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000012,204,Hackney,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000013,205,Hammersmith and Fulham,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000019,206,Islington,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000020,207,Kensington and Chelsea,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000022,208,Lambeth,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000023,209,Lewisham,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000028,210,Southwark,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000030,211,Tower Hamlets,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000032,212,Wandsworth,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000033,213,Westminster,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000014,309,Haringey,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000001,Inner London,E09000025,316,Newham,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000011,203,Greenwich,No,Recruiting,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000002,301,Barking and Dagenham,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000003,302,Barnet,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000004,303,Bexley,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000005,304,Brent,Yes,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000006,305,Bromley,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000008,306,Croydon,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000009,307,Ealing,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000010,308,Enfield,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000015,310,Harrow,No,No,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000016,311,Havering,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000017,312,Hillingdon,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000018,313,Hounslow,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000021,314,Kingston upon Thames,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000024,315,Merton,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000026,317,Redbridge,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000027,318,Richmond upon Thames,Yes,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000029,319,Sutton,No,Yes,n/a
+2023,Calendar year,Local authority,E92000001,England,E13000002,Outer London,E09000031,320,Waltham Forest,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000037,390,Gateshead,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000021,391,Newcastle upon Tyne,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000022,392,North Tyneside,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000023,393,South Tyneside,No,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000024,394,Sunderland,No,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000001,805,Hartlepool,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000002,806,Middlesbrough,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000003,807,Redcar and Cleveland,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000004,808,Stockton-on-Tees,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000047,840,County Durham,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000005,841,Darlington,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000057,929,Northumberland,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000011,340,Knowsley,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000012,341,Liverpool,Yes,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000013,342,St. Helens,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000014,343,Sefton,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000015,344,Wirral,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000001,350,Bolton,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000002,351,Bury,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000003,352,Manchester,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000004,353,Oldham,No,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000005,354,Rochdale,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000006,355,Salford,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000007,356,Stockport,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000008,357,Tameside,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000009,358,Trafford,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000010,359,Wigan,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000006,876,Halton,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000007,877,Warrington,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000017,888,Lancashire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000008,889,Blackburn with Darwen,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000009,890,Blackpool,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000049,895,Cheshire East,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000050,896,Cheshire West and Chester,No,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000063,942,Cumberland,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000064,943,Westmorland and Furness,No,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000016,370,Barnsley,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000017,371,Doncaster,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000018,372,Rotherham,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000019,373,Sheffield,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000032,380,Bradford,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000033,381,Calderdale,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000034,382,Kirklees,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000035,383,Leeds,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000036,384,Wakefield,No,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000010,810,"Kingston upon Hull, City of",Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000011,811,East Riding of Yorkshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000012,812,North East Lincolnshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000013,813,North Lincolnshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E10000023,815,North Yorkshire,No,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000014,816,York,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000007,830,Derbyshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000015,831,Derby,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000018,855,Leicestershire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000016,856,Leicester,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000017,857,Rutland,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000024,891,Nottinghamshire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000018,892,Nottingham,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000019,925,Lincolnshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000061,940,North Northamptonshire,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000062,941,West Northamptonshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000025,330,Birmingham,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000026,331,Coventry,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000027,332,Dudley,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000028,333,Sandwell,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000029,334,Solihull,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000030,335,Walsall,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000031,336,Wolverhampton,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000028,860,Staffordshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000021,861,Stoke-on-Trent,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000019,884,"Herefordshire, County of",Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000034,885,Worcestershire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000051,893,Shropshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000020,894,Telford and Wrekin,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000031,937,Warwickshire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000032,821,Luton,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000055,822,Bedford,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000056,823,Central Bedfordshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000003,873,Cambridgeshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000031,874,Peterborough,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000012,881,Essex,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000033,882,Southend-on-Sea,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000034,883,Thurrock,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000015,919,Hertfordshire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000020,926,Norfolk,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000029,935,Suffolk,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000001,201,City of London,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000007,202,Camden,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000011,203,Greenwich,Yes,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000012,204,Hackney,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000013,205,Hammersmith and Fulham,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000019,206,Islington,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000020,207,Kensington and Chelsea,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000022,208,Lambeth,Yes,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000023,209,Lewisham,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000028,210,Southwark,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000030,211,Tower Hamlets,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000032,212,Wandsworth,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000033,213,Westminster,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000002,301,Barking and Dagenham,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000003,302,Barnet,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000004,303,Bexley,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000005,304,Brent,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000006,305,Bromley,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000008,306,Croydon,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000009,307,Ealing,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000010,308,Enfield,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000014,309,Haringey,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000015,310,Harrow,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000016,311,Havering,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000017,312,Hillingdon,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000018,313,Hounslow,Recruiting,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000021,314,Kingston upon Thames,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000024,315,Merton,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000025,316,Newham,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000026,317,Redbridge,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000027,318,Richmond upon Thames,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000029,319,Sutton,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000007,London,E09000031,320,Waltham Forest,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000002,825,Buckinghamshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000042,826,Milton Keynes,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000011,845,East Sussex,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000043,846,Brighton and Hove,Yes,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000014,850,Hampshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000044,851,Portsmouth,Recruiting,Recruiting,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000045,852,Southampton,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000036,867,Bracknell Forest,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000040,868,Windsor and Maidenhead,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000037,869,West Berkshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000038,870,Reading,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000039,871,Slough,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000041,872,Wokingham,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000016,886,Kent,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000035,887,Medway,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000046,921,Isle of Wight,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000025,931,Oxfordshire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000030,936,Surrey,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000032,938,West Sussex,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000053,420,Isles of Scilly,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000022,800,Bath and North East Somerset,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000023,801,"Bristol, City of",Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000024,802,North Somerset,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000025,803,South Gloucestershire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000059,838,Dorset,Yes,No,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000058,839,"Bournemouth, Christchurch and Poole",Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000054,865,Wiltshire,No,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000030,866,Swindon,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000008,878,Devon,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000026,879,Plymouth,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000027,880,Torbay,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000052,908,Cornwall,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000013,916,Gloucestershire,Yes,Yes,n/a
+2024,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000027,933,Somerset,No,Yes,n/a
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000037,390,Gateshead,Yes,No,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000021,391,Newcastle upon Tyne,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000022,392,North Tyneside,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000023,393,South Tyneside,Yes,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E08000024,394,Sunderland,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000001,805,Hartlepool,Yes,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000002,806,Middlesbrough,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000003,807,Redcar and Cleveland,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000004,808,Stockton-on-Tees,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000047,840,County Durham,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000005,841,Darlington,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000001,North East,E06000057,929,Northumberland,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000011,340,Knowsley,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000012,341,Liverpool,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000013,342,St. Helens,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000014,343,Sefton,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000015,344,Wirral,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000001,350,Bolton,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000002,351,Bury,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000003,352,Manchester,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000004,353,Oldham,No,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000005,354,Rochdale,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000006,355,Salford,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000007,356,Stockport,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000008,357,Tameside,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000009,358,Trafford,No,Recruiting,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E08000010,359,Wigan,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000006,876,Halton,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000007,877,Warrington,No,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E10000017,888,Lancashire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000008,889,Blackburn with Darwen,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000009,890,Blackpool,Yes,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000049,895,Cheshire East,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000050,896,Cheshire West and Chester,Yes,No,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000063,942,Cumberland,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000002,North West,E06000064,943,Westmorland and Furness,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000016,370,Barnsley,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000017,371,Doncaster,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000018,372,Rotherham,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000019,373,Sheffield,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000032,380,Bradford,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000033,381,Calderdale,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000034,382,Kirklees,No,No,No
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000035,383,Leeds,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E08000036,384,Wakefield,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000010,810,"Kingston upon Hull, City of",Yes,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000011,811,East Riding of Yorkshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000012,812,North East Lincolnshire,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000013,813,North Lincolnshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E10000023,815,North Yorkshire,No,No,No
+2025,Calendar year,Local authority,E92000001,England,E12000003,Yorkshire and The Humber,E06000014,816,York,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000007,830,Derbyshire,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000015,831,Derby,No,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000018,855,Leicestershire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000016,856,Leicester,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000017,857,Rutland,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000024,891,Nottinghamshire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000018,892,Nottingham,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E10000019,925,Lincolnshire,No,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000061,940,North Northamptonshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000004,East Midlands,E06000062,941,West Northamptonshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000025,330,Birmingham,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000026,331,Coventry,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000027,332,Dudley,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000028,333,Sandwell,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000029,334,Solihull,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000030,335,Walsall,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E08000031,336,Wolverhampton,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000028,860,Staffordshire,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000021,861,Stoke-on-Trent,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000019,884,"Herefordshire, County of",Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000034,885,Worcestershire,No,Yes,Recruiting
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000051,893,Shropshire,No,No,No
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E06000020,894,Telford and Wrekin,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000005,West Midlands,E10000031,937,Warwickshire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000032,821,Luton,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000055,822,Bedford,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000056,823,Central Bedfordshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000003,873,Cambridgeshire,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000031,874,Peterborough,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000012,881,Essex,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000033,882,Southend-on-Sea,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E06000034,883,Thurrock,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000015,919,Hertfordshire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000020,926,Norfolk,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000006,East of England,E10000029,935,Suffolk,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000001,201,City of London,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000007,202,Camden,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000011,203,Greenwich,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000012,204,Hackney,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000013,205,Hammersmith and Fulham,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000019,206,Islington,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000020,207,Kensington and Chelsea,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000022,208,Lambeth,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000023,209,Lewisham,No,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000028,210,Southwark,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000030,211,Tower Hamlets,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000032,212,Wandsworth,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000033,213,Westminster,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000002,301,Barking and Dagenham,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000003,302,Barnet,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000004,303,Bexley,Yes,Yes,Recruiting
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000005,304,Brent,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000006,305,Bromley,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000008,306,Croydon,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000009,307,Ealing,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000010,308,Enfield,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000014,309,Haringey,Yes,No,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000015,310,Harrow,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000016,311,Havering,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000017,312,Hillingdon,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000018,313,Hounslow,No,Recruiting,Recruiting
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000021,314,Kingston upon Thames,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000024,315,Merton,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000025,316,Newham,Yes,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000026,317,Redbridge,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000027,318,Richmond upon Thames,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000029,319,Sutton,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000007,London,E09000031,320,Waltham Forest,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000002,825,Buckinghamshire,No,Yes,Recruiting
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000042,826,Milton Keynes,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000011,845,East Sussex,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000043,846,Brighton and Hove,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000014,850,Hampshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000044,851,Portsmouth,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000045,852,Southampton,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000036,867,Bracknell Forest,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000040,868,Windsor and Maidenhead,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000037,869,West Berkshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000038,870,Reading,No,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000039,871,Slough,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000041,872,Wokingham,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000016,886,Kent,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000035,887,Medway,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E06000046,921,Isle of Wight,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000025,931,Oxfordshire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000030,936,Surrey,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000008,South East,E10000032,938,West Sussex,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000053,420,Isles of Scilly,No,Yes,No
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000022,800,Bath and North East Somerset,Yes,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000023,801,"Bristol, City of",Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000024,802,North Somerset,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000025,803,South Gloucestershire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000059,838,Dorset,Yes,No,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000058,839,"Bournemouth, Christchurch and Poole",No,Yes,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000054,865,Wiltshire,No,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000030,866,Swindon,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000008,878,Devon,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000026,879,Plymouth,Yes,Recruiting,Not returned
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000027,880,Torbay,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E06000052,908,Cornwall,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000013,916,Gloucestershire,Yes,Yes,Yes
+2025,Calendar year,Local authority,E92000001,England,E12000009,South West,E10000027,933,Somerset,No,Yes,No

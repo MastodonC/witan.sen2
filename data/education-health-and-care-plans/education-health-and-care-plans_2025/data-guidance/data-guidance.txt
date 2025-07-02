@@ -1,0 +1,514 @@
+Education, health and care plans
+Reporting year 2025
+
+Description
+
+This document describes the data included in the Education, health and care (EHC) plans National Statistics release’s underlying data files. This data is released under the terms of the Open Government License and is intended to meet at least 3 stars for Open Data. The methodology document should be referenced alongside this data. It provides information on the data sources, their coverage and quality as well as explaining methodology used in producing the data.
+
+Coverage
+
+This release provides information on various stages of the EHC plan process including:
+
+- The number of active EHC plans at January of the calendar year- this includes the number of plans by placement type, sex, ethnicity, age, the length of time the plan has been held and the age of the child or young person when the plan started.
+- The number of new EHC plans in the previous calendar year- this includes the number of plans by placement type, sex, ethnicity, age, etc etc - to add to
+- The number of requests for EHC needs assessment in the previous calendar year- this includes the number of requests by sex, ethnicity, age at the time of request. Information is broken down by the outcome of the request and whether any mediation or tribunals were held connected to the outcome of the request. Information is also shown on the number of requests where the outcome was delivered within the statutory timeframe.
+- The number of EHC needs assessments in the previous calendar year- this includes the number of assessments by sex, ethnicity, age at the time of assessment. Information is broken down by the outcome of the assessment and whether any mediation or tribunals were held connected to the assessment and its outcome.
+- The type of primary need named in the plan- this is included for both all plans and new plans. It is broken down by  placement type, sex, ethnicity, age, the length of time the plan has been held and the age of the child or young person when the plan started.
+- The number of plans issued with the statutory timeframe in the previous calendar year- this is broken down by sex, age and ethnicity and includes both those where exemptions apply and where exemptions do not apply.
+- The number of EHC plans where a personal budget is in place- this is broken down by sex, age and ethnicity.
+- The number of work based placements- this is broken down by sex, age and ethnicity plus type of establishment attended. Information is given for supported internships, apprenticeships and traineeships. Information is given for both the number active as at January each year and the number which closed during the previous calendar year.
+- The number of residential placements- this is broken down by sex, age and ethnicity plus type of establishment attended. Information is given for those which are between 38 and 51 weeks duration and those which are of 51 weeks or more duration.
+- The number of annual reviews- this is broken down by sex, age and ethnicity plus type of establishment attended. Information is included by the outcome of the review.
+- The number of plans which ceased during the the previous calendar year- this is broken down by sex, age when the plan ceased and ethnicity. The reason why the plan ceased and the placement at the time of ceasing are also included.
+
+Data sources
+
+In 2023 the source of data on EHC plans changed. Prior to 2023 the data collection was local authority level  with aggregated data being collected for a range of indicators and outcomes from each local authority.
+
+In 2023 the collection changed to individual level. The local authority returns information on:
+
+- Each EHC needs assessments and its outcome
+- Each EHC needs assessment and its outcome
+- The content of all plans, the type of special educational need, setting named in plan, setting attended, the date the plan started or ceased and what annual reviews have taken place and features of the plan such as personal budgets and residential placements
+- Personal details of the child or young person with a request, assessment or plan in place
+
+This individual level data is then aggregated to calculate national, regional and local authority totals.
+
+The time series
+
+This change in data source has necessitated a change in how figures are presented and how the time series of data is shown. Some data items collected in the pre-2023 aggregate collection are no longer available while the individual data now collected allows a much richer and increased range of detailed analysis to be produced. As such there has been a break in the time series. In 2014, changes to the SEN code of Practice (https://www.gov.uk/government/publications/send-code-of-practice-0-to-25) replaced statements of special educational needs (SEN) and Learning Difficulty Assessments (LDAs) with Education, Health and Care (EHC) plans. Those with a statement of SEN were converted to EHC plans. This process was completed by 2018. Therefore the time series included in this publication begins at 2019. Data for the years prior to 2019 remains available.   The 2024 edition of this statistical release (https://explore-education-statistics.service.gov.uk/find-statistics/education-health-and-care-plans/2024) includes information on EHC plans prior to 2019 plus information on statements of SEN for each year from 2010.
+
+This edition of the release includes an expanded range of analysis including those only possible with the change in data source. Where previous data exists figures have been given to provide a a time series of covering each of the 7 years from 2018/19.
+
+File formats and conventions
+
+The dataset and outputs have not had suppression or rounding applied
+
+The following convention is used throughout the underlying data.
+
+z - Not applicable
+
+x - unavailable
+
+Data files
+
+All data files associated with this releases are listed below with guidance on their content. To download any of these files, please visit our data catalogue (https://explore-education-statistics.service.gov.uk/data-catalogue?publicationId=88312cc0-fe1d-4ab5-81df-33fd708185cb&releaseVersionId=2e60aacd-d46c-416a-af4d-9d2269506ff6).
+
+Data files
+
+Number of education, health (EHC) plans as at January each year
+
+Filename: caseload.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2018/19 to 2024/25
+Content summary: The number of EHC plans active at January each year. This is shown for the type of setting attended, broken down by current age, age when plan started, ethnicity, sex and how long the plan has been in place. Data is shown on an academic year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name                                 |  Variable description
+--------------------------------------------  |  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ap_pru_academy                                |  Alternative provision academies
+ap_pru_free_school                            |  Alternative provision free schools
+ap_pru_la_maintained                          |  Pupil referral units
+ap_pru_total                                  |  Total alternative provision
+AP_PRU_total_pc                               |  Total percentage alternative provision
+await_prov_2022                               |  Awaiting provision (pre 2023 only)
+breakdown                                     |  Characteristics of child or young person with EHC plan - Filter by characteristics of child or young person with an EHC plan, years plan in place or the setting attended
+ed_elsewhere                                  |  Total educated elsewhere
+ed_elsewhere_pc                               |  Total percentage educated elsewhere
+ehcplans                                      |  Total number of EHC plans
+elective_home_education                       |  Elective home education
+fe_total                                      |  Total further education and post 16
+fe_total_pc                                   |  Total percentage further education and post 16
+general_fe_tertiary_colleges                  |  FE colleges and sixth forms
+mainstream_academy                            |  Mainstream academies
+mainstream_academy_resourced_provision        |  Mainstream academies - resourced provision
+mainstream_academy_senunit                    |  Mainstream academies - SEN units
+mainstream_free_school                        |  Mainstream free schools
+mainstream_free_school_resourced_provision    |  Mainstream free schools - resourced provision
+mainstream_free_school_senunit                |  Mainstream free schools - SEN units
+mainstream_independent                        |  Mainstream independent schools
+mainstream_la_maintained                      |  Mainstream LA maintained schools
+mainstream_la_maintained_resourced_provision  |  Mainstream LA maintained schools - resourced provision
+mainstream_la_maintained_senunit              |  Mainstream LA maintained schools - SEN units
+mainstream_total                              |  Total mainstream schools
+mainstream_total_pc                           |  Total percentage mainstream schools
+neet                                          |  Not in employment, education or training
+neet_ntci                                     |  Not in education or training – notice to cease issued
+neet_other                                    |  Not in education or training – other age groups
+neet_other_csa                                |  Not in education or training – compulsory school age
+nm_early_years                                |  Non maintained early years
+nm_early_years_pc                             |  Non maintained early years percentage
+online_provider                               |  Online providers
+other_arrangements_la                         |  Other arrangements made by LA
+other_arrangements_parents                    |  Other arrangements made by parents
+other_placement_settings                      |  Other types of placement
+other_schools                                 |  Other school types
+perm_ex_2022                                  |  Permanently excluded (pre 2023 only)
+placement_unknown                             |  Placement not recorded
+placement_unknown_pc                          |  Placement not recorded percentage
+special_academy_free                          |  Special academies and free schools
+special_independent                           |  Independent special schools
+special_la_maintained                         |  LA maintained special schools
+special_non_maintained                        |  Non maintained special schools
+special_total                                 |  Total special schools
+special_total_pc                              |  Total percentage special schools
+specialist_post_16_institutions               |  Specialist post 16 establishments
+ukrlp_provider                                |  UKRLP providers
+w_settings                                    |  Welsh schools and establishments
+
+Footnotes:
+
+1. Cambridgeshire and North East Lincolnshire were not able to return placements for significant numbers of plans for 2025. These are shown as "Not recorded".
+2. Includes service children's education, offshore schools, secure units, British schools overseas and establishments listed as "Miscellaneous" on Get Information About Schools (https://get-information-schools.service.gov.uk/Search).
+3. Incudes those awaiting provision, those where a type of setting is specified in the EHC plan (e.g. special school) but no specific setting is named, those out of provision, and all other settings not otherwise listed.
+4. Age is calculated based on the start date recorded for the EHC plan.
+5. Figures for 2023/24 include the total number of  EHC plans for Hackney and Peterborough. Both LAs submitted total figures but were unable to return individual level data. Figures do not therefore sum to the totals.
+
+
+Number of education, health (EHC) plans as at January each year,  by their primary type of need
+
+Filename: sen_needs_all_plans.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2024/25
+Content summary: The number of EHC plans active at January each year, by their primary SEN need. This is shown for the type of setting attended, current age, age when plan started, ethnicity, sex and length of plan. Data is shown on an academic year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name        |  Variable description
+-------------------  |  ------------------------------------------------------------------------------------------------------------------------------
+asd_pc               |  Autistic spectrum disorder (%)
+breakdown            |  Characteristics of child or young person for whom EHC needs assessment requested - Filter by primary need recorded in EHC plan
+ehc_plans            |  Total number of EHC plans
+hi_pc                |  Hearing impairment (%)
+mld_pc               |  Moderate learning difficulty  (%)
+msi_pc               |  Multisensory impairment (%)
+number_asd           |  Autistic spectrum disorder
+number_hi            |  Hearing impairment
+number_mld           |  Moderate learning difficulty
+number_msi           |  Multisensory impairment
+number_need_unknown  |  Primary need is not recorded
+number_oth           |  Other difficulty/disability
+number_pd            |  Physical disability
+number_pmld          |  Profound & multiple learning difficulty
+number_semh          |  Social, emotional and mental health
+number_slcn          |  Speech, language and communication needs
+number_sld           |  Severe learning difficulty
+number_spld          |  Specific learning difficulty
+number_vi            |  Visual impairment
+oth_pc               |  Other difficulty/disability (%)
+pd_pc                |  Physical disability (%)
+pmld_pc              |  Profound & multiple learning difficulty (%)
+semh_pc              |  Social, emotional and mental health (%)
+slcn_pc              |  Speech, language and communication needs (%)
+sld_pc               |  Severe learning difficulty (%)
+spld_pc              |  Specific learning difficulty (%)
+unknown_pc           |  Primary need is not recorded (%)
+vi_pc                |  Visual impairment (%)
+
+Footnotes:
+
+1. EHC plans where the primary need is Down Syndrome are included under "other difficulty/disability".
+2. Surrey submitted amended figures on the primary type of need following completion of the SEN2 data collection in 2025. The published figures include the amended totals they supplied. Information on characteristics for this authority is not therefore available.
+
+
+Number of new EHC plans during the calendar year
+
+Filename: newplans.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2019 to 2024
+Content summary: The number of EHC plans which start each year. The number of new plans is shown for the type of setting attended, broken down by the age when the plan started, ethnicity and sex. Data is shown on a calendar year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name                                 |  Variable description
+--------------------------------------------  |  -----------------------------------------------------------------------------------------------------------------------------------
+ap_pru_academy                                |  Alternative provision academies
+ap_pru_free_school                            |  Alternative provision free schools
+ap_pru_la_maintained                          |  Pupil referral units
+ap_pru_total                                  |  Total alternative provision
+AP_PRU_total_pc                               |  Total percentage alternative provision
+await_prov_2022                               |  Awaiting provision (pre 2023 only)
+breakdown                                     |  Characteristics of child or young person with new EHC plan - Filter by characteristics of child or young person with a new EHC plan
+ed_elsewhere                                  |  Total educated elsewhere
+ed_elsewhere_pc                               |  Total percentage educated elsewhere
+elective_home_education                       |  Elective home education
+fe_total                                      |  Total further education and post 16
+fe_total_pc                                   |  Total percentage further education and post 16
+general_fe_tertiary_colleges                  |  FE colleges and sixth forms
+mainstream_academy                            |  Mainstream academies
+mainstream_academy_resourced_provision        |  Mainstream academies - resourced provision
+mainstream_academy_senunit                    |  Mainstream academies - SEN units
+mainstream_free_school                        |  Mainstream free schools
+mainstream_free_school_resourced_provision    |  Mainstream free schools - resourced provision
+mainstream_free_school_senunit                |  Mainstream free schools - SEN units
+mainstream_independent                        |  Mainstream independent schools
+mainstream_la_maintained                      |  Mainstream LA maintained schools
+mainstream_la_maintained_resourced_provision  |  Mainstream LA maintained schools - resourced provision
+mainstream_la_maintained_senunit              |  Mainstream LA maintained schools - SEN units
+mainstream_total                              |  Total mainstream schools
+mainstream_total_pc                           |  Total percentage mainstream schools
+neet                                          |  Not in employment, education or training
+neet_ntci                                     |  Not in education or training – notice to cease issued
+neet_other                                    |  Not in education or training – other age groups
+neet_other_csa                                |  Not in education or training – compulsory school age
+new_ehc_plans                                 |  Total number of new EHC plans
+nm_early_years                                |  Non maintained early years
+nm_early_years_pc                             |  Non maintained early years percentage
+online_provider                               |  Online providers
+other_arrangements_la                         |  Other arrangements made by LA
+other_arrangements_parents                    |  Other arrangements made by parents
+other_placement_settings                      |  Other types of placement
+other_schools                                 |  Other school types
+perm_ex_2022                                  |  Permanently excluded (pre 2023 only)
+placement_unknown                             |  Placement not recorded
+placement_unknown_pc                          |  Placement not recorded percentage
+special_academy_free                          |  Special academies and free schools
+special_independent                           |  Independent special schools
+special_la_maintained                         |  LA maintained special schools
+special_non_maintained                        |  Non maintained special schools
+special_total                                 |  Total special schools
+special_total_pc                              |  Total percentage special schools
+specialist_post_16_institutions               |  Specialist post 16 establishments
+ukrlp_provider                                |  UKRLP providers
+w_settings                                    |  Welsh schools and establishments
+
+Footnotes:
+
+1. Cambridgeshire and North East Lincolnshire were not able to return placements for significant numbers of plans for 2025. These are shown as "Not recorded".
+2. Includes service children's education, offshore schools, secure units, British schools overseas and establishments listed as "Miscellaneous" on Get Information About Schools (https://get-information-schools.service.gov.uk/Search).
+3. Incudes those awaiting provision, those where a type of setting is specified in the EHC plan (e.g. special school) but no specific setting is named, those out of provision, and all other settings not otherwise listed.
+4. Wakefield submitted aggregate information for new plans for 2022. The totals will therefore not match the sum of characteristics and placements information.
+
+
+Number of new EHC plans during the calendar year, by their primary type of need
+
+Filename: sen_need_newplans.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2024
+Content summary: The number of new EHC plans each year, by their primary SEN need. This is shown for the type of setting attended, age when plan started, ethnicity, and sex. Data is shown on an calendar year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name        |  Variable description
+-------------------  |  ------------------------------------------------------------------------------------------------------------------------------
+asd_pc               |  Autistic spectrum disorder (%)
+breakdown            |  Characteristics of child or young person for whom EHC needs assessment requested - Filter by primary need recorded in EHC plan
+ehc_plans            |  Total number of new EHC plans
+hi_pc                |  Hearing impairment (%)
+mld_pc               |  Moderate learning difficulty  (%)
+msi_pc               |  Multisensory impairment (%)
+number_asd           |  Autistic spectrum disorder
+number_hi            |  Hearing impairment
+number_mld           |  Moderate learning difficulty
+number_msi           |  Multisensory impairment
+number_need_unknown  |  Primary need is not recorded
+number_oth           |  Other difficulty/disability
+number_pd            |  Physical disability
+number_pmld          |  Profound & multiple learning difficulty
+number_semh          |  Social, emotional and mental health
+number_slcn          |  Speech, language and communication needs
+number_sld           |  Severe learning difficulty
+number_spld          |  Specific learning difficulty
+number_vi            |  Visual impairment
+oth_pc               |  Other difficulty/disability (%)
+pd_pc                |  Physical disability (%)
+pmld_pc              |  Profound & multiple learning difficulty (%)
+semh_pc              |  Social, emotional and mental health (%)
+slcn_pc              |  Speech, language and communication needs (%)
+sld_pc               |  Severe learning difficulty (%)
+spld_pc              |  Specific learning difficulty (%)
+unknown_pc           |  Primary need is not recorded (%)
+vi_pc                |  Visual impairment (%)
+
+Footnotes:
+
+1. Surrey submitted amended figures on the primary type of need following completion of the SEN2 data collection in 2025. The published figures include the amended totals they supplied. Information on characteristics for this authority is not therefore available.
+
+
+Number of requests for an EHC needs assessment, and the request outcomes
+
+Filename: requests.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2019 to 2024
+Content summary: The number of requests for an EHC needs assessment carried out each year. Figures are shown by the outcome of the request, if a mediation or a tribunal occurred, and if the process met the statutory timeframe. Data is shown on a calendar year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name                     |  Variable description
+--------------------------------  |  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+breakdown                         |  Characteristics of child or young person for whom EHC needs assessment requested - Filter by characteristics of child or young person for whom EHC needs assessment requested
+mediation_related_request         |  Number of requests subject to mediation
+request_assess_pc                 |  Percentage of requests where LA decided to proceed with an assessment
+request_not_assess_pc             |  Percentage of requests where LA decided not to proceed with an assessment
+request_outcome_over_6_weeks      |  Number of requests where decision made after 6 weeks
+request_outcome_over_6_weeks_pc   |  Percentage of requests where decision made after 6 weeks
+request_outcome_six_weeks         |  Number of requests where decision made within 6 weeks
+request_outcome_six_weeks_pc      |  Percentage of requests where decision made within 6 weeks
+request_outstanding_pc            |  Percentage of requests ongoing
+request_withdrawn_pc              |  Percentage of requests withdrawn
+requests_decided_not_to_assess    |  Number of requests where LA decided not to proceed with an assessment
+requests_decided_to_assess        |  Number of requests where LA decided to proceed with an assessment
+requests_decision_not_made        |  Number of requests ongoing
+requests_received_in_year         |  Total requests for an EHC needs assessment
+requests_rya                      |  Requests where child in relevant youth accommodation
+requests_withdrawn                |  Number of requests withdrawn
+tribunal_after_mediation_request  |  Number of requests where tribunal followed mediation
+tribunal_related_request          |  Number of requests subject to a tribunal
+
+Footnotes:
+
+1. Age on the date the request for the EHC needs assessment was received.
+
+
+Number of EHC needs assessments, and the assessment outcomes
+
+Filename: assessments.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2019 to 2024
+Content summary: The number of EHC needs assessments carried out each year. Figures are shown by the outcome of assessment, whether a mediation or a tribunal occurred and whether the process met the statutory timeframe. Data is shown on a calendar year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name                      |  Variable description
+---------------------------------  |  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+assess_in_year                     |  Total number of EHC needs assessments
+assess_issued                      |  Number of assessments where a plan was issued
+assess_issued_pc                   |  Percentage of assessments where a plan was issued
+assess_not_issued                  |  Number of assessments where a plan was not issued
+assess_not_issued_pc               |  Percentage of assessments where a plan was not issued
+assess_not_made                    |  Number of assessments where the decision is outstanding
+assess_not_made_pc                 |  Percentage of assessments where the decision is outstanding
+assess_withdrawn                   |  Number of assessments where the request was withdrawn
+assess_withdrawn_pc                |  Percentage of assessments where the request was withdrawn
+breakdown                          |  Characteristics of child or young person for whom EHC needs assessment carried out - Filter by characteristics of child or young person for whom EHC needs assessment carried out
+number_assess_mediation            |  Number of mediations related to assessment decision
+number_assess_tribunal             |  Number of tribunals related to assessment decision
+number_asssess_mediation_tribunal  |  Number of tribunals following mediation related to assessment decision
+number_other_mediation             |  Number of mediations related to assessment for other reasons
+number_other_mediation_tribunal    |  Number of tribunals following mediations related to assessment for other reasons
+number_other_tribunal              |  Number of tribunals related to assessment for other reasons
+outcome_decision_over_time         |  Number of assessments where it was decided NOT to issue a plan which were over 16 weeks
+outcome_decision_over_time_pc      |  Percentage of assessments where it was decided NOT to issue a plan which were over 16 weeks
+outcome_decision_within_time       |  Number of assessments where it was decided NOT to issue a plan which were within 16 weeks
+outcome_decision_within_time_pc    |  Percentage of assessments where it was decided NOT to issue a plan which were within 16 weeks
+
+Footnotes:
+
+1. Age on the date the request for the EHC needs assessment was received.
+2. Percentages of assessments only apply where a decision was made.
+
+
+Timeliness - education, health and care plans issued within the statutory 20 week timeframe
+
+Filename: timeliness_20_week.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2019 to 2024
+Content summary: The number of plans issued and whether the issue of those plans met the statutory timeframe, both with, and without, exceptions applying. Data is shown on a calendar year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name                        |  Variable description
+-----------------------------------  |  --------------------------------------------------------------------------------------------------------------------------
+breakdown                            |  Characteristics of child or young person with EHC plan - Characteristics of child or young person for whom EHC plan issued
+PC_plans_issued_20_weeks_ex          |  EHC plans issued within 20 weeks excluding exceptions - %
+pc_plans_issued_gt_1_year            |  EHC plans issued after 52 weeks including exceptions - %
+PC_plans_issued_gt_1_year_ex         |  EHC plans issued after 52 weeks excluding exceptions - %
+pc_plans_issued_gt20weeks_ltYear     |  EHC plans issued between 20 and 52 weeks including exceptions- %
+PC_plans_issued_gt20weeks_ltYear_ex  |  EHC plans issued between 20 and 52 weeks excluding exceptions - %
+pc_plans_issued_within_20_weeks      |  EHC plans issued within 20 weeks including exceptions - %
+plans_issued_20_weeks_ex             |  EHC plans issued within 20 weeks excluding exceptions
+plans_issued_den                     |  Number of EHC plans issued including exeptions (denominator)
+plans_issued_den_ex                  |  Number of EHC plans issued excluding exeptions (denominator)
+plans_issued_gt_1_year               |  EHC plans issued after 52 weeks including exceptions
+plans_issued_gt_1_year_ex            |  EHC plans issued after 52 weeks excluding exceptions
+plans_issued_gt20weeks_ltYear        |  EHC plans issued between 20 and 52 weeks including exceptions
+plans_issued_gt20weeks_ltYear_ex     |  EHC plans issued between 20 and 52 weeks excluding exceptions
+plans_issued_within_20_weeks         |  EHC plans issued within 20 weeks including exceptions
+
+Footnotes:
+
+1. For the 2024 calendar year, Dorset and City of London have classed all new plans as having permitted exceptions to the 20 week statutory timeframe.
+
+
+Number and outcome of annual reviews of education, health and care plans
+
+Filename: annual_reviews.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2024
+Content summary: The number of annual reviews which took place each year. Figures are shown for the outcome of the review, and whether the review outcome met the statutory timeframe. Data is shown on a calendar year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name                |  Variable description
+---------------------------  |  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+breakdown                    |  Characteristics of EHC plan for which annual review is expected - Filter by characteristics of child or young person, years EHC plan in place or the placement attended
+no_outcome                   |  Number where no outcome is recorded
+no_review_meeting            |  Number with no annual review meeting recorded
+number_decision_gt_4weeks    |  Number where outcome of review communicated after 4 weeks
+number_decsion_4weeks        |  Number where outcome of review communicated within 4 weeks
+outcome_amend                |  Number where decision was to amend the plan
+outcome_cease                |  Number where decision was to cease the plan
+outcome_maintan              |  Number where the decision was to maintain the plan
+pc_decision_gt_4weeks        |  Percentage where outcome of review communicated after 4 weeks
+pc_decsion_4weeks            |  Percentage where outcome of review communicated within 4 weeks
+review_decision_not_due      |  Number where annual review decision not yet due
+review_decision_outstanding  |  Number where annual review decision is outstanding
+review_decision_prior24      |  Number where annual review decision recorded prior to 2024
+review_decision24            |  Number where annual review decision recorded in 2024
+review_decision25            |  Number where annual review decision recorded in 2025
+review_expected              |  Number where annual review expected
+review_meeting_24            |  Number where annual review meeting recorded in 2024
+review_meeting_25            |  Number where annual review meeting recorded in 2025
+review_meeting_prior_24      |  Number where annual review meeting recorded prior to 2024
+review_not_expected          |  Number where annual review not expected
+total_ehc_plans              |  Total number of EHC plans
+total_review_meeting         |  Number with annual review meeting recorded
+
+Footnotes:
+
+1. Blackpool and Reading were unable to return data on annual reviews in 2025. There are also queries regarding the quality of reviews data returned by Waltham Forest, Surrey, Redbridge, Hertfordshire and Plymouth. Data for these authorities has been suppressed pending further checks.
+
+
+Number of EHC plans with a personal budget in place
+
+Filename: personal_budgets.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2019/20 to 2024/25
+Content summary: The number of EHC plans where there is personal budget in place. This is broken down by age, sex, ethnicity and the type of setting attended. Figures are shown as at January each year, on an academic year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name    |  Variable description
+---------------  |  ---------------------------------------------------------------------------------------------------------------
+breakdown        |  Characteristics of residential placements - Filter by characteristics of plan where personal budget is in place
+org_arrangments  |  Number with organised arrangements
+pb_education     |  Personal budget covers education only
+pb_health        |  Personal budget covers health only
+pb_integrated    |  Personal budget covers any combination of education, health and social care
+pb_social        |  Personal budget covers social care only
+personal_budget  |  Total EHC plans with personal budget in place
+
+
+Number of residential placements
+
+Filename: residential_settings.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2018/19 to 2024/25
+Content summary: The number of residential placements, broken down by age, sex, ethnicity and the type of setting attended. Figures are shown as at January each year, on an academic year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name  |  Variable description
+---------  |  --------------------------------------------------------------------------------------------------------------------------
+breakdown  |  Characteristics of residential placements - Filter by characteristics of child or young person with residential placements
+Res_3851   |  Number of residential setting - between 38 and 51 weeks
+Res_52     |  Number of residential settings - 52 weeks
+Res_tot    |  Total number of residential settings
+
+
+Number of work placed placements
+
+Filename: work_based_placements.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2024/25
+Content summary: The number of work based placements each year, by age, sex, ethnicity and the type of setting attended. Figures are shown as at January, on an academic year basis, and also work based placements which were active in the previous calendar year.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name     |  Variable description
+----------------  |  -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+breakdown         |  Characteristics of young people with a work based placement - Filter by characteristics of child or young person, years EHC plan in place or the placement attended
+open_apprentice   |  Apprenticeships
+open_supp_intern  |  Supported internships
+open_trainee      |  Traineeships
+open_wbp          |  Total work based placements
+
+
+Number of EHC plans which ceased during the calendar year
+
+Filename: ceased_plans.csv
+Geographic levels: Local authority; National; Regional
+Time period: 2022 to 2024
+Content summary: The number of plans which ceased each year, and the reason why they ceased. This is broken down by the age when the plan ceased, sex, ethnicity, length of time plan in place and the last setting attended. Data is shown on an calendar year basis.
+
+Variable names and descriptions for this file are provided below:
+
+Variable name      |  Variable description
+-----------------  |  -------------------------------------------------------------------------------------------------------------------
+breakdown          |  Characteristics of child or young person where plan has ceased - Filter by characteristics of child or young person
+deceased           |  Number where child or young person deceased
+employ             |  Number moved to paid employment
+he                 |  Number moved to higher education
+max_age            |  Number where maximum age reached
+moved_outside_eng  |  Number who have moved outside England
+needs_met          |  Number where educational or training needs met without a plan
+no_engage          |  Number where young person no longer wishes to engage in education or training
+not_rec            |  Number ceased for other reasons
+other              |  Number where reason is not recorded
+total_ceased       |  Total number of ceased EHC plans
+transfer           |  Number transferred to another LA
+
+Footnotes:
+
+1. Age is calculated on the date the plan ceased.
