@@ -163,8 +163,7 @@
         (tc/map-columns :col-label    [:col-name] col-name->label)
         (tc/reorder-columns [:col-name :csv-col-name :col-label])))
 
-  (-> (->ds
-       #_{::resource-file-name default-resource-file-name})
+  (-> (->ds {::resource-file-name default-resource-file-name})
       (csv-ds-column-info (set/map-invert src-col-name->col-name)
                           col-name->label)
       (vary-meta assoc :print-index-range 1000))
