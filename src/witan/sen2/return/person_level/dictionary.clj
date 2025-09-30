@@ -28,6 +28,54 @@
 
 
 
+;;; # Cease Reason - reason the EHC plan ended: <CeaseReason>, per item 4.6 of the DfE 2025 SEN2 return.
+(def cease-reason
+  ""
+  (let [m {1  {:order       1
+               :label       "Max Age"
+               :description (str "Reached maximum age "
+                                 "(this is the end of the academic year during which "
+                                 "the young person turned 25, "
+                                 "or turns 19 if the young person enters the adult estate).")}
+           2  {:order       2
+               :label       "Needs Met"
+               :description (str "Ongoing educational or training needs "
+                                 "being met without an EHC plan "
+                                 "– this should only be used where there is "
+                                 "ongoing education and training.")}
+           3  {:order       3
+               :label       "Higher Ed"
+               :description (str "Moved on to higher education.")}
+           4  {:order       4
+               :label       "Employed"
+               :description (str "Moved on to paid employment, excluding apprenticeships.")}
+           5  {:order       5
+               :label       "Transfer Out"
+               :description (str "Transferred to another local authority in England.")}
+           6 {:order       6
+              :label       "No Engagement"
+              :description (str "Young person no longer wishes to engage in education or training "
+                                "– this should include where the young person "
+                                "has reached their 18th birthday and is no "
+                                "longer under a statutory duty to participate "
+                                "in education or training, and where a young "
+                                "person has yet to reach their 18th birthday "
+                                "but is not complying with their statutory duty "
+                                "to participate in education or training.")}
+           7 {:order       7
+              :label       "Left England"
+              :description (str "Person has moved outside England.")}
+           8 {:order       8
+              :label       "Deceased"
+              :description (str "Person deceased.")}
+           9 {:order       9
+              :label       "Other"
+              :description (str "Other - Where a large number of cases are "
+                                "recorded as ‘other’, the local authority will "
+                                "be prompted for further information in COLLECT.")}}]
+    (into (sorted-map-by (partial compare-get-in m :order)) m)))
+
+
 ;;; # SEN setting - Establishment type <SENsetting>, per items 4.7c & 5.7c of the DfE 2025 SEN2 return.
 (def sen-setting
   "SEN setting - Establishment type <SENsetting>, per items 4.7c & 5.7c of the DfE 2025 SEN2 return."
