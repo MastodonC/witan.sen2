@@ -28,9 +28,9 @@
 
 
 
-;;; # Cease Reason - reason the EHC plan ended: <CeaseReason>, per item 4.6 of the DfE 2025 SEN2 return.
+;;; # Named plan cease reason - reason the EHC plan ended: <CeaseReason>, per item 4.6 of the DfE 2025 SEN2 return.
 (def cease-reason
-  ""
+  "Named plan cease reason - reason the EHC plan ended: <CeaseReason>, per item 4.6 of the DfE 2025 SEN2 return."
   (let [m {1  {:order       1
                :label       "Max Age"
                :description (str "Reached maximum age "
