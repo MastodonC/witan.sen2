@@ -1,12 +1,12 @@
 (ns sen2-blade-csv-eda
   "EDA of SEN2 Blade read from COLLECT Blade CSV export."
   #:nextjournal.clerk{:toc                  true
-                      :visibility           {:code :hide, :result :hide}
+                      :visibility           {:code   :hide
+                                             :result :hide}
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [clojure.string :as string]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
             [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
@@ -102,19 +102,3 @@
 ;; Note: Except for `person`, OK if not a unique key without `requests-table-id`,
 (sen2-blade-eda/report-unique-keys @sen2-blade/ds-map)
 (sen2-blade-eda/report-table-keys)
-
-
-
-
-^#::clerk{:visibility {:result :hide}}
-(comment ;; clerk build
-  (let [in-path  (str "templates/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
-        out-path (str out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
-    (clerk/build! {:paths      [in-path]
-                   :ssr        true
-                   #_#_:bundle true         ; clerk v0.15.957
-                   :package    :single-file ; clerk v0.16.1016
-                   :out-path   "."})
-    (.renameTo (io/file "./index.html") (io/file out-path)))
-
-  )
