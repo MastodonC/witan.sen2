@@ -156,7 +156,7 @@
   "
   [sen2-blade-ds-map census-dates-ds]
   (-> (sen2-blade-ds-map :placement-detail)
-      (extract-episodes-on-census-dates census-dates-ds :entry-date :leaving-date )
+      (extract-episodes-on-census-dates census-dates-ds :entry-date :leaving-date)
       ;; Add `:census-date-placement-idx` to index multiple placements in `:placement-rank` order.
       (tc/order-by [:person-table-id :requests-table-id :census-date :placement-rank])
       (tc/group-by [:person-table-id :requests-table-id :census-date])
@@ -260,13 +260,13 @@
         ;; As full (outer) join the join keys may be nil in either dataset so coalesce into single column.
         ((fn [ds] (cond-> ds
                     (contains? ds :placement-detail.sen2-table-id) ; May not have `:sen2-table-id`
-                    (tc/map-columns :sen2-table-id         [:sen2-table-id     :placement-detail.sen2-table-id    ] #(or %1 %2))
+                    (tc/map-columns :sen2-table-id         [:sen2-table-id     :placement-detail.sen2-table-id]     #(or %1 %2))
                     true
-                    (tc/map-columns :person-table-id       [:person-table-id   :placement-detail.person-table-id  ] #(or %1 %2))
+                    (tc/map-columns :person-table-id       [:person-table-id   :placement-detail.person-table-id]   #(or %1 %2))
                     true
                     (tc/map-columns :requests-table-id     [:requests-table-id :placement-detail.requests-table-id] #(or %1 %2))
                     true
-                    (tc/map-columns :census-date           [:census-date       :placement-detail.census-date      ] #(or %1 %2)))))
+                    (tc/map-columns :census-date           [:census-date       :placement-detail.census-date]       #(or %1 %2)))))
         (tc/drop-columns #"^:placement-detail\..+$")
         ;;
         ;; Merge in `sen-need` EHCP primary need (if available)
@@ -304,12 +304,12 @@
         (tc/drop-columns #"^:person\..+$")
         ;; Arrange dataset
         (tc/reorder-columns (distinct (concat sen2-blade-table-id-col-names
-                                              [                  ] (tc/column-names census-dates-ds)
-                                              [:person?          ] (sen2-blade-module-cols-to-select :person) [:age-at-start-of-school-year :ncy-nominal]
-                                              [:named-plan?      ] (sen2-blade-module-cols-to-select :named-plan)
-                                              [:active-plans?    ] (sen2-blade-module-cols-to-select :active-plans)
+                                              []                   (tc/column-names census-dates-ds)
+                                              [:person?]           (sen2-blade-module-cols-to-select :person) [:age-at-start-of-school-year :ncy-nominal]
+                                              [:named-plan?]       (sen2-blade-module-cols-to-select :named-plan)
+                                              [:active-plans?]     (sen2-blade-module-cols-to-select :active-plans)
                                               [:placement-detail?] (sen2-blade-module-cols-to-select :placement-detail)
-                                              [:sen-need?        ] (sen2-blade-module-cols-to-select :sen-need))))
+                                              [:sen-need?]         (sen2-blade-module-cols-to-select :sen-need))))
         (tc/order-by [:person-table-id :census-date :requests-table-id])
         (tc/set-dataset-name "plans-placements-on-census-dates"))))
 
@@ -727,8 +727,7 @@
    :total-row-count {:idx           998
                      :label         "TOTAL number of records"
                      :summary-fn    tc/row-count
-                     :summary-label "#rows"
-                     }
+                     :summary-label "#rows"}
    :total-num-cyp   {:idx           999
                      :label         "TOTAL number of CYP"
                      :summary-fn    (comp count distinct :person-table-id)
@@ -1097,7 +1096,7 @@
                 additional-val-cols]
          :or   {person-id-col-name :person-table-id}}]
   (-> ds
-      (tc/map-columns :val-col-name [:census-year :return-year] #(cond (= %1    %2   ) :census-year-return
+      (tc/map-columns :val-col-name [:census-year :return-year] #(cond (= %1    %2)    :census-year-return
                                                                        (= %1 (- %2 1)) :next-year-return
                                                                        :else           :other))
       (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
