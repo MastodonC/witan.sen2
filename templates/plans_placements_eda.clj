@@ -2,29 +2,35 @@
   "Report on plans & placements on census dates extracted from SEN2 Blade."
   #:nextjournal.clerk{:toc                  true
                       :visibility           {:code   :hide
-                                             :result :show}
+                                             :result :hide}
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [clojure.string :as string]
-            [clojure.java.io :as io]
-            [nextjournal.clerk :as clerk]
+  (:require [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-	    [witan.send.adroddiad.tablecloth-utils :as tc-utils]
+            [witan.send.adroddiad.tablecloth-utils :as tc-utils]
+            [witan.sen2.return.person-level.dictionary :as sen2-dictionary]
             [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
-            [sen2-blade :as sen2-blade] ; <- replace with workpackage specific version
+            [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
             [witan.sen2.ehcp-stats :as ehcp-stats]))
 
 
-^{;; Notebook header
-  ::clerk/no-cache true}
-(clerk/md (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
-               "# witan.sen2"
-               (format "  \n`%s`  \n" *ns*)
-               ((comp :doc meta) *ns*)
-               "  \nTimeStamp: " (.format (java.time.LocalDateTime/now)
-                                          (java.time.format.DateTimeFormatter/ISO_LOCAL_DATE_TIME))))
+(def client-name      "Mastodon C")
+(def workpackage-name "witan.sen2")
+(def out-dir "Output directory" "./tmp/")
+
+^#::clerk{:visibility {:result :show},:viewer clerk/md, :no-cache true} ; Notebook header
+(str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
+     (format "# %s SEND %s  \n" client-name workpackage-name)
+     (format "`%s`\n\n" *ns*)
+     (format "%s\n\n" ((comp :doc meta) *ns*))
+     (format "Produced: `%s`\n\n"  (.format (java.time.LocalDateTime/now)
+                                            (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu HH:mm:ss"
+                                                                                          (java.util.Locale. "en_GB")))))
+
+(defn doc-var [v] (format "%s:  \n`%s`." (-> v meta :doc) (var-get v)))
+{::clerk/visibility {:result :show}}
 
 
 
@@ -35,17 +41,19 @@
 ;; 3. Identify issues in the dataset of plans & placements and create an
 ;;    issues CSV file for review and entry of updates.
 ;; 4. Compare Totals with DfE Caseload
+;; 5. Additional EDA
 
 
 
 ;;; ## Parameters
 ;;; ### Output directory
-^{::clerk/viewer clerk/md}
-(def out-dir "./tmp/")
+^#::clerk{:viewer clerk/md}
+(doc-var #'out-dir)
+
 
 ;;; ### LA
 ^{::clerk/viewer clerk/md}
-(def la-name "Plymouth")
+(def la-name "South Tyneside")
 
 
 
@@ -67,40 +75,102 @@
 
 ;;; ### Census dates
 ^{::clerk/viewer (partial clerk/table {::clerk/width :prose})}
-plans-placements/census-dates-ds
+(-> plans-placements/census-dates-ds
+    (tc/map-columns :census-date #(.toString %)))
 
 
 ;;; ### `plans-placements-on-census-dates` dataset 
-;; `plans-placements-on-census-dates` dataset structure:
-^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(tc-utils/column-info-with-labels @plans-placements/plans-placements-on-census-dates
-                                  @plans-placements/plans-placements-on-census-dates-col-name->label)
-
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: `%s`:"
         (tc/dataset-name @plans-placements/plans-placements-on-census-dates)
         plans-placements/out-dir)
 
+;; dataset structure:
+^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
+(tc-utils/column-info-with-labels @plans-placements/plans-placements-on-census-dates
+                                  @plans-placements/plans-placements-on-census-dates-col-name->label)
+
 
 
 ;;; ## 3. Issues
-;;; ### Issues dataset
-;; `plans-placements-on-census-dates-issues` dataset structure:
+;;; ### Issues summary
+;; Summary of issues (& numbers of CYP & records with issues) by `:census-date`:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(tc-utils/column-info-with-labels @plans-placements/plans-placements-on-census-dates-issues
-                                  @plans-placements/plans-placements-on-census-dates-issues-col-name->label)
+(-> @plans-placements/plans-placements-on-census-dates-issues
+    sen2-blade-plans-placements/drop-falsey-issue-columns
+    (sen2-blade-plans-placements/summarise-issues (merge @plans-placements/checks
+                                                         sen2-blade-plans-placements/checks-total-issues)))
 
+;;; ### Establishment issues
+;;; #### URNs with unexpected GIAS Establishment Types for a SEND Placement
+;; To check URNs and appropriate settings:
+^#::clerk{:viewer (partial clerk/table {::clerk/width :wide})}
+(-> @plans-placements/plans-placements-on-census-dates-issues
+    (tc/select-rows (some-fn :issue-urn-for-unexpected-gfe-gias-establishment-type
+                             :issue-urn-for-unexpected-othe-gias-establishment-type))
+    (tc/select-columns [:urn :census-year])
+    (tc/fold-by [:urn] frequencies)
+    (tc/map-rows (fn [{:keys [urn]}]
+                   (-> urn
+                       (@plans-placements/edubaseall-send-map)
+                       (select-keys [:establishment-name :type-of-establishment-name]))))
+    (tc/reorder-columns [:establishment-name :urn :type-of-establishment-name :census-year])
+    (tc/order-by [:establishment-name]))
+
+;;; #### SEN Unit | RP flagged at estab. other than URNs GIAS says has them
+;; To check flagging of SENU & RP:
+^#::clerk{:viewer (partial clerk/table {::clerk/width :full})}
+(-> @plans-placements/plans-placements-on-census-dates-issues
+    (tc/select-rows (some-fn :issue-senu-flagged-at-estab-without-one
+                             :issue-resourced-provision-flagged-at-estab-without-one))
+    (tc/select-columns (conj sen2-blade-plans-placements/sen2-estab-keys :census-year))
+    (tc/fold-by sen2-blade-plans-placements/sen2-estab-keys frequencies)
+    (tc/map-rows (fn [{:keys [urn]}]
+                   (-> urn
+                       (@plans-placements/edubaseall-send-map)
+                       (select-keys [:establishment-name :sen-unit? :resourced-provision?]))))
+    (tc/reorder-columns [:establishment-name :sen-unit? :resourced-provision?])
+    (tc/order-by [:establishment-name])
+    (tc/update-columns [:sen-unit? :resourced-provision? :sen-unit-indicator :resourced-provision-indicator]
+                       (partial map {false "×", true "✅"}))
+    (tc/convert-types {:ukprn :string, :sen-setting :string})
+    (#(tc/replace-missing % (tc/column-names % #{:string} :datatype) :value " ")))
+
+;;; #### SEN2 Establishments with fewer placed than expected
+;; Flagging Specialist Provision with less 75% of the places taken by LAs CYP,
+;; in particular to check SENU & RP flagging:
+^#::clerk{:viewer (partial clerk/table {::clerk/width :wide})}
+(-> @plans-placements/plans-placements-on-census-dates-issues
+    (tc/select-rows :issue-less-placements-than-expected)
+    (tc/select-columns (conj sen2-blade-plans-placements/sen2-estab-keys :census-year :issue-less-placements-than-expected))
+    tc/unique-by
+    (tc/order-by [:census-year])
+    (tc/pivot->wider :census-year :issue-less-placements-than-expected {:drop-missing? false})
+    ((fn [ds] (tc/update-columns ds (tc/column-names ds :type/numerical) (partial map #(if % (str %) "≥")))))
+    (tc/map-columns :establishment-name [:urn] (comp :establishment-name @plans-placements/edubaseall-send-map))
+    (tc/reorder-columns [:establishment-name])
+    (tc/order-by [:establishment-name])
+    (tc/update-columns [:sen-unit-indicator :resourced-provision-indicator]
+                       (partial map {nil " ", false "×", true "✅"}))
+    (tc/convert-types {:ukprn :string, :sen-setting :string})
+    (#(tc/replace-missing % (tc/column-names % #{:string} :datatype) :value " ")))
+
+;; Note: "≥" in the census year column indicates the number placed was above the check threshold.
+
+
+;;; ### Issues dataset
 ^{::clerk/viewer clerk/md}
 (format "Wrote `%s`  \nto working directory: `%s`:"
         (tc/dataset-name @plans-placements/plans-placements-on-census-dates-issues)
         plans-placements/out-dir)
 
-
-;;; ### Issues summary
-;; Summary of issues (& numbers of CYP & records) by `:census-date`:
+;; dataset structure:
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(sen2-blade-plans-placements/summarise-issues @plans-placements/plans-placements-on-census-dates-issues
-                                              plans-placements/checks)
+(tc-utils/column-info-with-labels @plans-placements/plans-placements-on-census-dates-issues
+                                  @plans-placements/plans-placements-on-census-dates-issues-col-name->label)
+
+
+
 
 
 ;;; ## 4. Compare Totals with DfE Caseload
@@ -154,15 +224,22 @@ plans-placements/census-dates-ds
 
 
 
+;;; ## 5. Additional EDA
+;;; ### `sen-settings`
+^#::clerk{:viewer (partial clerk/table {:clerk/width :prose})}
+(-> @plans-placements/plans-placements-on-census-dates
+    (tc/select-columns [:sen-setting :census-year])
+    (tc/order-by [:census-year])
+    (tc/fold-by [:sen-setting] frequencies)
+    (tc/order-by [(comp :order sen2-dictionary/sen-setting :sen-setting)])
+    (tc/update-columns [:sen-setting] (partial map #(when % (str "\"" % "\"")))))
 
-^{::clerk/visibility {:result :hide}}
-(comment ;; clerk build
-  (let [in-path            (str "templates/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
-        out-path           (str out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
-    (clerk/build! {:paths       [in-path]
-                   :ssr         true
-                   :bundle      true         ; clerk v0.15.957
-                   #_#_:package :single-file ; clerk v0.16.1016
-                   :out-path    "."})
-    (.renameTo (io/file "./index.html") (io/file out-path)))
-  )
+;;; ### `sen-setting-other` strings
+^#::clerk{:viewer (partial clerk/table {:clerk/width :prose})}
+(-> @plans-placements/plans-placements-on-census-dates
+    (tc/select-columns [:sen-setting :sen-setting-other :census-year])
+    (tc/order-by [:census-year])
+    (tc/fold-by [:sen-setting :sen-setting-other] frequencies)
+    (tc/order-by [(comp :order sen2-dictionary/sen-setting :sen-setting)
+                  :sen-setting-other])
+    (tc/update-columns [:sen-setting] (partial map #(when % (str "\"" % "\"")))))
