@@ -720,8 +720,8 @@
       ((fn [m] (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
                                                          [(get-in m [k2 :idx]) k2]))) m))))))
 
-(def checks-totals
-  "Additional summaries of #rows and #CYP that can be merged onto checks."
+(def checks-total-issues
+  "Additional summaries of #rows and #CYP with issues that can be merged onto checks."
   {:issue-row-count {:idx           996
                      :label         "TOTAL number of records with issues flagged"
                      :summary-fn    #(-> %
@@ -736,8 +736,11 @@
                                          (tc/select-rows :issue?)
                                          (tc/unique-by [:person-table-id])
                                          tc/row-count)
-                     :summary-label "#CYP"}
-   :total-row-count {:idx           998
+                     :summary-label "#CYP"}})
+
+(def checks-total-records
+  "Additional summaries of #rows and #CYP that can be merged onto checks."
+  {:total-row-count {:idx           998
                      :label         "TOTAL number of records"
                      :summary-fn    tc/row-count
                      :summary-label "#rows"}
@@ -745,6 +748,11 @@
                      :label         "TOTAL number of CYP"
                      :summary-fn    (comp count distinct :person-table-id)
                      :summary-label "#CYP"}})
+
+(def checks-totals
+  "Additional summaries of #rows and #CYP with issues and in total that can be merged onto checks."
+  (merge checks-total-issues
+         checks-total-records))
 
 (defn flag-issues
   "Run `checks` on dataset `ds`, adding issue flag columns."
