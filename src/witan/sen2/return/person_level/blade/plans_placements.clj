@@ -334,6 +334,19 @@
            :placement-detail? "Got placement details from `placement-detail`?"
            :sen-need?         "Got an EHCP primary need from `sen-need`?"}))
 
+(defn csv-col-labels-dataset
+  "Given dataset and map mapping column names to labels, returns dataset with
+   columns `:column-number`, `:column-name` & `:column label` where any keyword 
+   column names are converted to names to match how `tc/write!` saves column
+   names in a CSV file."
+  [ds col-name->label]
+  (let [ds-col-names    (tc/column-names ds)
+        ds-dataset-name (tc/dataset-name ds)]
+    (tc/dataset {:column-number (iterate inc 1)
+                 :column-name   (map #(if (keyword? %) (name %) %) ds-col-names)
+                 :column-label  (map col-name->label ds-col-names)}
+                {:dataset-name (str ds-dataset-name "-col-labels")})))
+
 
 
 ;;; # Checks
