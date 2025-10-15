@@ -13,7 +13,9 @@
             [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
             [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
-            [witan.sen2.ehcp-stats :as ehcp-stats]))
+            )
+  (:import [java.time LocalDateTime]
+           [java.time.format DateTimeFormatter]))
 
 
 (def client-name      "Mastodon C")
@@ -25,9 +27,9 @@
      (format "# %s SEND %s  \n" client-name workpackage-name)
      (format "`%s`\n\n" *ns*)
      (format "%s\n\n" ((comp :doc meta) *ns*))
-     (format "Produced: `%s`\n\n"  (.format (java.time.LocalDateTime/now)
-                                            (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu HH:mm:ss"
-                                                                                          (java.util.Locale. "en_GB")))))
+     (format "Produced: `%s`\n\n"  (.format (LocalDateTime/now)
+                                            (DateTimeFormatter/ofPattern "dd-MMM-uuuu HH:mm:ss"
+                                                                         (java.util.Locale. "en_GB")))))
 
 (defn doc-var [v] (format "%s:  \n`%s`." (-> v meta :doc) (var-get v)))
 {::clerk/visibility {:result :show}}
@@ -175,52 +177,15 @@
 
 ;;; ## 4. Compare Totals with DfE Caseload
 ;;; ### #CYP with plan and/or placement record on census-date
-;; …and discrepancy in # with both a plan & a placement record open on the census-date
-;; with the EHCP caseload published by the DfE on [explore-education-statistics.service.gov.uk](https://explore-education-statistics.service.gov.uk/find-statistics/education-health-and-care-plans):
-^{::clerk/visibility {:result :hide}}
-(defn plan-placement-stats
-  [plans-placements-on-census-dates la-name]
-  (let [census-dates-ds                  (-> plans-placements-on-census-dates
-                                             (tc/select-columns [:census-year :census-date])
-                                             tc/unique-by
-                                             (tc/order-by [:census-year]))
-        stats                            (-> plans-placements-on-census-dates
-                                             (tc/map-rows (fn [{:keys [named-plan? placement-detail?]}]
-                                                            {:num-plans              (if named-plan? 1 0)
-                                                             :num-placements         (if placement-detail? 1 0)
-                                                             :num-plan-or-placement  (if (or named-plan?
-                                                                                             placement-detail?) 1 0)
-                                                             :num-plan-and-placement (if (and named-plan?
-                                                                                              placement-detail?) 1 0)}))
-                                             (tc/group-by [:census-year])
-                                             (tc/aggregate {:num-plans              #(reduce + (% :num-plans))
-                                                            :num-placements         #(reduce + (% :num-placements))
-                                                            :num-plan-or-placement  #(reduce + (% :num-plan-or-placement))
-                                                            :num-plan-and-placement #(reduce + (% :num-plan-and-placement))}))
-        caseload                         (-> @ehcp-stats/caseload
-                                             (tc/select-rows (comp #{la-name} :la-name))
-                                             (tc/select-rows (comp (apply hash-set (:census-year census-dates-ds)) :time-period))
-                                             (tc/select-columns [:time-period :num-caseload])
-                                             (tc/rename-columns {:time-period :census-year})
-                                             (tc/set-dataset-name "caseload"))]
-    (->  census-dates-ds
-         (tc/map-columns :census-date-str [:census-date]
-                         #(.format % (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu"
-                                                                                   (java.util.Locale. "en_GB"))))
-         (tc/left-join stats [:census-year])
-         (tc/left-join caseload [:census-year])
-         (tc/drop-columns #"^:.*\.census-year")
-         (tc/drop-columns [:census-date])
-         (tc/rename-columns {:census-year            "Census Year"
-                             :census-date-str        "Census Date"
-                             :num-plans              "#plans"
-                             :num-placements         "#placements"
-                             :num-plan-or-placement  "#plan|placement"
-                             :num-plan-and-placement "#plan&placement"
-                             :num-caseload           "EHCP Caseload"}))))
-
+;; With the EHCP caseload as published by the DfE at  
+;; [explore-education-statistics.service.gov.uk](https://explore-education-statistics.service.gov.uk/find-statistics/education-health-and-care-plans):
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
-(plan-placement-stats @plans-placements/plans-placements-on-census-dates la-name)
+(-> @plans-placements/plans-placements-on-census-dates
+    (sen2-blade-plans-placements/plan-placement-stats la-name)
+    (tc/update-columns :census-date (partial map #(.format % (DateTimeFormatter/ofPattern
+                                                              "dd-MMM-uuuu"
+                                                              (java.util.Locale. "en_GB")))))
+    (tc/rename-columns sen2-blade-plans-placements/plan-placement-stats-col-name->label))
 
 
 

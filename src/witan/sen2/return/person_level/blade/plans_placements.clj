@@ -6,6 +6,7 @@
             [tablecloth.api :as tc]
             [tablecloth.column.api :as tcc]
             [witan.gias :as gias]
+            [witan.sen2.caseload :as caseload]
             [witan.sen2.ncy :as ncy]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]))
 
@@ -1129,3 +1130,49 @@
       (tc/reorder-columns [person-id-col-name :census-year :census-date :census-year-return :next-year-return])
       (tc/order-by [person-id-col-name :census-year])))
 
+
+
+;;; # EDA
+(defn plan-placement-stats
+  "Given a `plans-placements-on-census-dates` dataset (possibly with records from
+   multiple returns identified by `:return-year`), summarises numbers of 
+   records with `:named-plan?` and/or `:placement-detail?` for each `:census-year`
+   (& `:return-year`), and adds on the published EHCP caseload for LA `la-name` 
+   for comparison."
+  [plans-placements-on-census-dates la-name]
+  (let [return-census-dates-ds (-> plans-placements-on-census-dates
+                                   (tc/select-columns [:census-year :census-date :return-year])
+                                   tc/unique-by
+                                   (tc/order-by [:census-year :census-date :return-year]))
+        stats                  (-> plans-placements-on-census-dates
+                                   (tc/map-rows (fn [{:keys [named-plan? placement-detail?]}]
+                                                  {:num-plans              (if named-plan? 1 0)
+                                                   :num-placements         (if placement-detail? 1 0)
+                                                   :num-plan-or-placement  (if (or named-plan?
+                                                                                   placement-detail?) 1 0)
+                                                   :num-plan-and-placement (if (and named-plan?
+                                                                                    placement-detail?) 1 0)}))
+                                   (tc/group-by [:census-year :return-year])
+                                   (tc/aggregate-columns [:num-plans
+                                                          :num-placements
+                                                          :num-plan-or-placement
+                                                          :num-plan-and-placement]
+                                                         tcc/reduce-+))
+        caseload               (-> (caseload/->ds)
+                                   (tc/select-rows #(-> %
+                                                        ((juxt :la-name :breakdown))
+                                                        (= [la-name "All EHC plans"])))
+                                   (tc/select-columns [:census-year :ehcplans]))]
+    (->  return-census-dates-ds
+         (tc/left-join stats [:census-year :return-year])
+         (tc/left-join caseload [:census-year])
+         (tc/drop-columns #"^:.*\.(census|return)-year"))))
+
+(def plan-placement-stats-col-name->label
+  {:census-year            "Census Year"
+   :census-date            "Census Date"
+   :num-plans              "#plans"
+   :num-placements         "#placements"
+   :num-plan-or-placement  "#plan|placement"
+   :num-plan-and-placement "#plan&placement"
+   :ehcplans               "EHCP Caseload"})
