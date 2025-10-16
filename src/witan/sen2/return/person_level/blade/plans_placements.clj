@@ -2,7 +2,7 @@
   "Tools to extract and manipulate plans & placements on census dates
    (with person details and EHCP primary need) from SEN2 Blade."
   (:require [clojure.set :as set]
-            [clojure.string :as string]
+            [clojure.string :as str]
             [tablecloth.api :as tc]
             [tablecloth.column.api :as tcc]
             [witan.gias :as gias]
@@ -834,7 +834,7 @@
          (update-vals checks :label)
          (reduce (fn [m k] (assoc m k (-> k
                                           name
-                                          (#(string/replace % "update-" ""))
+                                          (#(str/replace % "update-" ""))
                                           (#(plans-placements-on-census-dates-col-name->label (keyword %) %))
                                           ((partial str "Update: ")))))
                  {} names-of-update-cols)))
@@ -895,8 +895,8 @@
 
 
 ;;; # CSV file read
-(def parser-fn
-  "Parser function for reading plans-placements-on-census-dates from CSV files."
+(def csv-parser-fn
+  "Map of parser functions for reading columns of plans-placements-on-census-dates dataset from CSV files."
   {:sen2-table-id                     :string
    :person-table-id                   :string
    :requests-table-id                 :string
@@ -944,11 +944,29 @@
   [filepath & {:keys [column-allowlist key-fn parser-fn]
                :or   {column-allowlist (map name cols-to-keep)
                       key-fn           keyword
-                      parser-fn        parser-fn}}]
+                      parser-fn        csv-parser-fn}}]
   (tc/dataset filepath
               {:column-allowlist column-allowlist
                :key-fn           key-fn
                :parser-fn        parser-fn}))
+
+(def update-cols-parser-fn
+  "Map of parser functions for reading the update columns from a CSV file."
+  (into {}
+        (map (fn [k]
+               [k (or ({:update-drop? :boolean
+                        :update-notes :string} k)
+                      (-> k
+                          name
+                          (str/replace #"update-" "")
+                          keyword
+                          csv-parser-fn))]))
+        names-of-update-cols))
+
+(def issues-csv-parser-fn
+  "Map of parser functions for reading columns of issues dataset from CSV file."
+  (merge csv-parser-fn
+         update-cols-parser-fn))
 
 (def updates-ds-required-cols
   "Required columns for updates dataset."
@@ -964,21 +982,7 @@
   [filepath & {:keys [column-allowlist key-fn parser-fn]
                :or   {column-allowlist (map name updates-ds-required-cols)
                       key-fn           keyword
-                      parser-fn        (merge (select-keys parser-fn [:person-table-id
-                                                                      :census-date
-                                                                      :census-year
-                                                                      :requests-table-id])
-                                              {:update-drop? :boolean}
-                                              (-> parser-fn
-                                                  (select-keys [:ncy-nominal
-                                                                :urn
-                                                                :ukprn
-                                                                :sen-unit-indicator
-                                                                :resourced-provision-indicator
-                                                                :sen-setting
-                                                                :sen-type
-                                                                :upn])
-                                                  (update-keys (comp keyword (partial str "update-") name))))}}]
+                      parser-fn        issues-csv-parser-fn}}]
   (tc/dataset filepath
               {:column-allowlist column-allowlist
                :key-fn           key-fn
