@@ -108,35 +108,15 @@
 ;; To check URNs and appropriate settings:
 ^#::clerk{:viewer (partial clerk/table {::clerk/width :wide})}
 (-> @plans-placements/plans-placements-on-census-dates-issues
-    (tc/select-rows (some-fn :issue-urn-for-unexpected-gfe-gias-establishment-type
-                             :issue-urn-for-unexpected-othe-gias-establishment-type))
-    (tc/select-columns [:urn :census-year])
-    (tc/fold-by [:urn] frequencies)
-    (tc/map-rows (fn [{:keys [urn]}]
-                   (-> urn
-                       (@plans-placements/edubaseall-send-map)
-                       (select-keys [:establishment-name :type-of-establishment-name]))))
-    (tc/reorder-columns [:establishment-name :urn :type-of-establishment-name :census-year])
-    (tc/order-by [:establishment-name]))
+    (sen2-blade-plans-placements/summarise-urns-with-unexpected-establishment-type-issues
+     {:edubaseall-send-map @plans-placements/edubaseall-send-map}))
 
 ;;; #### SEN Unit | RP flagged at estab. other than URNs GIAS says has them
 ;; To check flagging of SENU & RP:
 ^#::clerk{:viewer (partial clerk/table {::clerk/width :full})}
 (-> @plans-placements/plans-placements-on-census-dates-issues
-    (tc/select-rows (some-fn :issue-senu-flagged-at-estab-without-one
-                             :issue-resourced-provision-flagged-at-estab-without-one))
-    (tc/select-columns (conj sen2-blade-plans-placements/sen2-estab-keys :census-year))
-    (tc/fold-by sen2-blade-plans-placements/sen2-estab-keys frequencies)
-    (tc/map-rows (fn [{:keys [urn]}]
-                   (-> urn
-                       (@plans-placements/edubaseall-send-map)
-                       (select-keys [:establishment-name :sen-unit? :resourced-provision?]))))
-    (tc/reorder-columns [:establishment-name :sen-unit? :resourced-provision?])
-    (tc/order-by [:establishment-name])
-    (tc/update-columns [:sen-unit? :resourced-provision? :sen-unit-indicator :resourced-provision-indicator]
-                       (partial map {false "×", true "✅"}))
-    (tc/convert-types {:ukprn :string, :sen-setting :string})
-    (#(tc/replace-missing % (tc/column-names % #{:string} :datatype) :value " ")))
+    (sen2-blade-plans-placements/summarise-sen2-etabs-with-SENU-RP-flagged-issues
+     {:edubaseall-send-map @plans-placements/edubaseall-send-map}))
 
 ;;; #### SEN2 Establishments with fewer placed than expected
 ;; Flagging Specialist Provision with less 75% of the places taken by LAs CYP,

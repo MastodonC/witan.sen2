@@ -892,6 +892,62 @@
                             :summary-label "Summary"})
         (tc/set-dataset-name "issue-summary"))))
 
+(defn summarise-urns-with-unexpected-establishment-type-issues
+  "Summarises establishments in plans-placements-on-census-dates-issues dataset `ds`
+   identified as being of an unexpected type in columns specified by `issue-cols-selector`
+   (default #\"^:issue-urn-for-unexpected-.+-establishment-type\").
+   Summmary includes frequencies by `census-year-col` (default `:census-year-*` 
+   if present, otherwise `:census-year`), with establishment details from 
+   `edubaseall-send-map` (which should be the same version as that used to 
+   identify the issues, defaulting if not provided to the current default 
+   `witan.gias/edubaseall-send->map`)."
+  [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map]
+         :or   {issue-cols-selector #"^:issue-urn-for-unexpected-.+-establishment-type"
+                census-year-col     (-> ds (tc/column-names [:census-year-* :census-year]) first)}}]
+  (let [issue-cols          (tc/column-names ds issue-cols-selector)
+        edubaseall-send-map (or edubaseall-send-map (gias/edubaseall-send->map))]
+    (-> ds
+        (tc/select-rows (apply some-fn issue-cols))
+        (tc/select-columns [:urn census-year-col])
+        (tc/fold-by [:urn] frequencies)
+        (tc/map-rows (fn [{:keys [urn]}]
+                       (-> (edubaseall-send-map urn)
+                           (select-keys [:establishment-name :type-of-establishment-name]))))
+        (tc/reorder-columns [:establishment-name :urn :type-of-establishment-name census-year-col])
+        (tc/order-by [:establishment-name]))))
+
+(defn summarise-sen2-etabs-with-SENU-RP-flagged-issues
+  "Summarises SEN2 establishments in plans-placements-on-census-dates-issues dataset `ds`
+   identified as having SENU or RP flagged when GIAS says there isn't one.
+   Issue records identified by truthy value in columns specified by `issue-cols-selector`
+   (default `[:issue-senu-flagged-at-estab-without-one :issue-resourced-provision-flagged-at-estab-without-one]`).
+   Summmary includes frequencies by `census-year-col` (default `:census-year-*` 
+   if present, otherwise `:census-year`), with establishment details from 
+   `edubaseall-send-map` (which should be the same version as that used to 
+   identify the issues, defaulting if not provided to the current default 
+   `witan.gias/edubaseall-send->map`)."
+  [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map]
+         :or   {issue-cols-selector [:issue-senu-flagged-at-estab-without-one
+                                     :issue-resourced-provision-flagged-at-estab-without-one]
+                census-year-col     (-> ds (tc/column-names [:census-year-* :census-year]) first)}}]
+  (let [issue-cols          (tc/column-names ds issue-cols-selector)
+        edubaseall-send-map (or edubaseall-send-map (gias/edubaseall-send->map))]
+    (-> ds
+        (tc/select-rows (apply some-fn issue-cols))
+        (tc/select-columns (conj sen2-estab-keys census-year-col))
+        (tc/fold-by sen2-estab-keys frequencies)
+        (tc/map-rows (fn [{:keys [urn]}]
+                       (-> (edubaseall-send-map urn)
+                           (select-keys [:establishment-name :sen-unit? :resourced-provision?]))))
+        (tc/reorder-columns [:establishment-name :sen-unit? :resourced-provision?])
+        (tc/order-by [:establishment-name])
+        (tc/update-columns [:sen-unit? :resourced-provision? :sen-unit-indicator :resourced-provision-indicator]
+                           (partial map {false "×"
+                                         true  "✅"}))
+        (tc/convert-types {:ukprn       :string
+                           :sen-setting :string})
+        (#(tc/replace-missing % (tc/column-names % #{:string} :datatype) :value " ")))))
+
 
 
 ;;; # CSV file read
@@ -1095,16 +1151,48 @@
 
 
 ;;; # Combining
+(defn census-year-*
+  "Given the `census-year` (the year of the SEN2 census date of a plan/placement)
+   and the SEN2 `return-year` from which the plan/placement was identified,
+   returns a string indicating both:
+   - YYYY= indicates record for YYYY SEN2 census date
+           from year YYYY SEN2 return
+           (i.e. the return for that year);
+   - YYYY+ indicates record for YYYY SEN2 census date
+           from year YYYY + 1 SEN2 return 
+           (i.e. the return for the following year)."
+  [census-year return-year]
+  (cond
+    (=      census-year  return-year) (str census-year "=")
+    (= (inc census-year) return-year) (str census-year "+")
+    :else nil))
+
 (defn concat-plans-placements-on-census-dates
   "Given sequence `xs` of datasets of plans-placements-on-census-dates from
-   different years SEN2 returns, adds column `:return-year` to each (derived as 
-   the maximum `:census-year`) and concatenates them."
-  [xs & {:keys [person-id-col-name]
-         :or   {person-id-col-name :person-table-id}}]
+   individual SEN2 returns for different years, adds columns `:return-year` & 
+   `:census-year-*` to each and concatenates them:
+   - `:return-year`   indicates the SEN2 return from which the plan/placement 
+                      record was extracted, derived as the maximum 
+                      `:census-year` for the return.
+   - `:census-year-*` a string indicating both the year of the SEN2 census-date 
+                      of the plan/placement and whether the record is from the 
+                      SEN2 return for the same year or the SEN2 return for the
+                      next year:
+                      - YYYY= indicates record for YYYY SEN2 census date
+                              from year YYYY SEN2 return
+                              (i.e. the return for that year);
+                      - YYYY+ indicates record for YYYY SEN2 census date
+                              from year YYYY + 1 SEN2 return 
+                              (i.e. the return for the following year)."
+  [xs]
   (as-> xs $
     (map #(tc/add-column % :return-year (comp tcc/reduce-max :census-year)) $)
     (reduce tc/concat-copying $)
-    (tc/reorder-columns $ [person-id-col-name :census-year :census-date :return-year])
+    (tc/map-columns $ :census-year-* [:census-year :return-year] census-year-*)
+    (tc/reorder-columns $ (->> $ tc/column-names reverse
+                               (drop-while (complement #{:census-date :census-year}))
+                               (concat [:census-year-* :return-year])
+                               reverse))
     (tc/order-by $ (tc/column-names $))))
 
 (defn concatenated-plans-placements->side-by-side
