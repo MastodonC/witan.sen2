@@ -15,7 +15,7 @@
 
 (def sen2-blade-suffix
   "Suffix (to identify source SEN2 blade) to append to dataset and output file names."
-  "-2025")
+  "-2024")
 
 
 ;;; ## Census dates

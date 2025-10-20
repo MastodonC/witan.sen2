@@ -6,10 +6,12 @@
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [clojure.java.io :as io]
+  (:require [clojure.string :as string]
+            [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
-            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
+            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]
+            [witan.send.adroddiad.clerk.html :as chtml]))
 
 
 (def client-name      "Mastodon C")
@@ -102,3 +104,18 @@
 ;; Note: Except for `person`, OK if not a unique key without `requests-table-id`,
 (sen2-blade-eda/report-unique-keys @sen2-blade/ds-map)
 (sen2-blade-eda/report-table-keys)
+
+
+
+;;; ## Output
+^#::clerk{:viewer clerk/md}
+(str "This notebook (as HTML)"
+     ":  \n`" out-dir (string/replace (str *ns*) #"^.*\." "") ".html`")
+
+^#::clerk{:visibility {:result :hide}}
+(comment ;; clerk build to a standalone html file
+  (when (chtml/build-ns! *ns* {:project-path "./templates"
+                               :out-dir      "./tmp"})
+    (clerk/show! (chtml/ns->filepath *ns* "./templates")))
+
+  )

@@ -6,11 +6,13 @@
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [nextjournal.clerk :as clerk]
+  (:require [clojure.string :as string]
+            [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
-            [witan.send.adroddiad.tablecloth-utils :as tc-utils]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]
             [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
+            [witan.send.adroddiad.clerk.html :as chtml]
+            [witan.send.adroddiad.tablecloth-utils :as tc-utils]
             [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
             [plans-placements :as plans-placements] ; <- replace with workpackage specific version
             )
@@ -44,7 +46,7 @@
 ;;    issues CSV file for review and entry of updates.
 ;; 4. Compare Totals with DfE Caseload
 ;; 5. Additional EDA
-
+;; 6. Output
 
 
 ;;; ## Parameters
@@ -187,3 +189,26 @@
     (tc/order-by [(comp :order sen2-dictionary/sen-setting :sen-setting)
                   :sen-setting-other])
     (tc/update-columns [:sen-setting] (partial map #(when % (str "\"" % "\"")))))
+
+
+
+
+
+;;; ## 6. Output
+^{::clerk/viewer clerk/md}
+(apply str (concat [(format "Datasets output to `%s`:\n" plans-placements/out-dir)]
+                   (map #(->> % tc/dataset-name (format "- `%s`\n"))
+                        [@plans-placements/plans-placements-on-census-dates
+                         @plans-placements/plans-placements-on-census-dates-issues])))
+
+^#::clerk{:viewer clerk/md}
+(str "This notebook (as HTML)"
+     ":  \n`" out-dir (string/replace (str *ns*) #"^.*\." "") ".html`")
+
+^#::clerk{:visibility {:result :hide}}
+(comment ;; clerk build to a standalone html file
+  (when (chtml/build-ns! *ns* {:project-path "./templates"
+                               :out-dir      "./tmp"})
+    (clerk/show! (chtml/ns->filepath *ns* "./templates")))
+
+  )
