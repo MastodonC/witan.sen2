@@ -629,9 +629,9 @@
               :summary-label "#URNs"
               :action        "Confirm the placement-detail is correct or update."})
       (seq edubaseall-send-map) ; 53#: Add GIAS based checks for SENU & RP indicators if have GIAS SEND map:
-      (assoc :issue-senu-flagged-at-estab-without-one
+      (assoc :issue-unexpected-senu-indicated
              {:idx           532
-              :label         "SEN unit flagged at estab. other than URNs GIAS says has them."
+              :label         "SEN unit placement indicated at estab. other than URNs GIAS says has them."
               :cols-required #{:urn :sen-unit-indicator}
               :col-fn        (fn [{:keys [urn sen-unit-indicator]}]
                                (map #(and (->> %1
@@ -644,14 +644,14 @@
                                                true?))
                                     urn sen-unit-indicator))
               :summary-fn    (fn [ds] (-> ds
-                                          (tc/select-rows :issue-senu-flagged-at-estab-without-one)
+                                          (tc/select-rows :issue-unexpected-senu-indicated)
                                           (tc/unique-by [:urn :ukprn :sen-setting])
                                           tc/row-count))
               :summary-label "#Estabs"
               :action        "Review SEN unit flagging for these establishment(s) and correct if necessary."}
-             :issue-resourced-provision-flagged-at-estab-without-one
+             :issue-unexpected-rp-indicated
              {:idx           534
-              :label         "RP flagged at estab. other than URNs GIAS says has them."
+              :label         "RP placement indicated at estab. other than URNs GIAS says has them."
               :cols-required #{:urn :resourced-provision-indicator}
               :col-fn        (fn [{:keys [urn resourced-provision-indicator]}]
                                (map #(and (->> %1
@@ -664,7 +664,7 @@
                                                true?))
                                     urn resourced-provision-indicator))
               :summary-fn    (fn [ds] (-> ds
-                                          (tc/select-rows :issue-resourced-provision-flagged-at-estab-without-one)
+                                          (tc/select-rows :issue-unexpected-rp-indicated)
                                           (tc/unique-by [:urn :ukprn :sen-setting])
                                           tc/row-count))
               :summary-label "#Estabs"
@@ -927,8 +927,8 @@
    identify the issues, defaulting if not provided to the current default 
    `witan.gias/edubaseall-send->map`)."
   [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map]
-         :or   {issue-cols-selector [:issue-senu-flagged-at-estab-without-one
-                                     :issue-resourced-provision-flagged-at-estab-without-one]
+         :or   {issue-cols-selector [:issue-unexpected-senu-indicated
+                                     :issue-unexpected-rp-indicated]
                 census-year-col     (-> ds (tc/column-names [:census-year-* :census-year]) first)}}]
   (let [issue-cols          (tc/column-names ds issue-cols-selector)
         edubaseall-send-map (or edubaseall-send-map (gias/edubaseall-send->map))]
