@@ -1180,16 +1180,16 @@
   "Given the `census-year` (the year of the SEN2 census date of a plan/placement)
    and the SEN2 `return-year` from which the plan/placement was identified,
    returns a string indicating both:
-   - YYYY= indicates record for YYYY SEN2 census date
+   - YYYY# indicates record for YYYY SEN2 census date
            from year YYYY SEN2 return
            (i.e. the return for that year);
-   - YYYY+ indicates record for YYYY SEN2 census date
+   - YYYY~ indicates record for YYYY SEN2 census date
            from year YYYY + 1 SEN2 return 
            (i.e. the return for the following year)."
   [census-year return-year]
   (cond
-    (=      census-year  return-year) (str census-year "=")
-    (= (inc census-year) return-year) (str census-year "+")
+    (=      census-year  return-year) (str census-year "#")
+    (= (inc census-year) return-year) (str census-year "~")
     :else nil))
 
 (defn concat-plans-placements-on-census-dates
@@ -1203,10 +1203,10 @@
                       of the plan/placement and whether the record is from the 
                       SEN2 return for the same year or the SEN2 return for the
                       next year:
-                      - YYYY= indicates record for YYYY SEN2 census date
+                      - YYYY# indicates record for YYYY SEN2 census date
                               from year YYYY SEN2 return
                               (i.e. the return for that year);
-                      - YYYY+ indicates record for YYYY SEN2 census date
+                      - YYYY~ indicates record for YYYY SEN2 census date
                               from year YYYY + 1 SEN2 return 
                               (i.e. the return for the following year)."
   [xs]
