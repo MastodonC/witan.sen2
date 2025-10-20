@@ -892,7 +892,7 @@
                             :summary-label "Summary"})
         (tc/set-dataset-name "issue-summary"))))
 
-(defn summarise-urns-with-unexpected-establishment-type-issues
+(defn summarise-issues-urns-with-unexpected-establishment-type
   "Summarises establishments in plans-placements-on-census-dates-issues dataset `ds`
    identified as being of an unexpected type in columns specified by `issue-cols-selector`
    (default #\"^:issue-urn-for-unexpected-.+-establishment-type\").
@@ -916,11 +916,11 @@
         (tc/reorder-columns [:establishment-name :urn :type-of-establishment-name census-year-col])
         (tc/order-by [:establishment-name]))))
 
-(defn summarise-sen2-etabs-with-SENU-RP-flagged-issues
+(defn summarise-issues-sen2-etabs-with-unexpected-SENU-RP-indicated
   "Summarises SEN2 establishments in plans-placements-on-census-dates-issues dataset `ds`
-   identified as having SENU or RP flagged when GIAS says there isn't one.
+   identified as having SENU or RP indicated when GIAS says there isn't one.
    Issue records identified by truthy value in columns specified by `issue-cols-selector`
-   (default `[:issue-senu-flagged-at-estab-without-one :issue-resourced-provision-flagged-at-estab-without-one]`).
+   (default `[:issue-unexpected-senu-indicated :issue-unexpected-rp-indicated]`).
    Summmary includes frequencies by `census-year-col` (default `:census-year-*` 
    if present, otherwise `:census-year`), with establishment details from 
    `edubaseall-send-map` (which should be the same version as that used to 
@@ -936,17 +936,42 @@
         (tc/select-rows (apply some-fn issue-cols))
         (tc/select-columns (conj sen2-estab-keys census-year-col))
         (tc/fold-by sen2-estab-keys frequencies)
+        (tc/convert-types {:ukprn       :string
+                           :sen-setting :string})
         (tc/map-rows (fn [{:keys [urn]}]
                        (-> (edubaseall-send-map urn)
                            (select-keys [:establishment-name :sen-unit? :resourced-provision?]))))
         (tc/reorder-columns [:establishment-name :sen-unit? :resourced-provision?])
-        (tc/order-by [:establishment-name])
-        (tc/update-columns [:sen-unit? :resourced-provision? :sen-unit-indicator :resourced-provision-indicator]
-                           (partial map {false "×"
-                                         true  "✅"}))
+        (tc/order-by [:establishment-name]))))
+
+(defn summarise-issues-sen2-estab-with-less-placements-than-expected
+  "Summarises SEN2 establishments in plans-placements-on-census-dates-issues dataset `ds`
+   identified as having less learners placed there than expected.
+   Issue records identified by truthy value in column specified by `issue-cols-selector`
+   (default `[:issue-less-placements-than-expected]`).
+   If map `sen2-estab-min-expected-placed` is provided then it is used to 
+   populate the `:min-expected` column."
+  [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map sen2-estab-min-expected-placed]
+         :or   {issue-cols-selector            [:issue-less-placements-than-expected]
+                census-year-col                (-> ds (tc/column-names [:census-year-* :census-year]) first)
+                sen2-estab-min-expected-placed {}}}]
+  (let [issue-cols          (tc/column-names ds issue-cols-selector)
+        edubaseall-send-map (or edubaseall-send-map (gias/edubaseall-send->map))]
+    (-> ds
+        (tc/select-rows (apply some-fn issue-cols))
+        (tc/select-columns (concat sen2-estab-keys [census-year-col] issue-cols))
+        tc/unique-by
+        (tc/order-by [census-year-col])
+        (tc/pivot->wider census-year-col issue-cols-selector {:drop-missing? false})
         (tc/convert-types {:ukprn       :string
                            :sen-setting :string})
-        (#(tc/replace-missing % (tc/column-names % #{:string} :datatype) :value " ")))))
+        (tc/map-columns :establishment-name [:urn] (comp :establishment-name edubaseall-send-map))
+        (tc/join-columns :sen2-estab sen2-estab-keys {:result-type   :map
+                                                      :drop-columns? false})
+        (tc/map-columns :min-expected [:sen2-estab] sen2-estab-min-expected-placed)
+        (tc/drop-columns [:sen2-estab])
+        (tc/reorder-columns (concat [:establishment-name] sen2-estab-keys [:min-expected]))
+        (tc/order-by [:establishment-name]))))
 
 
 

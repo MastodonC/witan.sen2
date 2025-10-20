@@ -108,33 +108,32 @@
 ;; To check URNs and appropriate settings:
 ^#::clerk{:viewer (partial clerk/table {::clerk/width :wide})}
 (-> @plans-placements/plans-placements-on-census-dates-issues
-    (sen2-blade-plans-placements/summarise-urns-with-unexpected-establishment-type-issues
+    (sen2-blade-plans-placements/summarise-issues-urns-with-unexpected-establishment-type
      {:edubaseall-send-map @plans-placements/edubaseall-send-map}))
 
 ;;; #### SEN Unit | RP flagged at estab. other than URNs GIAS says has them
 ;; To check flagging of SENU & RP:
 ^#::clerk{:viewer (partial clerk/table {::clerk/width :full})}
 (-> @plans-placements/plans-placements-on-census-dates-issues
-    (sen2-blade-plans-placements/summarise-sen2-etabs-with-SENU-RP-flagged-issues
-     {:edubaseall-send-map @plans-placements/edubaseall-send-map}))
+    (sen2-blade-plans-placements/summarise-issues-sen2-etabs-with-unexpected-SENU-RP-indicated
+     {:edubaseall-send-map @plans-placements/edubaseall-send-map})
+    (tc/update-columns [:sen-unit? :resourced-provision? :sen-unit-indicator :resourced-provision-indicator]
+                       (partial map {false "×"
+                                     true  "✅"}))
+    (#(tc/replace-missing % (tc/column-names % #{:string} :datatype) :value " ")))
 
 ;;; #### SEN2 Establishments with fewer placed than expected
-;; Flagging Specialist Provision with less 75% of the places taken by LAs CYP,
+;; Flagging Specialist Provision with less placements than expected,
 ;; in particular to check SENU & RP flagging:
-^#::clerk{:viewer (partial clerk/table {::clerk/width :wide})}
+^#::clerk{:viewer (partial clerk/table {::clerk/width :full})}
 (-> @plans-placements/plans-placements-on-census-dates-issues
-    (tc/select-rows :issue-less-placements-than-expected)
-    (tc/select-columns (conj sen2-blade-plans-placements/sen2-estab-keys :census-year :issue-less-placements-than-expected))
-    tc/unique-by
-    (tc/order-by [:census-year])
-    (tc/pivot->wider :census-year :issue-less-placements-than-expected {:drop-missing? false})
-    ((fn [ds] (tc/update-columns ds (tc/column-names ds :type/numerical) (partial map #(if % (str %) "≥")))))
-    (tc/map-columns :establishment-name [:urn] (comp :establishment-name @plans-placements/edubaseall-send-map))
-    (tc/reorder-columns [:establishment-name])
-    (tc/order-by [:establishment-name])
+    (sen2-blade-plans-placements/summarise-issues-sen2-estab-with-less-placements-than-expected
+     {:edubaseall-send-map            @plans-placements/edubaseall-send-map
+      :sen2-estab-min-expected-placed @plans-placements/sen2-estab-min-expected-placed})
     (tc/update-columns [:sen-unit-indicator :resourced-provision-indicator]
-                       (partial map {nil " ", false "×", true "✅"}))
-    (tc/convert-types {:ukprn :string, :sen-setting :string})
+                       (partial map {false "×"
+                                     true  "✅"}))
+    ((fn [ds] (tc/update-columns ds (tc/column-names ds :type/numerical) (partial map #(if % (str %) "≥")))))
     (#(tc/replace-missing % (tc/column-names % #{:string} :datatype) :value " ")))
 
 ;; Note: "≥" in the census year column indicates the number placed was above the check threshold.
