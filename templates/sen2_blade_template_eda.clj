@@ -1,15 +1,16 @@
 (ns sen2-blade-template-eda
   "EDA of SEN2 Blade read from Excel submission template."
   #:nextjournal.clerk{:toc                  true
-                      :visibility           {:code :hide, :result :hide}
+                      :visibility           {:code   :hide
+                                             :result :hide}
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [clojure.string :as string]
-            [clojure.java.io :as io]
+  (:require [clojure.string :as str]
             [nextjournal.clerk :as clerk]
             [sen2-blade-template :as sen2-blade] ; <- replace with workpackage specific version
-            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
+            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]
+            [witan.send.adroddiad.clerk.html :as chtml]))
 
 (def client-name      "Mastodon C")
 (def workpackage-name "witan.sen2")
@@ -82,16 +83,16 @@
 
 
 
+;;; ## Output
+^#::clerk{:viewer clerk/md}
+(str "This notebook (as HTML)"
+     ":  \n`" out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html`")
 
-^{::clerk/visibility {:result :hide}}
-(comment ;; clerk build
-  (let [in-path  (str "templates/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
-        out-path (str out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
-    (clerk/build! {:paths      [in-path]
-                   :ssr        true
-                   #_#_:bundle true         ; clerk v0.15.957
-                   :package    :single-file ; clerk v0.16.1016
-                   :out-path   "."})
-    (.renameTo (io/file "./index.html") (io/file out-path)))
+^#::clerk{:visibility {:result :hide}}
+(comment ;; clerk build to a standalone html file
+  (when (chtml/build-ns! *ns* {:project-path "./templates"
+                               :out-dir      "./tmp"})
+    (clerk/show! (chtml/ns->filepath *ns* "./templates")))
 
   )
+

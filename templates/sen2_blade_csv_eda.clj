@@ -6,13 +6,12 @@
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
             [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
             [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]
             [witan.send.adroddiad.clerk.html :as chtml]))
-
 
 (def client-name      "Mastodon C")
 (def workpackage-name "witan.sen2")
@@ -110,7 +109,7 @@
 ;;; ## Output
 ^#::clerk{:viewer clerk/md}
 (str "This notebook (as HTML)"
-     ":  \n`" out-dir (string/replace (str *ns*) #"^.*\." "") ".html`")
+     ":  \n`" out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html`")
 
 ^#::clerk{:visibility {:result :hide}}
 (comment ;; clerk build to a standalone html file

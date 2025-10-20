@@ -6,7 +6,7 @@
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [nextjournal.clerk :as clerk]
             [tablecloth.api :as tc]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]
@@ -18,7 +18,6 @@
             )
   (:import [java.time LocalDateTime]
            [java.time.format DateTimeFormatter]))
-
 
 (def client-name      "Mastodon C")
 (def workpackage-name "witan.sen2")
@@ -203,7 +202,7 @@
 
 ^#::clerk{:viewer clerk/md}
 (str "This notebook (as HTML)"
-     ":  \n`" out-dir (string/replace (str *ns*) #"^.*\." "") ".html`")
+     ":  \n`" out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html`")
 
 ^#::clerk{:visibility {:result :hide}}
 (comment ;; clerk build to a standalone html file
