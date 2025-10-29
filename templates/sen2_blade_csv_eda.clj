@@ -17,7 +17,10 @@
 (def workpackage-name "witan.sen2")
 (def out-dir "Output directory" "./tmp/")
 
-^#::clerk{:visibility {:result :show},:viewer clerk/md, :no-cache true} ; Notebook header
+(defn doc-var [v] (format "%s:  \n`%s`." (-> v meta :doc) (var-get v)))
+
+{::clerk/visibility {:result :show}}
+^#::clerk{:viewer clerk/md, :no-cache true} ; Notebook header
 (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
      (format "# %s SEND %s  \n" client-name workpackage-name)
      (format "`%s`\n\n" *ns*)
@@ -25,13 +28,6 @@
      (format "Produced: `%s`\n\n"  (.format (java.time.LocalDateTime/now)
                                             (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu HH:mm:ss"
                                                                                           (java.util.Locale. "en_GB")))))
-
-(defn doc-var [v] (format "%s:  \n`%s`." (-> v meta :doc) (var-get v)))
-{::clerk/visibility {:result :show}}
-
-
-
-
 ;;; # SEN2 Blade EDA
 ;;; ## Parameters
 ;;; ### Output directory
