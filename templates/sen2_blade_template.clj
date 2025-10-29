@@ -18,7 +18,15 @@
   (delay (sen2-blade-template/template-file->ds-map template-filepath)))
 
 
-;;; ## Bring in defs required for EDA/documentation
+
+;;; # Extract return year
+(def return-year
+  "SEN2 return year"
+  (delay (->> @ds-map :sen2 :year (apply max))))
+
+
+
+;;; # Bring in defs required for EDA/documentation
 ;; Not required if not doing a sen2-blade-eda.
 (def module-titles
   sen2-blade-template/module-titles)

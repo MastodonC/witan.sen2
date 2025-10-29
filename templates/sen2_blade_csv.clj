@@ -35,7 +35,15 @@
   (delay (sen2-blade-csv/file-paths->ds-map file-paths)))
 
 
-;;; ## Bring in defs required for EDA/documentation
+
+;;; # Extract return year
+(def return-year
+  "SEN2 return year"
+  (delay (->> @ds-map :sen2 :year (apply max))))
+
+
+
+;;; # Bring in defs required for EDA/documentation
 ;; Not required if not doing a sen2-blade-eda.
 (def table-id-ds
   "Dataset of `:*table-id` key relationships."

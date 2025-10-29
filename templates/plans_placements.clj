@@ -14,15 +14,19 @@
   "Output directory"
   "./tmp/")
 
+(def census-years
+  "Years of SEN2 census dates on which to extract plans & placements."
+  (-> @sen2-blade/return-year sen2/return-year->census-years))
+
 (def sen2-blade-suffix
   "Suffix (to identify source SEN2 blade) to append to dataset and output file names."
-  "-2024")
+  (str "-" @sen2-blade/return-year))
 
 
 ;;; ## Census dates
 (def census-dates-ds
   "Dataset with column `:census-date` of dates to extract open plans & placements on."
-  (sen2/census-years->census-dates-ds [2022 2023]))
+  (sen2/census-years->census-dates-ds census-years))
 
 
 

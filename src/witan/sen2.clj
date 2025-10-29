@@ -7,6 +7,12 @@
            [java.time.format DateTimeFormatter]))
 
 ;;; # SEN2 census dates
+(defn return-year->census-years
+  "Given year of a SEN2 return, returns vector containing the years of the two 
+   SEN2 census dates covered by the reporting period for that return."
+  [return-year]
+  ((juxt dec identity) return-year))
+
 (def census-year->date-string
   "Map SEN2 census year to census date (as ISO8601 date strings)"
   (sorted-map
