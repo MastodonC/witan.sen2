@@ -9,9 +9,10 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
-            [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
             [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]
-            [witan.send.adroddiad.clerk.html :as chtml]))
+            [witan.send.adroddiad.clerk.html :as chtml]
+            [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
+            ))
 
 (def client-name      "Mastodon C")
 (def workpackage-name "witan.sen2")

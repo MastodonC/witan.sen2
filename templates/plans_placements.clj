@@ -3,8 +3,9 @@
   (:require [tablecloth.api :as tc]
             [witan.gias :as gias]
             [witan.sen2 :as sen2]
+            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]
             [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
-            [witan.sen2.return.person-level.blade.plans-placements :as sen2-blade-plans-placements]))
+            ))
 
 
 ;;; # Parameters
