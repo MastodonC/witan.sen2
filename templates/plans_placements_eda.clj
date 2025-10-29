@@ -158,7 +158,7 @@
 ;; [explore-education-statistics.service.gov.uk](https://explore-education-statistics.service.gov.uk/find-statistics/education-health-and-care-plans):
 ^{::clerk/viewer (partial clerk/table {::clerk/width :full})}
 (-> @plans-placements/plans-placements-on-census-dates
-    (sen2-blade-plans-placements/plan-placement-stats la-name)
+    (sen2-blade-plans-placements/plan-placement-module-summary-with-caseload la-name)
     (tc/update-columns :census-date (partial map #(.format % (DateTimeFormatter/ofPattern
                                                               "dd-MMM-uuuu"
                                                               (java.util.Locale. "en_GB")))))
