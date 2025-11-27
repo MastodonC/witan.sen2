@@ -9,12 +9,14 @@
 (def data-dir
   "Directory containing SEN2 Blade export files"
   #_"./data/example-sen2-blade-csv-export-2023/"
-  "./data/example-sen2-blade-csv-export-2024/")
+  "./data/example-sen2-blade-csv-export-2024/"
+  #_"./data/example-sen2-blade-csv-export-2025/")
 
 (def export-date-string
   "Date (string) of COLLECT `Blade-Export`"
   #_"31-03-2023"
-  "18-04-2024")
+  "18-04-2024"
+  #_"07-03-2025")
 
 
 
@@ -33,7 +35,15 @@
   (delay (sen2-blade-csv/file-paths->ds-map file-paths)))
 
 
-;;; ## Bring in defs required for EDA/documentation
+
+;;; # Extract return year
+(def return-year
+  "SEN2 return year"
+  (delay (->> @ds-map :sen2 :year (apply max))))
+
+
+
+;;; # Bring in defs required for EDA/documentation
 ;; Not required if not doing a sen2-blade-eda.
 (def table-id-ds
   "Dataset of `:*table-id` key relationships."

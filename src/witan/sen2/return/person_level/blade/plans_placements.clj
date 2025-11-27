@@ -2,10 +2,11 @@
   "Tools to extract and manipulate plans & placements on census dates
    (with person details and EHCP primary need) from SEN2 Blade."
   (:require [clojure.set :as set]
-            [clojure.string :as string]
+            [clojure.string :as str]
             [tablecloth.api :as tc]
             [tablecloth.column.api :as tcc]
             [witan.gias :as gias]
+            [witan.sen2.caseload :as caseload]
             [witan.sen2.ncy :as ncy]
             [witan.sen2.return.person-level.dictionary :as sen2-dictionary]))
 
@@ -156,7 +157,7 @@
   "
   [sen2-blade-ds-map census-dates-ds]
   (-> (sen2-blade-ds-map :placement-detail)
-      (extract-episodes-on-census-dates census-dates-ds :entry-date :leaving-date )
+      (extract-episodes-on-census-dates census-dates-ds :entry-date :leaving-date)
       ;; Add `:census-date-placement-idx` to index multiple placements in `:placement-rank` order.
       (tc/order-by [:person-table-id :requests-table-id :census-date :placement-rank])
       (tc/group-by [:person-table-id :requests-table-id :census-date])
@@ -260,13 +261,13 @@
         ;; As full (outer) join the join keys may be nil in either dataset so coalesce into single column.
         ((fn [ds] (cond-> ds
                     (contains? ds :placement-detail.sen2-table-id) ; May not have `:sen2-table-id`
-                    (tc/map-columns :sen2-table-id         [:sen2-table-id     :placement-detail.sen2-table-id    ] #(or %1 %2))
+                    (tc/map-columns :sen2-table-id         [:sen2-table-id     :placement-detail.sen2-table-id]     #(or %1 %2))
                     true
-                    (tc/map-columns :person-table-id       [:person-table-id   :placement-detail.person-table-id  ] #(or %1 %2))
+                    (tc/map-columns :person-table-id       [:person-table-id   :placement-detail.person-table-id]   #(or %1 %2))
                     true
                     (tc/map-columns :requests-table-id     [:requests-table-id :placement-detail.requests-table-id] #(or %1 %2))
                     true
-                    (tc/map-columns :census-date           [:census-date       :placement-detail.census-date      ] #(or %1 %2)))))
+                    (tc/map-columns :census-date           [:census-date       :placement-detail.census-date]       #(or %1 %2)))))
         (tc/drop-columns #"^:placement-detail\..+$")
         ;;
         ;; Merge in `sen-need` EHCP primary need (if available)
@@ -304,12 +305,12 @@
         (tc/drop-columns #"^:person\..+$")
         ;; Arrange dataset
         (tc/reorder-columns (distinct (concat sen2-blade-table-id-col-names
-                                              [                  ] (tc/column-names census-dates-ds)
-                                              [:person?          ] (sen2-blade-module-cols-to-select :person) [:age-at-start-of-school-year :ncy-nominal]
-                                              [:named-plan?      ] (sen2-blade-module-cols-to-select :named-plan)
-                                              [:active-plans?    ] (sen2-blade-module-cols-to-select :active-plans)
+                                              []                   (tc/column-names census-dates-ds)
+                                              [:person?]           (sen2-blade-module-cols-to-select :person) [:age-at-start-of-school-year :ncy-nominal]
+                                              [:named-plan?]       (sen2-blade-module-cols-to-select :named-plan)
+                                              [:active-plans?]     (sen2-blade-module-cols-to-select :active-plans)
                                               [:placement-detail?] (sen2-blade-module-cols-to-select :placement-detail)
-                                              [:sen-need?        ] (sen2-blade-module-cols-to-select :sen-need))))
+                                              [:sen-need?]         (sen2-blade-module-cols-to-select :sen-need))))
         (tc/order-by [:person-table-id :census-date :requests-table-id])
         (tc/set-dataset-name "plans-placements-on-census-dates"))))
 
@@ -333,6 +334,19 @@
            :active-plans?     "Got active plan from `active plans`?"
            :placement-detail? "Got placement details from `placement-detail`?"
            :sen-need?         "Got an EHCP primary need from `sen-need`?"}))
+
+(defn csv-col-labels-dataset
+  "Given dataset and map mapping column names to labels, returns dataset with
+   columns `:column-number`, `:column-name` & `:column label` where any keyword 
+   column names are converted to names to match how `tc/write!` saves column
+   names in a CSV file."
+  [ds col-name->label]
+  (let [ds-col-names    (tc/column-names ds)
+        ds-dataset-name (tc/dataset-name ds)]
+    (tc/dataset {:column-number (iterate inc 1)
+                 :column-name   (map #(if (keyword? %) (name %) %) ds-col-names)
+                 :column-label  (map col-name->label ds-col-names)}
+                {:dataset-name (str ds-dataset-name "-col-labels")})))
 
 
 
@@ -615,9 +629,9 @@
               :summary-label "#URNs"
               :action        "Confirm the placement-detail is correct or update."})
       (seq edubaseall-send-map) ; 53#: Add GIAS based checks for SENU & RP indicators if have GIAS SEND map:
-      (assoc :issue-senu-flagged-at-estab-without-one
+      (assoc :issue-unexpected-senu-indicated
              {:idx           532
-              :label         "SEN unit flagged at estab. other than URNs GIAS says has them."
+              :label         "SEN unit placement indicated at estab. other than URNs GIAS says has them."
               :cols-required #{:urn :sen-unit-indicator}
               :col-fn        (fn [{:keys [urn sen-unit-indicator]}]
                                (map #(and (->> %1
@@ -630,14 +644,14 @@
                                                true?))
                                     urn sen-unit-indicator))
               :summary-fn    (fn [ds] (-> ds
-                                          (tc/select-rows :issue-senu-flagged-at-estab-without-one)
+                                          (tc/select-rows :issue-unexpected-senu-indicated)
                                           (tc/unique-by [:urn :ukprn :sen-setting])
                                           tc/row-count))
               :summary-label "#Estabs"
               :action        "Review SEN unit flagging for these establishment(s) and correct if necessary."}
-             :issue-resourced-provision-flagged-at-estab-without-one
+             :issue-unexpected-rp-indicated
              {:idx           534
-              :label         "RP flagged at estab. other than URNs GIAS says has them."
+              :label         "RP placement indicated at estab. other than URNs GIAS says has them."
               :cols-required #{:urn :resourced-provision-indicator}
               :col-fn        (fn [{:keys [urn resourced-provision-indicator]}]
                                (map #(and (->> %1
@@ -650,7 +664,7 @@
                                                true?))
                                     urn resourced-provision-indicator))
               :summary-fn    (fn [ds] (-> ds
-                                          (tc/select-rows :issue-resourced-provision-flagged-at-estab-without-one)
+                                          (tc/select-rows :issue-unexpected-rp-indicated)
                                           (tc/unique-by [:urn :ukprn :sen-setting])
                                           tc/row-count))
               :summary-label "#Estabs"
@@ -707,8 +721,8 @@
       ((fn [m] (into (sorted-map-by (fn [k1 k2] (compare [(get-in m [k1 :idx]) k1]
                                                          [(get-in m [k2 :idx]) k2]))) m))))))
 
-(def checks-totals
-  "Additional summaries of #rows and #CYP that can be merged onto checks."
+(def checks-total-issues
+  "Additional summaries of #rows and #CYP with issues that can be merged onto checks."
   {:issue-row-count {:idx           996
                      :label         "TOTAL number of records with issues flagged"
                      :summary-fn    #(-> %
@@ -723,16 +737,23 @@
                                          (tc/select-rows :issue?)
                                          (tc/unique-by [:person-table-id])
                                          tc/row-count)
-                     :summary-label "#CYP"}
-   :total-row-count {:idx           998
+                     :summary-label "#CYP"}})
+
+(def checks-total-records
+  "Additional summaries of #rows and #CYP that can be merged onto checks."
+  {:total-row-count {:idx           998
                      :label         "TOTAL number of records"
                      :summary-fn    tc/row-count
-                     :summary-label "#rows"
-                     }
+                     :summary-label "#rows"}
    :total-num-cyp   {:idx           999
                      :label         "TOTAL number of CYP"
                      :summary-fn    (comp count distinct :person-table-id)
                      :summary-label "#CYP"}})
+
+(def checks-totals
+  "Additional summaries of #rows and #CYP with issues and in total that can be merged onto checks."
+  (merge checks-total-issues
+         checks-total-records))
 
 (defn flag-issues
   "Run `checks` on dataset `ds`, adding issue flag columns."
@@ -813,7 +834,7 @@
          (update-vals checks :label)
          (reduce (fn [m k] (assoc m k (-> k
                                           name
-                                          (#(string/replace % "update-" ""))
+                                          (#(str/replace % "update-" ""))
                                           (#(plans-placements-on-census-dates-col-name->label (keyword %) %))
                                           ((partial str "Update: ")))))
                  {} names-of-update-cols)))
@@ -871,11 +892,92 @@
                             :summary-label "Summary"})
         (tc/set-dataset-name "issue-summary"))))
 
+(defn summarise-issues-urns-with-unexpected-establishment-type
+  "Summarises establishments in plans-placements-on-census-dates-issues dataset `ds`
+   identified as being of an unexpected type in columns specified by `issue-cols-selector`
+   (default #\"^:issue-urn-for-unexpected-.+-establishment-type\").
+   Summmary includes frequencies by `census-year-col` (default `:census-year-*` 
+   if present, otherwise `:census-year`), with establishment details from 
+   `edubaseall-send-map` (which should be the same version as that used to 
+   identify the issues, defaulting if not provided to the current default 
+   `witan.gias/edubaseall-send->map`)."
+  [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map]
+         :or   {issue-cols-selector #"^:issue-urn-for-unexpected-.+-establishment-type"
+                census-year-col     (-> ds (tc/column-names [:census-year-* :census-year]) first)}}]
+  (let [issue-cols          (tc/column-names ds issue-cols-selector)
+        edubaseall-send-map (or edubaseall-send-map (gias/edubaseall-send->map))]
+    (-> ds
+        (tc/select-rows (apply some-fn issue-cols))
+        (tc/select-columns [:urn census-year-col])
+        (tc/fold-by [:urn] frequencies)
+        (tc/map-rows (fn [{:keys [urn]}]
+                       (-> (edubaseall-send-map urn)
+                           (select-keys [:establishment-name :type-of-establishment-name]))))
+        (tc/reorder-columns [:establishment-name :urn :type-of-establishment-name census-year-col])
+        (tc/order-by [:establishment-name]))))
+
+(defn summarise-issues-sen2-etabs-with-unexpected-SENU-RP-indicated
+  "Summarises SEN2 establishments in plans-placements-on-census-dates-issues dataset `ds`
+   identified as having SENU or RP indicated when GIAS says there isn't one.
+   Issue records identified by truthy value in columns specified by `issue-cols-selector`
+   (default `[:issue-unexpected-senu-indicated :issue-unexpected-rp-indicated]`).
+   Summmary includes frequencies by `census-year-col` (default `:census-year-*` 
+   if present, otherwise `:census-year`), with establishment details from 
+   `edubaseall-send-map` (which should be the same version as that used to 
+   identify the issues, defaulting if not provided to the current default 
+   `witan.gias/edubaseall-send->map`)."
+  [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map]
+         :or   {issue-cols-selector [:issue-unexpected-senu-indicated
+                                     :issue-unexpected-rp-indicated]
+                census-year-col     (-> ds (tc/column-names [:census-year-* :census-year]) first)}}]
+  (let [issue-cols          (tc/column-names ds issue-cols-selector)
+        edubaseall-send-map (or edubaseall-send-map (gias/edubaseall-send->map))]
+    (-> ds
+        (tc/select-rows (apply some-fn issue-cols))
+        (tc/select-columns (conj sen2-estab-keys census-year-col))
+        (tc/fold-by sen2-estab-keys frequencies)
+        (tc/convert-types {:ukprn       :string
+                           :sen-setting :string})
+        (tc/map-rows (fn [{:keys [urn]}]
+                       (-> (edubaseall-send-map urn)
+                           (select-keys [:establishment-name :sen-unit? :resourced-provision?]))))
+        (tc/reorder-columns [:establishment-name :sen-unit? :resourced-provision?])
+        (tc/order-by [:establishment-name]))))
+
+(defn summarise-issues-sen2-estab-with-less-placements-than-expected
+  "Summarises SEN2 establishments in plans-placements-on-census-dates-issues dataset `ds`
+   identified as having less learners placed there than expected.
+   Issue records identified by truthy value in column specified by `issue-cols-selector`
+   (default `[:issue-less-placements-than-expected]`).
+   If map `sen2-estab-min-expected-placed` is provided then it is used to 
+   populate the `:min-expected` column."
+  [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map sen2-estab-min-expected-placed]
+         :or   {issue-cols-selector            [:issue-less-placements-than-expected]
+                census-year-col                (-> ds (tc/column-names [:census-year-* :census-year]) first)
+                sen2-estab-min-expected-placed {}}}]
+  (let [issue-cols          (tc/column-names ds issue-cols-selector)
+        edubaseall-send-map (or edubaseall-send-map (gias/edubaseall-send->map))]
+    (-> ds
+        (tc/select-rows (apply some-fn issue-cols))
+        (tc/select-columns (concat sen2-estab-keys [census-year-col] issue-cols))
+        tc/unique-by
+        (tc/order-by [census-year-col])
+        (tc/pivot->wider census-year-col issue-cols-selector {:drop-missing? false})
+        (tc/convert-types {:ukprn       :string
+                           :sen-setting :string})
+        (tc/map-columns :establishment-name [:urn] (comp :establishment-name edubaseall-send-map))
+        (tc/join-columns :sen2-estab sen2-estab-keys {:result-type   :map
+                                                      :drop-columns? false})
+        (tc/map-columns :min-expected [:sen2-estab] sen2-estab-min-expected-placed)
+        (tc/drop-columns [:sen2-estab])
+        (tc/reorder-columns (concat [:establishment-name] sen2-estab-keys [:min-expected]))
+        (tc/order-by [:establishment-name]))))
+
 
 
 ;;; # CSV file read
-(def parser-fn
-  "Parser function for reading plans-placements-on-census-dates from CSV files."
+(def csv-parser-fn
+  "Map of parser functions for reading columns of plans-placements-on-census-dates dataset from CSV files."
   {:sen2-table-id                     :string
    :person-table-id                   :string
    :requests-table-id                 :string
@@ -923,11 +1025,29 @@
   [filepath & {:keys [column-allowlist key-fn parser-fn]
                :or   {column-allowlist (map name cols-to-keep)
                       key-fn           keyword
-                      parser-fn        parser-fn}}]
+                      parser-fn        csv-parser-fn}}]
   (tc/dataset filepath
               {:column-allowlist column-allowlist
                :key-fn           key-fn
                :parser-fn        parser-fn}))
+
+(def update-cols-parser-fn
+  "Map of parser functions for reading the update columns from a CSV file."
+  (into {}
+        (map (fn [k]
+               [k (or ({:update-drop? :boolean
+                        :update-notes :string} k)
+                      (-> k
+                          name
+                          (str/replace #"update-" "")
+                          keyword
+                          csv-parser-fn))]))
+        names-of-update-cols))
+
+(def issues-csv-parser-fn
+  "Map of parser functions for reading columns of issues dataset from CSV file."
+  (merge csv-parser-fn
+         update-cols-parser-fn))
 
 (def updates-ds-required-cols
   "Required columns for updates dataset."
@@ -943,21 +1063,7 @@
   [filepath & {:keys [column-allowlist key-fn parser-fn]
                :or   {column-allowlist (map name updates-ds-required-cols)
                       key-fn           keyword
-                      parser-fn        (merge (select-keys parser-fn [:person-table-id
-                                                                      :census-date
-                                                                      :census-year
-                                                                      :requests-table-id])
-                                              {:update-drop? :boolean}
-                                              (-> parser-fn
-                                                  (select-keys [:ncy-nominal
-                                                                :urn
-                                                                :ukprn
-                                                                :sen-unit-indicator
-                                                                :resourced-provision-indicator
-                                                                :sen-setting
-                                                                :sen-type
-                                                                :upn])
-                                                  (update-keys (comp keyword (partial str "update-") name))))}}]
+                      parser-fn        issues-csv-parser-fn}}]
   (tc/dataset filepath
               {:column-allowlist column-allowlist
                :key-fn           key-fn
@@ -1070,16 +1176,48 @@
 
 
 ;;; # Combining
+(defn census-year-*
+  "Given the `census-year` (the year of the SEN2 census date of a plan/placement)
+   and the SEN2 `return-year` from which the plan/placement was identified,
+   returns a string indicating both:
+   - YYYY# indicates record for YYYY SEN2 census date
+           from year YYYY SEN2 return
+           (i.e. the return for that year);
+   - YYYY~ indicates record for YYYY SEN2 census date
+           from year YYYY + 1 SEN2 return 
+           (i.e. the return for the following year)."
+  [census-year return-year]
+  (cond
+    (=      census-year  return-year) (str census-year "#")
+    (= (inc census-year) return-year) (str census-year "~")
+    :else nil))
+
 (defn concat-plans-placements-on-census-dates
   "Given sequence `xs` of datasets of plans-placements-on-census-dates from
-   different years SEN2 returns, adds column `:return-year` to each (derived as 
-   the maximum `:census-year`) and concatenates them."
-  [xs & {:keys [person-id-col-name]
-         :or   {person-id-col-name :person-table-id}}]
+   individual SEN2 returns for different years, adds columns `:return-year` & 
+   `:census-year-*` to each and concatenates them:
+   - `:return-year`   indicates the SEN2 return from which the plan/placement 
+                      record was extracted, derived as the maximum 
+                      `:census-year` for the return.
+   - `:census-year-*` a string indicating both the year of the SEN2 census-date 
+                      of the plan/placement and whether the record is from the 
+                      SEN2 return for the same year or the SEN2 return for the
+                      next year:
+                      - YYYY# indicates record for YYYY SEN2 census date
+                              from year YYYY SEN2 return
+                              (i.e. the return for that year);
+                      - YYYY~ indicates record for YYYY SEN2 census date
+                              from year YYYY + 1 SEN2 return 
+                              (i.e. the return for the following year)."
+  [xs]
   (as-> xs $
     (map #(tc/add-column % :return-year (comp tcc/reduce-max :census-year)) $)
     (reduce tc/concat-copying $)
-    (tc/reorder-columns $ [person-id-col-name :census-year :census-date :return-year])
+    (tc/map-columns $ :census-year-* [:census-year :return-year] census-year-*)
+    (tc/reorder-columns $ (->> $ tc/column-names reverse
+                               (drop-while (complement #{:census-date :census-year}))
+                               (concat [:census-year-* :return-year])
+                               reverse))
     (tc/order-by $ (tc/column-names $))))
 
 (defn concatenated-plans-placements->side-by-side
@@ -1097,7 +1235,7 @@
                 additional-val-cols]
          :or   {person-id-col-name :person-table-id}}]
   (-> ds
-      (tc/map-columns :val-col-name [:census-year :return-year] #(cond (= %1    %2   ) :census-year-return
+      (tc/map-columns :val-col-name [:census-year :return-year] #(cond (= %1    %2)    :census-year-return
                                                                        (= %1 (- %2 1)) :next-year-return
                                                                        :else           :other))
       (tc/join-columns :sen2-estab sen2-estab-keys {:result-type :map})
@@ -1109,3 +1247,53 @@
       (tc/reorder-columns [person-id-col-name :census-year :census-date :census-year-return :next-year-return])
       (tc/order-by [person-id-col-name :census-year])))
 
+
+
+;;; # EDA
+(defn plan-placement-module-summary
+  "Given a `plans-placements-on-census-dates` dataset (possibly with records from
+   multiple returns identified by `:return-year`), returns dataset summarising 
+   the numbers of records with `:named-plan?` and/or `:placement-detail?` for 
+   each `:census-year`, `:census-date` (& `:return-year`)."
+  [plans-placements-on-census-dates]
+  (-> plans-placements-on-census-dates
+      (tc/map-rows (fn [{:keys [named-plan? placement-detail?]}]
+                     {:num-plans              (if named-plan? 1 0)
+                      :num-placements         (if placement-detail? 1 0)
+                      :num-plan-or-placement  (if (or named-plan?
+                                                      placement-detail?) 1 0)
+                      :num-plan-and-placement (if (and named-plan?
+                                                       placement-detail?) 1 0)}))
+      (tc/group-by [:census-year :census-date :return-year])
+      (tc/aggregate-columns [:num-plans
+                             :num-placements
+                             :num-plan-or-placement
+                             :num-plan-and-placement]
+                            tcc/reduce-+)
+      (tc/order-by [:census-year :census-date :return-year])))
+
+(defn plan-placement-module-summary-with-caseload
+  "Given a `plans-placements-on-census-dates` dataset (possibly with records from
+   multiple returns identified by `:return-year`), returns dataset summarising 
+   the numbers of records with `:named-plan?` and/or `:placement-detail?` for 
+   each `:census-year`, `:census-date` (& `:return-year`) including the 
+   published EHCP caseload for LA `la-name` for comparison."
+  [plans-placements-on-census-dates la-name]
+  (let [caseload (-> (caseload/->ds)
+                     (tc/select-rows #(-> %
+                                          ((juxt :la-name :breakdown))
+                                          (= [la-name "All EHC plans"])))
+                     (tc/select-columns [:census-year :ehcplans]))]
+    (->  plans-placements-on-census-dates
+         plan-placement-module-summary
+         (tc/left-join caseload [:census-year])
+         (tc/drop-columns #"^:.*\.(census-year|census-date|return-year)$"))))
+
+(def plan-placement-stats-col-name->label
+  {:census-year            "Census Year"
+   :census-date            "Census Date"
+   :num-plans              "#plans"
+   :num-placements         "#placements"
+   :num-plan-or-placement  "#plan|placement"
+   :num-plan-and-placement "#plan&placement"
+   :ehcplans               "EHCP Caseload"})

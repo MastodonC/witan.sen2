@@ -1,22 +1,27 @@
 (ns sen2-blade-csv-eda
   "EDA of SEN2 Blade read from COLLECT Blade CSV export."
   #:nextjournal.clerk{:toc                  true
-                      :visibility           {:code :hide, :result :hide}
+                      :visibility           {:code   :hide
+                                             :result :hide}
                       :page-size            nil
                       :auto-expand-results? true
                       :budget               nil}
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [nextjournal.clerk :as clerk]
+            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]
+            [witan.send.adroddiad.clerk.html :as chtml]
             [sen2-blade-csv :as sen2-blade] ; <- replace with workpackage specific version
-            [witan.sen2.return.person-level.blade.eda :as sen2-blade-eda]))
-
+            ))
 
 (def client-name      "Mastodon C")
 (def workpackage-name "witan.sen2")
 (def out-dir "Output directory" "./tmp/")
 
-^#::clerk{:visibility {:result :show},:viewer clerk/md, :no-cache true} ; Notebook header
+(defn doc-var [v] (format "%s:  \n`%s`." (-> v meta :doc) (var-get v)))
+
+{::clerk/visibility {:result :show}}
+^#::clerk{:viewer clerk/md, :no-cache true} ; Notebook header
 (str "![Mastodon C](https://www.mastodonc.com/wp-content/themes/MastodonC-2018/dist/images/logo_mastodonc.png)  \n"
      (format "# %s SEND %s  \n" client-name workpackage-name)
      (format "`%s`\n\n" *ns*)
@@ -24,13 +29,6 @@
      (format "Produced: `%s`\n\n"  (.format (java.time.LocalDateTime/now)
                                             (java.time.format.DateTimeFormatter/ofPattern "dd-MMM-uuuu HH:mm:ss"
                                                                                           (java.util.Locale. "en_GB")))))
-
-(defn doc-var [v] (format "%s:  \n`%s`." (-> v meta :doc) (var-get v)))
-{::clerk/visibility {:result :show}}
-
-
-
-
 ;;; # SEN2 Blade EDA
 ;;; ## Parameters
 ;;; ### Output directory
@@ -105,16 +103,15 @@
 
 
 
+;;; ## Output
+^#::clerk{:viewer clerk/md}
+(str "This notebook (as HTML)"
+     ":  \n`" out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html`")
 
 ^#::clerk{:visibility {:result :hide}}
-(comment ;; clerk build
-  (let [in-path  (str "templates/" (clojure.string/replace (str *ns*) #"\.|-" {"." "/" "-" "_"}) ".clj")
-        out-path (str out-dir (clojure.string/replace (str *ns*) #"^.*\." "") ".html")]
-    (clerk/build! {:paths      [in-path]
-                   :ssr        true
-                   #_#_:bundle true         ; clerk v0.15.957
-                   :package    :single-file ; clerk v0.16.1016
-                   :out-path   "."})
-    (.renameTo (io/file "./index.html") (io/file out-path)))
+(comment ;; clerk build to a standalone html file
+  (when (chtml/build-ns! *ns* {:project-path "./templates"
+                               :out-dir      "./tmp"})
+    (clerk/show! (chtml/ns->filepath *ns* "./templates")))
 
   )

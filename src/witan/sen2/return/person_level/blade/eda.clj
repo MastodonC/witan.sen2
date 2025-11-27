@@ -309,10 +309,10 @@
    (report-collect-key-relationship ds-map :requests         :person       :person-table-id       "(Should be 1+  per 2023 SEN2 guide v1.0 Module 2 description on p18.)")
    (report-collect-key-relationship ds-map :assessment       :requests     :requests-table-id     "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 3 description on p21.)")
    (report-collect-key-relationship ds-map :named-plan       :assessment   :assessment-table-id   "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 3 description on p21 & Module 4 description on p24.)")
-   (report-collect-key-relationship ds-map :plan-detail      :named-plan   :named-plan-table-id   "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 4 <PlanDetail> description on p26.)")
-   (report-collect-key-relationship ds-map :active-plans     :requests     :requests-table-id     "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 5 <ActivePlans> description on p28.)")
-   (report-collect-key-relationship ds-map :placement-detail :active-plans :active-plans-table-id "(Should be 1+  per 2023 SEN2 guide v1.0 Module 5 <PlacementDetail> description on p29.)")
-   (report-collect-key-relationship ds-map :sen-need         :active-plans :active-plans-table-id "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 5 <SENtype> description on p31.)")))
+   (report-collect-key-relationship ds-map :plan-detail      :named-plan   :named-plan-table-id   "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 4 `PlanDetail` description on p26.)")
+   (report-collect-key-relationship ds-map :active-plans     :requests     :requests-table-id     "(Should be 0-1 per 2023 SEN2 guide v1.0 Module 5 `ActivePlans` description on p28.)")
+   (report-collect-key-relationship ds-map :placement-detail :active-plans :active-plans-table-id "(Should be 1+  per 2023 SEN2 guide v1.0 Module 5 `PlacementDetail` description on p29.)")
+   (report-collect-key-relationship ds-map :sen-need         :active-plans :active-plans-table-id "(Should be 1-2 per 2023 SEN2 guide v1.0 Module 5 `SENtype` description on p31.)")))
 
 (defn report-table-id-ds
   [table-id-ds]

@@ -2,9 +2,17 @@
   "Special educational needs survey (SEN2) information
    from [gov.uk](https://www.gov.uk/guidance/special-educational-needs-survey)
    unless stated otherwise."
-  (:require [tablecloth.api :as tc]))
+  (:require [tablecloth.api :as tc])
+  (:import [java.time LocalDate]
+           [java.time.format DateTimeFormatter]))
 
 ;;; # SEN2 census dates
+(defn return-year->census-years
+  "Given year of a SEN2 return, returns vector containing the years of the two 
+   SEN2 census dates covered by the reporting period for that return."
+  [return-year]
+  ((juxt dec identity) return-year))
+
 (def census-year->date-string
   "Map SEN2 census year to census date (as ISO8601 date strings)"
   (sorted-map
@@ -26,9 +34,9 @@
 (def census-year->date
   "Map SEN2 census year to census date"
   (update-vals census-year->date-string
-               #(java.time.LocalDate/parse %
-                                           (java.time.format.DateTimeFormatter/ofPattern "uuuu-MM-dd"
-                                                                                         (java.util.Locale. "en_GB")))))
+               #(LocalDate/parse %
+                                 (DateTimeFormatter/ofPattern "uuuu-MM-dd"
+                                                              (java.util.Locale. "en_GB")))))
 
 (defn date->census-date
   "Given a date `d` and vector of `census-dates`, returns the (first) SEN2 census-date on or after that date.

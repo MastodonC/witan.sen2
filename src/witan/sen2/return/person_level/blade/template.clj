@@ -22,7 +22,7 @@
   [s]
   (->> s parse-double (format "%.0f")))
 
-(defn- parse-boolean
+(defn- parse-float-string-to-boolean
   "Function to parse \"0.0\" & \"1.0\" `s` to boolean."
   [s]
   (get {"0.0" false "1.0" true} s s))
@@ -287,11 +287,11 @@
    :person-table-id               [:string parse-id]
    :received-date                 [:local-date parse-date]
    :request-source                [:int8 parse-double]      ; ≥v1.3
-   :rya                           [:boolean parse-boolean]
+   :rya                           [:boolean parse-float-string-to-boolean]
    :request-outcome-date          [:local-date parse-date]
    :request-outcome               :string
-   :request-mediation             [:boolean parse-boolean]
-   :request-tribunal              [:boolean parse-boolean]
+   :request-mediation             [:boolean parse-float-string-to-boolean]
+   :request-tribunal              [:boolean parse-float-string-to-boolean]
    :exported                      :string})
 
 (def requests-base-read-cfg
@@ -348,11 +348,11 @@
    :requests-table-id               [:string parse-id]
    :assessment-outcome              :string
    :assessment-outcome-date         [:local-date parse-date]
-   :assessment-mediation            [:boolean parse-boolean]
-   :assessment-tribunal             [:boolean parse-boolean]
-   :other-mediation                 [:boolean parse-boolean]
-   :other-tribunal                  [:boolean parse-boolean]
-   :week20                          [:boolean parse-boolean]})
+   :assessment-mediation            [:boolean parse-float-string-to-boolean]
+   :assessment-tribunal             [:boolean parse-float-string-to-boolean]
+   :other-mediation                 [:boolean parse-float-string-to-boolean]
+   :other-tribunal                  [:boolean parse-float-string-to-boolean]
+   :week20                          [:boolean parse-float-string-to-boolean]})
 
 (def assessment-base-read-cfg
   "Base configuration map (without `:start-row` or `:end-row`) for reading SEN2 module 3 \"EHC needs assessments\" into a dataset."
@@ -412,8 +412,8 @@
    :start-date                      [:local-date parse-date]
    :plan-res                        :string
    :plan-wbp                        :string
-   :pb                              [:boolean parse-boolean]
-   :oa                              [:boolean parse-boolean]
+   :pb                              [:boolean parse-float-string-to-boolean]
+   :oa                              [:boolean parse-float-string-to-boolean]
    :dp                              :string
    :cease-date                      [:local-date parse-date]
    :cease-reason                    [:int8 parse-double]})
@@ -478,8 +478,8 @@
    :ukprn                            [:string parse-id]
    :sen-setting                      :string
    :sen-setting-other                :string
-   :sen-unit-indicator               [:boolean parse-boolean]
-   :resourced-provision-indicator    [:boolean parse-boolean]
+   :sen-unit-indicator               [:boolean parse-float-string-to-boolean]
+   :resourced-provision-indicator    [:boolean parse-float-string-to-boolean]
    :placement-rank                   [:int8 parse-double]})
 
 (def plan-detail-base-read-cfg
@@ -618,8 +618,8 @@
    :entry-date                            [:local-date parse-date]
    :leaving-date                          [:local-date parse-date]
    :attendance-pattern                    :string ; <v1.2
-   :sen-unit-indicator                    [:boolean parse-boolean]
-   :resourced-provision-indicator         [:boolean parse-boolean]
+   :sen-unit-indicator                    [:boolean parse-float-string-to-boolean]
+   :resourced-provision-indicator         [:boolean parse-float-string-to-boolean]
    :res                                   :string ; ≥v1.2
    :wbp                                   :string ; ≥v1.2
    })

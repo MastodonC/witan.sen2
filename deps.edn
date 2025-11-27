@@ -1,16 +1,16 @@
 {:paths   ["src" "resources"]
- :deps    {org.clojure/clojure             {:mvn/version "1.11.4"}
-           techascent/tech.ml.dataset      {:mvn/version "7.059"}
-           scicloj/tablecloth              {:mvn/version "7.059"
+ :deps    {org.clojure/clojure             {:mvn/version "1.12.3"}
+           techascent/tech.ml.dataset      {:mvn/version "7.066"}
+           scicloj/tablecloth              {:mvn/version "7.062"
                                             :exclusions  [techascent/tech.ml.dataset
                                                           org.apache.poi/poi-ooxml-schemas
                                                           org.apache.poi/poi
                                                           org.apache.poi/poi-ooxml]}
-           com.github.MastodonC/witan.gias {:git/sha "763874c49256ca51c508c28952480356e644dea9"}}
+           com.github.MastodonC/witan.gias {:git/sha "aaecb96d94a5e7a6b2d3aa36c617570d897f2d9c"}}
  :aliases {:dev  {:extra-paths ["templates" "dev"]
                   :extra-deps  {;; adroddiad & clerk only required to run the template namespaces and notebooks. Not required by src namespaces.
-                                com.github.MastodonC/witan.send.adroddiad {:git/sha    "fe464c39dd53cea4498dbcd5e08a24d05bf32fd4"
+                                com.github.MastodonC/witan.send.adroddiad {:git/sha    "1cf2e3293d5e16330c4dc06a2ee989068ebee7be"
                                                                            :exclusions [mastodonc/witan.send
                                                                                         techascent/tech.ml.dataset]}
-                                io.github.nextjournal/clerk               {:mvn/version "0.17.1102"}}}
+                                io.github.nextjournal/clerk               {:mvn/version "0.18.1142"}}}
            :test {:extra-paths ["test"]}}}
