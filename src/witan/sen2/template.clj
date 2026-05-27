@@ -17,7 +17,7 @@
    Optional extra key-values:
    - `:updates-file`: filepath of file with fixes/updates to records - usually created by manually updating
       the output of `write-out-issues`
-   - `:manually-updated-sen2`: an updated SEN2 ds to be used where fixes are to complicated to be applied
+   - `:manually-updated-sen2`: an updated SEN2 ds to be used where fixes are too complicated to be applied
       via an updates files (e.g. blanket fixes to RP/SENU labelling)
    - `module-read-cfg`: see `sen2-blade-csv/module-read-cfg` for applying bespoke SEN2 module parsing, otherwise defaults
    - `:checks`: see `plans/checks` for applying bespoke SEN2 issue checks, otherwise defaults"
