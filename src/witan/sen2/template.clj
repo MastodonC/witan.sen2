@@ -5,13 +5,15 @@
             [tablecloth.api :as tc]
             [kixi.large :as large]))
 
-(defn process-raw-sen2 [{:keys [census-dates data-path export-date module-read-cfg
+;; TODO rename ns plans_placements_with_issues???
+
+(defn process-raw-sen2 [{:keys [census-years data-path export-date module-read-cfg
                                 updates-file manually-updated-sen2 checks]
                          :or {module-read-cfg sen2-blade-csv/module-read-cfg
                               checks (plans/checks)}}]
   "Process raw SEN2 data or apply updates/fixes to SEN2 data. Expects a map with required and optional keys.
    Required key-values:
-   - `:census-dates`: vector of calendar years covered in this SEN2 data
+   - `:census-years`: vector of calendar years covered in this SEN2 data
    - `:data-path`: location of SEN2 data files
    - `:export-date`: date COLLECT data generated (in \"DD-MM-YYYY\" format)
    Optional extra key-values:
@@ -23,7 +25,7 @@
    - `:checks`: see `plans/checks` for applying bespoke SEN2 issue checks, otherwise defaults"
   (let [sen2-blade-csv-ds-map (sen2-blade-csv/file-paths->ds-map (sen2-blade-csv/make-file-paths export-date data-path)
                                                                  module-read-cfg)
-        census-dates-ds (sen2/census-years->census-dates-ds census-dates)
+        census-dates-ds (sen2/census-years->census-dates-ds census-years)
         sen2-census-raw (if manually-updated-sen2
                           manually-updated-sen2
                           (plans/plans-placements-on-census-dates sen2-blade-csv-ds-map
