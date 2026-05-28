@@ -23,17 +23,19 @@
    - `:checks`: see `plans/checks` for applying bespoke SEN2 issue checks, otherwise defaults"
   (let [sen2-blade-csv-ds-map (sen2-blade-csv/file-paths->ds-map (sen2-blade-csv/make-file-paths export-date data-path)
                                                                  module-read-cfg)
+        census-dates-ds (sen2/census-years->census-dates-ds census-dates)
         sen2-census-raw (if manually-updated-sen2
                           manually-updated-sen2
                           (plans/plans-placements-on-census-dates sen2-blade-csv-ds-map
-                                                                  (sen2/census-years->census-dates-ds census-dates)))]
+                                                                  census-dates-ds))]
     (as-> {:blade-csv-ds-map sen2-blade-csv-ds-map
            :census-raw (if updates-file
                          (as-> updates-file $
                            (plans/updates-csv-file->ds $)
                            (plans/update-plans-placements-on-census-dates sen2-census-raw $))
                          sen2-census-raw)
-           :checks checks} $
+           :checks checks
+           :census-dates census-dates-ds} $
       (assoc $ :issues (plans/issues->ds (:census-raw $) checks))
       (assoc $ :issues-summary (-> (:issues $)
                                    (plans/issues->ds checks)
