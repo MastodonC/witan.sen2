@@ -1,5 +1,5 @@
 ^{:nextjournal.clerk/toc true}
-(ns validation
+(ns client-validation-deck
   {:nextjournal.clerk/visibility {:code   :hide
                                   :result :hide}}
   (:require [nextjournal.clerk :as clerk]
