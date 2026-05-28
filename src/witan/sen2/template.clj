@@ -52,7 +52,7 @@
   ;; `:issue-missing-sen-type`
   (-> issues-ds
       (tc/select-rows #(and ((complement nil?) (id-key %))
-                            (true? (:issue-no-placement-detail %))))
+                            (true? (issue-key %))))
       (tc/unique-by [id-key :census-year])
       (tc/select-columns [id-key :census-year])
       (tc/add-column :update nil)
