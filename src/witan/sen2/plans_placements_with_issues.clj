@@ -5,10 +5,11 @@
             [tablecloth.api :as tc]
             [kixi.large :as large]))
 
-(defn process-raw-sen2 [{:keys [census-years data-path export-date module-read-cfg
-                                updates-file manually-updated-sen2 checks]
-                         :or {module-read-cfg sen2-blade-csv/module-read-cfg
-                              checks (plans/checks)}}]
+(defn raw-sen2->plans-placements-with-issues
+  [{:keys [census-years data-path export-date module-read-cfg
+           updates-file manually-updated-sen2 checks]
+    :or {module-read-cfg sen2-blade-csv/module-read-cfg
+         checks (plans/checks)}}]
   "Process raw SEN2 data or apply updates/fixes to SEN2 data. Expects a map with required and optional keys.
    Required key-values:
    - `:census-years`: vector of calendar years covered in this SEN2 data
