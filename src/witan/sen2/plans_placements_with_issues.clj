@@ -1,11 +1,9 @@
-(ns witan.sen2.template
+(ns witan.sen2.plans-placements-with-issues
   (:require [witan.sen2 :as sen2]
             [witan.sen2.return.person-level.blade.csv :as sen2-blade-csv]
             [witan.sen2.return.person-level.blade.plans-placements :as plans]
             [tablecloth.api :as tc]
             [kixi.large :as large]))
-
-;; TODO rename ns plans_placements_with_issues???
 
 (defn process-raw-sen2 [{:keys [census-years data-path export-date module-read-cfg
                                 updates-file manually-updated-sen2 checks]
