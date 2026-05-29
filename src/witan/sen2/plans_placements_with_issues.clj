@@ -66,9 +66,3 @@
                              ::large/data v)) $)
     (large/create-workbook $)
     (large/save-workbook! $ filepath)))
-
-;; TODO write validation note book
-;; - report issues (filter by >0 issue count)
-;; - report EHCP count per calendar year
-;; - report count difference & count of variation if previous SEN2 available
-;; - compare total ehcp count to RP/SENU indicator not set count to se if TP/SENU is > 0
