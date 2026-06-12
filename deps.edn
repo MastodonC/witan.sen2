@@ -6,7 +6,7 @@
                                                           org.apache.poi/poi-ooxml-schemas
                                                           org.apache.poi/poi
                                                           org.apache.poi/poi-ooxml]}
-           com.github.MastodonC/witan.gias {:git/sha "aaecb96d94a5e7a6b2d3aa36c617570d897f2d9c"}}
+           com.github.MastodonC/witan.gias {:git/sha "db64081bd0c1fe3bc94b7f9cf765959268ddb1d9"}}
  :aliases {:dev  {:extra-paths ["templates" "dev"]
                   :extra-deps  {;; adroddiad & clerk only required to run the template namespaces and notebooks. Not required by src namespaces.
                                 com.github.MastodonC/witan.send.adroddiad {:git/sha    "1cf2e3293d5e16330c4dc06a2ee989068ebee7be"
