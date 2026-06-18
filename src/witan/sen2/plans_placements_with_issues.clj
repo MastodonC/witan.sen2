@@ -71,9 +71,9 @@
                                                                   census-dates-ds))]
     (as-> {:blade-csv-ds-map sen2-ds-map
            :census-raw (if updates-file
-                         (as-> updates-file $
-                           (plans/updates-csv-file->ds $)
-                           (plans/update-plans-placements-on-census-dates sen2-census-raw $))
+                         (->> updates-file
+                              plans/updates-csv-file->ds
+                              plans/update-plans-placements-on-census-dates sen2-census-raw)
                          sen2-census-raw)
            :checks checks
            :census-dates census-dates-ds} $
