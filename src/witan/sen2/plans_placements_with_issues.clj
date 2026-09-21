@@ -73,7 +73,7 @@
            :census-raw (if updates-file
                          (->> updates-file
                               plans/updates-csv-file->ds
-                              plans/update-plans-placements-on-census-dates sen2-census-raw)
+                              (plans/update-plans-placements-on-census-dates sen2-census-raw))
                          sen2-census-raw)
            :checks checks
            :census-dates census-dates-ds} $
