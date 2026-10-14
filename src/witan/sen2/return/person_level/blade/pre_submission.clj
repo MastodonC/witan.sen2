@@ -125,9 +125,15 @@
             ::keys [post-fn]
             :or    {post-fn identity}
             :as    opts}]
-  (-> sheet
-      (ss/sheet->dataset opts)
-      post-fn))
+  (try (-> sheet
+           (ss/sheet->dataset opts)
+           post-fn)
+       (catch Exception e
+         (throw (ex-info (str "Failed to read dataset " (pr-str dataset-name)
+                              ": " (ex-message e))
+                         {:dataset-name dataset-name
+                          :opts opts}
+                         e)))))
 
 ;;; ## Module 0: SEN2 metadata (`sen2`)
 ;; Not in the pre-submission data.
