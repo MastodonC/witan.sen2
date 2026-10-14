@@ -279,7 +279,7 @@
    :assessment-outcome              :string
    :assessment-outcome-date         :local-date
    :assessment-mediation            [:boolean parse-binary->boolean]
-   :assessment-tribunal             [:boolean parse-binary->boolean]  
+   :assessment-tribunal             [:boolean parse-binary->boolean]
    :other-mediation                 [:boolean parse-binary->boolean]
    :other-tribunal                  [:boolean parse-binary->boolean]
    :week20                          [:boolean parse-binary->boolean]})
@@ -591,7 +591,7 @@
    #_#_:sen-need-order-seq-column :int32                              ; not in pre-submission workbooks
    #_#_:source-id                 :string                             ; not in pre-submission workbooks
    #_#_:active-plans-table-id     :string                             ; not in pre-submission workbooks
-   :sen-type                      :string                          
+   :sen-type                      :string
    :sen-type-rank                 :int8})
 
 (def sen-need-read-cfg
@@ -707,4 +707,3 @@
   "Collated parser functions for all SEN2 modules."
   ([] (parser-fn module-read-cfg))
   ([module-read-cfg] (reduce-kv (fn [m _ v] (merge m (:parser-fn v))) {} module-read-cfg)))
-
