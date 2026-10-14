@@ -337,7 +337,7 @@
 
 (defn csv-col-labels-dataset
   "Given dataset and map mapping column names to labels, returns dataset with
-   columns `:column-number`, `:column-name` & `:column label` where any keyword 
+   columns `:column-number`, `:column-name` & `:column label` where any keyword
    column names are converted to names to match how `tc/write!` saves column
    names in a CSV file."
   [ds col-name->label]
@@ -896,10 +896,10 @@
   "Summarises establishments in plans-placements-on-census-dates-issues dataset `ds`
    identified as being of an unexpected type in columns specified by `issue-cols-selector`
    (default #\"^:issue-urn-for-unexpected-.+-establishment-type\").
-   Summmary includes frequencies by `census-year-col` (default `:census-year-*` 
-   if present, otherwise `:census-year`), with establishment details from 
-   `edubaseall-send-map` (which should be the same version as that used to 
-   identify the issues, defaulting if not provided to the current default 
+   Summmary includes frequencies by `census-year-col` (default `:census-year-*`
+   if present, otherwise `:census-year`), with establishment details from
+   `edubaseall-send-map` (which should be the same version as that used to
+   identify the issues, defaulting if not provided to the current default
    `witan.gias/edubaseall-send->map`)."
   [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map]
          :or   {issue-cols-selector #"^:issue-urn-for-unexpected-.+-establishment-type"
@@ -921,10 +921,10 @@
    identified as having SENU or RP indicated when GIAS says there isn't one.
    Issue records identified by truthy value in columns specified by `issue-cols-selector`
    (default `[:issue-unexpected-senu-indicated :issue-unexpected-rp-indicated]`).
-   Summmary includes frequencies by `census-year-col` (default `:census-year-*` 
-   if present, otherwise `:census-year`), with establishment details from 
-   `edubaseall-send-map` (which should be the same version as that used to 
-   identify the issues, defaulting if not provided to the current default 
+   Summmary includes frequencies by `census-year-col` (default `:census-year-*`
+   if present, otherwise `:census-year`), with establishment details from
+   `edubaseall-send-map` (which should be the same version as that used to
+   identify the issues, defaulting if not provided to the current default
    `witan.gias/edubaseall-send->map`)."
   [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map]
          :or   {issue-cols-selector [:issue-unexpected-senu-indicated
@@ -949,7 +949,7 @@
    identified as having less learners placed there than expected.
    Issue records identified by truthy value in column specified by `issue-cols-selector`
    (default `[:issue-less-placements-than-expected]`).
-   If map `sen2-estab-min-expected-placed` is provided then it is used to 
+   If map `sen2-estab-min-expected-placed` is provided then it is used to
    populate the `:min-expected` column."
   [ds & {:keys [issue-cols-selector census-year-col edubaseall-send-map sen2-estab-min-expected-placed]
          :or   {issue-cols-selector            [:issue-less-placements-than-expected]
@@ -1184,7 +1184,7 @@
            from year YYYY SEN2 return
            (i.e. the return for that year);
    - YYYY~ indicates record for YYYY SEN2 census date
-           from year YYYY + 1 SEN2 return 
+           from year YYYY + 1 SEN2 return
            (i.e. the return for the following year)."
   [census-year return-year]
   (cond
@@ -1194,20 +1194,20 @@
 
 (defn concat-plans-placements-on-census-dates
   "Given sequence `xs` of datasets of plans-placements-on-census-dates from
-   individual SEN2 returns for different years, adds columns `:return-year` & 
+   individual SEN2 returns for different years, adds columns `:return-year` &
    `:census-year-*` to each and concatenates them:
-   - `:return-year`   indicates the SEN2 return from which the plan/placement 
-                      record was extracted, derived as the maximum 
+   - `:return-year`   indicates the SEN2 return from which the plan/placement
+                      record was extracted, derived as the maximum
                       `:census-year` for the return.
-   - `:census-year-*` a string indicating both the year of the SEN2 census-date 
-                      of the plan/placement and whether the record is from the 
+   - `:census-year-*` a string indicating both the year of the SEN2 census-date
+                      of the plan/placement and whether the record is from the
                       SEN2 return for the same year or the SEN2 return for the
                       next year:
                       - YYYY# indicates record for YYYY SEN2 census date
                               from year YYYY SEN2 return
                               (i.e. the return for that year);
                       - YYYY~ indicates record for YYYY SEN2 census date
-                              from year YYYY + 1 SEN2 return 
+                              from year YYYY + 1 SEN2 return
                               (i.e. the return for the following year)."
   [xs]
   (as-> xs $
@@ -1252,8 +1252,8 @@
 ;;; # EDA
 (defn plan-placement-module-summary
   "Given a `plans-placements-on-census-dates` dataset (possibly with records from
-   multiple returns identified by `:return-year`), returns dataset summarising 
-   the numbers of records with `:named-plan?` and/or `:placement-detail?` for 
+   multiple returns identified by `:return-year`), returns dataset summarising
+   the numbers of records with `:named-plan?` and/or `:placement-detail?` for
    each `:census-year`, `:census-date` (& `:return-year`)."
   [plans-placements-on-census-dates]
   (-> plans-placements-on-census-dates
@@ -1274,9 +1274,9 @@
 
 (defn plan-placement-module-summary-with-caseload
   "Given a `plans-placements-on-census-dates` dataset (possibly with records from
-   multiple returns identified by `:return-year`), returns dataset summarising 
-   the numbers of records with `:named-plan?` and/or `:placement-detail?` for 
-   each `:census-year`, `:census-date` (& `:return-year`) including the 
+   multiple returns identified by `:return-year`), returns dataset summarising
+   the numbers of records with `:named-plan?` and/or `:placement-detail?` for
+   each `:census-year`, `:census-date` (& `:return-year`) including the
    published EHCP caseload for LA `la-name` for comparison."
   [plans-placements-on-census-dates la-name]
   (let [caseload (-> (caseload/->ds)
