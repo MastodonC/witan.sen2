@@ -46,9 +46,10 @@
 (defn raw-sen2-pre-submission->plans-placements-with-issues
   [{:keys [census-years data-path module-read-cfg
            updates-file manually-updated-sen2 checks
-           sheet-names]
+           sheet-names census-dates-ds]
     :or {module-read-cfg sen2-blade-csv/module-read-cfg
-         checks (plans/checks)}}]
+         checks (plans/checks)
+         census-dates-ds (sen2/census-years->census-dates-ds census-years)}}]
   "Process raw SEN2 data or apply updates/fixes to SEN2 data. Expects a map with required and optional keys.
    Required key-values:
    - `:census-years`: vector of calendar years covered in this SEN2 data
@@ -64,7 +65,6 @@
   (let [sen2-ds-map (pre/pre-submission-workbook-filepath->ds-map data-path
                                                                   {:module-sheet-names sheet-names
                                                                    :module-read-cfg    module-read-cfg})
-        census-dates-ds (sen2/census-years->census-dates-ds census-years)
         sen2-census-raw (if manually-updated-sen2
                           manually-updated-sen2
                           (plans/plans-placements-on-census-dates sen2-ds-map
